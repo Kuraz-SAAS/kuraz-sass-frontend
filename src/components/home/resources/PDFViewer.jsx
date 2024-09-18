@@ -1,47 +1,44 @@
-// import React, { useState } from "react";
-// import { } ;
-// import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import React, { useState } from "react";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css"; // Include default layout styles
 
-// const PdfViewer = ({ pdfUrl }) => {
-//   const [numPages, setNumPages] = useState(null);
-//   const [pageNumber, setPageNumber] = useState(1);
+const PdfViewer = ({ pdfUrl }) => {
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
 
-//   const onDocumentLoadSuccess = ({ numPages }) => {
-//     setNumPages(numPages);
-//   };
+  // Initialize the default layout plugin
+  const defaultLayout = defaultLayoutPlugin();
 
-//   const goToNextPage = () => {
-//     if (pageNumber < numPages) setPageNumber(pageNumber + 1);
-//   };
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
 
-//   const goToPreviousPage = () => {
-//     if (pageNumber > 1) setPageNumber(pageNumber - 1);
-//   };
+  const goToNextPage = () => {
+    if (pageNumber < numPages) {
+      setPageNumber((prevPageNumber) => prevPageNumber + 1);
+    }
+  };
 
-//   return (
-//     <div className="pdf-viewer-container">
-//       <Document
-//         file={pdfUrl}
-//         onLoadSuccess={onDocumentLoadSuccess}
-//         loading="Loading PDF..."
-//         className="pdf-document"
-//       >
-//         <Page pageNumber={pageNumber} />
-//       </Document>
+  const goToPreviousPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber((prevPageNumber) => prevPageNumber - 1);
+    }
+  };
 
-//       <div className="pdf-controls">
-//         <button onClick={goToPreviousPage} disabled={pageNumber === 1}>
-//           Previous
-//         </button>
-//         <span>
-//           Page {pageNumber} of {numPages}
-//         </span>
-//         <button onClick={goToNextPage} disabled={pageNumber === numPages}>
-//           Next
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
+  return (
+    <div className="pdf-container h-[80vh]">
 
-// export default PdfViewer;
+      <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>
+        <Viewer
+          fileUrl={pdfUrl} // Use pdfUrl prop passed into the component
+          plugins={[defaultLayout]} // Add the default layout plugin here
+  
+        />
+      </Worker>
+    </div>
+  );
+};
+
+export default PdfViewer;

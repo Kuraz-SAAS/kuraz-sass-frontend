@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa";
 import { AiFillFilePdf } from "react-icons/ai";
-// import PdfViewer from "../../components/home/resources/PDFViewer";
+import PdfViewer from "../../components/home/resources/PDFViewer";
+import Navbar from "../../components/common/home/Navbar";
+
 
 const Resources = () => {
   // Mock Data
@@ -49,7 +51,7 @@ const Resources = () => {
   ];
 
   const [openFolders, setOpenFolders] = useState({});
-  const [selectedPdf, setSelectedPdf] = useState(null); // Track the selected PDF
+  const [selectedPdf, setSelectedPdf] = useState('http://localhost:5173/downloaded.pdf'); // Track the selected PDF
 
   // Toggle folder visibility
   const toggleFolder = (folderId) => {
@@ -64,74 +66,83 @@ const Resources = () => {
   };
 
   return (
-    <div className="w-[400px] bg-white shadow-md rounded-lg p-4">
-      <ul>
-        {mockData.map((grade) => (
-          <li key={grade.id}>
-            <div
-              className="flex items-center gap-2 cursor-pointer group"
-              onClick={() => toggleFolder(`grade${grade.id}`)}
-            >
-              {openFolders[`grade${grade.id}`] ? (
-                <FaFolderOpen className="text-yellow-500" />
-              ) : (
-                <FaFolder className="text-yellow-500" />
-              )}
-              <span className="font-semibold">{grade.name}</span>
-            </div>
-            <ul
-              id={`grade${grade.id}`}
-              className={`pl-6 mt-2 space-y-2 ${
-                openFolders[`grade${grade.id}`] ? "" : "hidden"
-              }`}
-            >
-              {grade.subjects.map((subject) => (
-                <li key={subject.id}>
-                  <div
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => toggleFolder(`subject${subject.id}`)}
-                  >
-                    {openFolders[`subject${subject.id}`] ? (
-                      <FaFolderOpen className="text-yellow-500" />
-                    ) : (
-                      <FaFolder className="text-yellow-500" />
-                    )}
-                    <span className="font-semibold">{subject.name}</span>
-                  </div>
-                  <ul
-                    id={`subject${subject.id}`}
-                    className={`pl-6 mt-2 space-y-2 ${
-                      openFolders[`subject${subject.id}`] ? "" : "hidden"
-                    }`}
-                  >
-                    {subject.resources.map((resource) => (
-                      <li key={resource.id}>
-                        <div className="flex items-center gap-2 cursor-pointer">
-                          <AiFillFilePdf className="text-red-600" />
-                          <button
-                            onClick={() => openPdf(resource.file)}
-                            className="font-semibold"
-                          >
-                            {resource.name}
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+    <div>
+      <Navbar/>
+    <div className="flex  font-poppins  rounded-lg pt-28 px-9">
+      {/* Folder list */}
+      <div className="w-[300px] bg-[#EEEEEE] rounded-s-lg pr-4 shadow-lg p-6">
+        <ul>
+          {mockData.map((grade) => (
+            <li key={grade.id}>
+              <div
+                className="flex items-center gap-2 cursor-pointer group"
+                onClick={() => toggleFolder(`grade${grade.id}`)}
+              >
+                {openFolders[`grade${grade.id}`] ? (
+                  <FaFolderOpen className="text-yellow-500" />
+                ) : (
+                  <FaFolder className="text-yellow-500" />
+                )}
+                <span className="font-semibold">{grade.name}</span>
+              </div>
+              <ul
+                id={`grade${grade.id}`}
+                className={`pl-6 mt-2 space-y-2 ${
+                  openFolders[`grade${grade.id}`] ? "" : "hidden"
+                }`}
+              >
+                {grade.subjects.map((subject) => (
+                  <li key={subject.id}>
+                    <div
+                      className="flex items-center gap-2 cursor-pointer group"
+                      onClick={() => toggleFolder(`subject${subject.id}`)}
+                    >
+                      {openFolders[`subject${subject.id}`] ? (
+                        <FaFolderOpen className="text-yellow-500" />
+                      ) : (
+                        <FaFolder className="text-yellow-500" />
+                      )}
+                      <span className="font-semibold">{subject.name}</span>
+                    </div>
+                    <ul
+                      id={`subject${subject.id}`}
+                      className={`pl-6 mt-2 space-y-2 ${
+                        openFolders[`subject${subject.id}`] ? "" : "hidden"
+                      }`}
+                    >
+                      {subject.resources.map((resource) => (
+                        <li key={resource.id}>
+                          <div className="flex items-center gap-2 cursor-pointer">
+                            <AiFillFilePdf className="text-red-600" />
+                            <button
+                              onClick={() => openPdf(resource.file)}
+                              className="font-semibold"
+                            >
+                              {resource.name}
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      {/* Render PDF Viewer if a file is selected */}
-      {selectedPdf && (
-        <div className="mt-4">
-          <h2 className="font-semibold text-lg mb-2">Viewing PDF</h2>
-          {/* <PdfViewer pdfUrl={selectedPdf} /> */}
-        </div>
-      )}
+      {/* PDF viewer */}
+      <div className="w-full ">
+        {selectedPdf ? (
+          <PdfViewer pdfUrl={selectedPdf} />
+        ) : (
+          <div className="text-center text-gray-500">
+            Select a resource to view the PDF
+          </div>
+        )}
+      </div>
+    </div>
     </div>
   );
 };
