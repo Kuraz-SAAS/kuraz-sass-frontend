@@ -1,11 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
 
-const Datatable = ({ datas, headers, actions }) => {
+const SubjectDatatable = ({ datas, headers }) => {
+  console.log(datas);
   const [searchValue, setSearchValue] = useState();
   const [dataList, setDataList] = useState([...datas]);
   const [rowsLimit] = useState(5);
-  const [rowsToShow, setRowsToShow] = useState(dataList?.slice(0, rowsLimit));
+  const [rowsToShow, setRowsToShow] = useState(
+    dataList?.slice(0, Math.min(rowsLimit, datas.length))
+  );
+
   const [customPagination, setCustomPagination] = useState([]);
   const [activeColumn, setActiveColumn] = useState(["Price"]);
   const [sortingColumn, setSortingColumn] = useState(["Price"]);
@@ -149,19 +152,13 @@ const Datatable = ({ datas, headers, actions }) => {
     setDataList(sortedProducts);
     setRowsToShow(sortedProducts?.slice(0, rowsLimit));
   }, []);
+
+  console.log(rowsToShow);
   return (
     <div className="min-h-screen bg-gray-100 flex  justify-center py-10">
       <div className="w-full max-w-7xl px-4">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="bg-gray-200 flex justify-between  items-center p-4 border-b border-gray-300">
-            <div>
-              <Link
-                to={"add"}
-                className="bg-[#bc8c4e] text-white p-2 rounded-md"
-              >
-                Add Grade
-              </Link>
-            </div>
+          <div className="bg-gray-200 flex justify-end p-4 border-b border-gray-300">
             <div className="flex items-center bg-white border rounded-full shadow-sm">
               <input
                 type="text"
@@ -237,19 +234,6 @@ const Datatable = ({ datas, headers, actions }) => {
                     <td className="py-3 px-6 text-gray-700">
                       {data?.subjects?.length}
                     </td>
-                    <td className="flex">
-                      {actions.map((action, index) => (
-                        <div key={index} className="py-3 px-6 text-gray-700">
-                          <button
-                            onClick={(e) => {
-                              action.function(data?.grade_id);
-                            }}
-                          >
-                            {action.label}
-                          </button>
-                        </div>
-                      ))}
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -312,4 +296,4 @@ const Datatable = ({ datas, headers, actions }) => {
     </div>
   );
 };
-export default Datatable;
+export default SubjectDatatable;

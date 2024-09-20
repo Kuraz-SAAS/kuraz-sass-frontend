@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Axios from "../../middleware/Axios";
 import { csrfCatch } from "../../middleware/utilities";
 import { useNavigate } from "react-router-dom";
+import { useSiteStore } from "../../context/siteStore";
 
 const RegistrationForm = () => {
   const [name, setname] = useState("");
@@ -10,7 +11,6 @@ const RegistrationForm = () => {
   const [domain, setDomin] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-
   const handleSubmit = async () => {
     // call the csrf catch
     const response = csrfCatch();
@@ -23,8 +23,8 @@ const RegistrationForm = () => {
       password_confirmation: confirmPassword,
       user_type: "school",
     }).then((res) => {
-      if (res.status === 204) {
-        navigate("/courses");
+      if (res.status === 204 || res.status === 200) {
+        navigate("/login");
       }
     });
   };

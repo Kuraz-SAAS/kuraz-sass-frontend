@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { bookImg } from "../../../assets/test_img";
+import { useSiteStore } from "../../../context/siteStore";
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const user = useSiteStore((store) => store.user);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -15,7 +17,7 @@ const Navbar = ({ user }) => {
       <div className="container mx-auto px-4 py-4 flex items-center justify-around">
         {/* Logo */}
         <div className="text-2xl font-bold text-gray-800">
-          <a href="/">School Logo</a>
+          <p>{user?.name}</p>
         </div>
 
         {/* Search Bar */}
@@ -59,14 +61,21 @@ const Navbar = ({ user }) => {
         {/* User Profile */}
         <div className="flex items-center space-x-4">
           <>
-            <div className="flex items-center space-x-2">
+            <Link
+              to={
+                user?.user_type === "student"
+                  ? "/student/dashboard"
+                  : "/school/dashboard"
+              }
+              className="flex items-center space-x-2 bg-[#bc8c4a] px-2 py-1 rounded-lg text-white"
+            >
               <img
-                src=""
-                alt={`ababe's profile`}
+                src={bookImg}
+                alt={bookImg}
                 className="w-10 h-10 rounded-full object-cover"
               />
-              <span className="text-gray-800">{"abebe"}</span>
-            </div>
+              <span className="">{"Dashboard"}</span>
+            </Link>
           </>
         </div>
 

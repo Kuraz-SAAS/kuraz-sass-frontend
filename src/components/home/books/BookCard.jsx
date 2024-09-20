@@ -2,50 +2,43 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { bookImg } from "../../../assets/test_img";
 
-// React functional component for a single book card
 const BookCard = ({ book }) => {
   return (
-    <div className="">
-      <div className="h-full bg-white p-3 rounded-lg flex flex-col shadow-lg hover:shadow-md transition-all justify-between">
-        <div className="flex gap-2">
-          <Link to={`/books/${book.id}`} className="w-3/4 rounded-md relative">
-            <img
-              className="w-[60px] rounded-md"
-              loading="lazy"
-              src={bookImg}
-              alt="Book Cover"
-            />
-          </Link>
-          <div className="w-full flex flex-col">
-            <div className="flex w-full mt-2 justify-between">
-              <h5 className="font-bold text-base">
-                {book.book_title.slice(0, 25)}
-              </h5>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-sm">
-                {book.book_author && book.book_author.name}
-              </p>
-            </div>
-            <div className="flex items-center text-xs my-4">
-              <span>in &nbsp;</span>
-              <p className="text-xs">{book.book_category_id}</p>
-            </div>
-          </div>
+    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <Link to={`/books/${book.id}`} className="block relative">
+        <img
+          className="w-full h-72 rounded-t-lg object-cover"
+          loading="lazy"
+          src={bookImg}
+          alt="Book Cover"
+        />
+      </Link>
+      <div className="p-4 flex flex-col">
+        <h5 className="font-semibold text-lg text-gray-800 truncate">
+          {book.book_title}
+        </h5>
+        <p className="text-sm text-gray-600 mt-1">
+          {book.book_author && book.book_author.name}
+        </p>
+        <div className="flex items-center text-xs text-gray-500 mt-2">
+          <span>Category: </span>
+          <p className="ml-1">{book.book_category_id}</p>
         </div>
-        <hr className="w-full" />
-        <div className="flex justify-between pt-2 items-center">
+        <div className="flex justify-between items-center mt-4">
           <div>
             {book.price ? (
-              <p className="text-lg font-bold text-end">
+              <p className="text-lg font-bold text-blue-600">
                 {book.currency === "ETB"
                   ? `ETB ${book.price}`
                   : `USD ${book.price}`}
               </p>
             ) : (
-              <p className="text-lg font-bold text-end">Free</p>
+              <p className="text-lg font-bold text-green-600">Free</p>
             )}
           </div>
+          <button className="px-3 py-1 text-white bg-primary rounded-md hover:bg-blue-600 transition duration-200">
+            Add to Cart
+          </button>
         </div>
       </div>
     </div>

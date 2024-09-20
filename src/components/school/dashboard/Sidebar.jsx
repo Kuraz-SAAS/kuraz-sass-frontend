@@ -12,14 +12,20 @@ import {
   FaCalendarAlt,
   FaLock,
 } from "react-icons/fa"; // Import icons
+import { useSiteStore } from "../../../context/siteStore";
 
 const Sidebar = () => {
+  const user = useSiteStore((store) => store.user);
+
   return (
     <aside className="w-1/5 font-poppins bg-white text-black min-h-screen p-6 flex flex-col">
       {/* School Logo and Name */}
-      <div className="flex flex-col items-center justify-center mb-8">
+      <div className="flex flex-col gap-x-28 items-center justify-center mb-8">
         {/* School Name */}
-        <div className="text-lg font-extrabold tracking-wider">School Name</div>
+        <h1>School's Dashobard</h1>
+        <div className="text-lg font-extrabold tracking-wider">
+          {user?.name}
+        </div>
       </div>
 
       {/* Active Links */}

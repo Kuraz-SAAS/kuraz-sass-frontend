@@ -13,9 +13,7 @@ const Resources = () => {
   const [openFolders, setOpenFolders] = useState({});
 
   // State to track selected PDF
-  const [selectedPdf, setSelectedPdf] = useState(
-    "http://localhost:5173/downloaded.pdf"
-  );
+  const [selectedPdf, setSelectedPdf] = useState("");
 
   // State to store resources by subject ID
   const [resourcesBySubject, setResourcesBySubject] = useState({});
