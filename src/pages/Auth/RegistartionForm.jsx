@@ -1,18 +1,30 @@
-import React from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import Axios from "../../middleware/Axios";
+import { csrfCatch } from "../../middleware/utilities";
 
 const RegistrationForm = () => {
+  const [name, setname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [domain, setDomin] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const handleSubmit = async () => {
-    try {
-      axios.defaults.withCredentials = true;
-      axios.defaults.withXSRFToken = true;
-      // Fetch CSRF token
-      const response = await axios.get(
-        "https://4cdc-196-188-51-249.ngrok-free.app/sanctum/csrf-cookie"
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    // call the csrf catch
+    const response = csrfCatch();
+
+    console.log(response);
+
+    await Axios.post("/register", {
+      domain: domain,
+      name: name,
+      email: email,
+      password: password,
+      password_confirmation: confirmPassword,
+      user_type: "school",
+    }).then((res) => {
+      console.log(res);
+    });
   };
 
   return (
@@ -41,22 +53,37 @@ const RegistrationForm = () => {
                 <input
                   className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="text"
+                  value={domain}
+                  onChange={(e) => setDomin(e.target.value)}
+                  placeholder="Enter your damin"
+                />
+                <input
+                  className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setname(e.target.value)}
                   placeholder="Enter your name"
                 />
                 <input
                   className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                />
-                <input
-                  className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                  type="tel"
-                  placeholder="Enter your phone"
                 />
                 <input
                   className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="password"
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <input
+                  className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  type="password"
+                  placeholder="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                   <svg

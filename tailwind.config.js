@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "black",
+        primary: "#323238",
+        seconday: "#323238",
       },
       fontFamily: {
         poppins: '"Poppins", system-ui',

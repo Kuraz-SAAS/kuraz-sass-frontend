@@ -7,6 +7,7 @@ import {
   kurazLogo,
   shadow,
 } from "../../assets/images";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -83,9 +84,12 @@ const Hero = () => {
 
         {/* Sign Up Button */}
         <div className="mt-4 md:mt-0">
-          <button className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-lg px-6 md:px-8 lg:px-16 py-2 transition duration-300">
+          <Link
+            to={"/register"}
+            className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-lg px-6 md:px-8 lg:px-16 py-2 transition duration-300"
+          >
             Sign up
-          </button>
+          </Link>
         </div>
       </div>
 

@@ -26,15 +26,16 @@ const PdfViewer = ({ pdfUrl }) => {
       setPageNumber((prevPageNumber) => prevPageNumber - 1);
     }
   };
+  console.log(pdfUrl);
 
   return (
     <div className="pdf-container h-[80vh]">
-
-      <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>
+      <Worker
+        workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}
+      >
         <Viewer
-          fileUrl={pdfUrl} // Use pdfUrl prop passed into the component
+          fileUrl={`http://localhost:8000/${pdfUrl}`} // Use pdfUrl prop passed into the component
           plugins={[defaultLayout]} // Add the default layout plugin here
-  
         />
       </Worker>
     </div>

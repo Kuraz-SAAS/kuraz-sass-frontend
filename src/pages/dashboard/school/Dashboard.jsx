@@ -1,21 +1,16 @@
-import React from 'react';
-import DashboardLayout from '../../../pages/layouts/dashboard/school/DashboardLayout'
-
+import React from "react";
+import DashboardLayout from "../../../pages/layouts/dashboard/school/DashboardLayout";
 
 const Dashboard = () => {
-
-    const students = 12;
-    const grades = 24;
-    const resources = 13
-    const upcomingEvents = 21;
-
+  const students = 12;
+  const grades = 24;
+  const resources = 13;
+  const upcomingEvents = 21;
 
   return (
-
     <DashboardLayout>
       <div className="grid grid-cols-4 gap-4 mb-8">
-    
-        <div className="bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+        <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
           <div className="text-3xl font-semibold mb-2">{students}</div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Total Students</span>
@@ -37,7 +32,7 @@ const Dashboard = () => {
         </div>
 
         {/* Total Grades Card */}
-        <div className="bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+        <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
           <div className="text-3xl font-semibold mb-2">{grades}</div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Total Grades</span>
@@ -59,7 +54,7 @@ const Dashboard = () => {
         </div>
 
         {/* Total Resources Card */}
-        <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+        <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
           <div className="text-3xl font-semibold mb-2">{resources}</div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Total Resources</span>
@@ -81,7 +76,7 @@ const Dashboard = () => {
         </div>
 
         {/* Upcoming Events Card */}
-        <div className="bg-gradient-to-br from-pink-400 to-pink-600 text-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+        <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
           <div className="text-3xl font-semibold mb-2">{upcomingEvents}</div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Upcoming Events</span>
@@ -102,8 +97,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-  </DashboardLayout>
-  )
-}
+    </DashboardLayout>
+  );
+};
 
-export default Dashboard
+export default Dashboard;

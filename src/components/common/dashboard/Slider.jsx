@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const Slider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
-    { content: 'No Events' },
-    { content: 'Event Details Here' },
+    { content: "No Events" },
+    { content: "Event Details Here" },
     // Add more slides as needed
   ];
 
@@ -21,7 +21,7 @@ const Slider = () => {
   };
 
   return (
-    <div className="relative overflow-hidden bg-green-500 text-white rounded-lg py-2 shadow px-8">
+    <div className="relative overflow-hidden bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
       <div className="flex justify-between items-center mb-4">
         <p>Upcoming Events</p>
         <a href="#" className="underline underline-offset-2 cursor-pointer">

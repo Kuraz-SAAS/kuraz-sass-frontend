@@ -25,6 +25,7 @@ const Tabs = ({ categories, onCategoryChange }) => {
               aria-selected={selectedCategory === category.name}
             >
               {category.name}
+              {"hh"}
             </button>
           </li>
         ))}

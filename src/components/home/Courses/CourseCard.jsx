@@ -11,7 +11,7 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
 
   return (
     <div className="bg-white p-3 rounded-lg shadow-lg relative course-card hover:shadow-2xl group">
-      <a href={`/course/${course.slug}`}>
+      <a href={`/course/${course.id}`}>
         <div className="course-card-header relative">
           <div className="w-full absolute bottom-0 left-0 p-1 bg-gradient-to-r from-white to-transparent">
             <img
@@ -22,12 +22,12 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
           </div>
           <img
             className="w-full rounded-lg"
-            src={courseImg}
-            alt={course.title}
+            src={course.course_cover}
+            alt={course.course_title}
           />
         </div>
         <div className="font-poppins">
-          <h4 className="text-lg font-bold">{course.title}</h4>
+          <h4 className="text-lg font-bold">{course.course_title}</h4>
           {user && (
             <button
               onClick={handleFavoriteToggle}
@@ -36,21 +36,25 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
               <FaHeart color={isFavorite ? "red" : "gray"} />
             </button>
           )}
-          <div className="course-instructor-container">
+          <div className="flex  items-center gap-3">
             <div className="course-instructor-image rounded-full">
               <img
                 src={
-                  course.instructor.image || "/path/to/default-instructor.png"
+                  course.instructor.instructor_image ||
+                  "/path/to/default-instructor.png"
                 }
                 // alt={course.instructor.name}
+                className="w-[50px] h-[50px] rounded-full"
               />
             </div>
-            <h5 className="text-md font-normal">{course.instructor.name}</h5>
+            <h5 className="text-md font-normal">
+              {course.instructor.user.name}
+            </h5>
           </div>
           <div className="font-semibold text-sm underline">
             <span>in</span>
-            <a href={`/courses?category=${course.category}`}>
-              {course.category}
+            <a href={`/courses?category=${course.category.id}`}>
+              {course.category.category_name}
             </a>
           </div>
           <hr />

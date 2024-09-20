@@ -11,15 +11,17 @@ import {
   FaChartBar,
   FaCalendarAlt,
   FaLock,
-} from "react-icons/fa"; // Import icons
+} from "react-icons/fa";
 
 const Sidebar = () => {
   return (
     <aside className="w-1/5 font-poppins bg-white text-black min-h-screen p-6 flex flex-col">
-      {/* School Logo and Name */}
+      {/* student Logo and Name */}
       <div className="flex flex-col items-center justify-center mb-8">
-        {/* School Name */}
-        <div className="text-lg font-extrabold tracking-wider">School Name</div>
+        {/* student Name */}
+        <div className="text-lg font-extrabold tracking-wider">
+          Student Name
+        </div>
       </div>
 
       {/* Active Links */}
@@ -28,7 +30,7 @@ const Sidebar = () => {
         <ul className="space-y-2">
           <li>
             <NavLink
-              to="/school/dashboard"
+              to="/student/dashboard"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
                   isActive
@@ -43,7 +45,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/school/grades"
+              to="/student/students"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
                   isActive
@@ -52,43 +54,13 @@ const Sidebar = () => {
                 }`
               }
             >
-              <FaUserGraduate className="text-green-400 mr-2" />
-              <span className="font-medium text-sm">Grades</span>
+              <FaUserGraduate className="text-primary mr-2" />
+              <span className="font-medium text-sm">Cources</span>
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="/school/students"
-              className={({ isActive }) =>
-                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "hover:bg-black hover:text-white"
-                }`
-              }
-            >
-              <FaUserGraduate className="text-green-400 mr-2" />
-              <span className="font-medium text-sm">Students</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/school/resources"
-              className={({ isActive }) =>
-                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "hover:bg-black hover:text-white"
-                }`
-              }
-            >
-              <FaBook className="text-yellow-400 mr-2" />
-              <span className="font-medium text-sm">Resources</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/school/notices"
+              to="/student/notices"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
                   isActive
@@ -98,12 +70,12 @@ const Sidebar = () => {
               }
             >
               <FaBell className="text-red-400 mr-2" />
-              <span className="font-medium text-sm">Notices</span>
+              <span className="font-medium text-sm">Saved Exams</span>
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="/school/settings"
+              to="/student/settings"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
                   isActive

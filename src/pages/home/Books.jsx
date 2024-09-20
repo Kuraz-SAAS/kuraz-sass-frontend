@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { books } from "../../utils/constants";
 import Tabs from "../../components/home/books/Tabs";
 import BookCard from "../../components/home/books/BookCard";
 import Navbar from "../../components/common/home/Navbar";
+import Axios from "../../middleware/Axios";
 
 const getCategories = (books) => {
   const categories = books.map((book) => book.category.cat_name);
@@ -10,17 +11,24 @@ const getCategories = (books) => {
 };
 
 export const Books = () => {
+  const [booksData, setBooksData] = useState([]);
+  const [categories, setBooksCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Get unique categories from books
-  const categories = getCategories(books).map((cat, index) => ({
-    id: index + 1, // Simple ID generation for demo
-    name: cat,
-  }));
+  useEffect(() => {
+    const fetchBookData = async () => {
+      // Assuming the course data is fetched from an API endpoint
+      await Axios.get("/api/books").then((res) => {
+        setBooksData(res.data.Books);
+        setBooksCategoryData(res.data.Book_categroy);
+      });
+    };
+    fetchBookData();
+  }, []);
 
   // Filter books based on selected category and search query
-  const filteredBooks = books.filter((book) => {
+  const filteredBooks = booksData.filter((book) => {
     const matchesCategory = selectedCategory
       ? book.category.cat_name === selectedCategory
       : true;

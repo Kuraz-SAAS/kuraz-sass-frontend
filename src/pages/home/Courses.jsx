@@ -1,58 +1,66 @@
 import React, { useState, useEffect } from "react";
-import { courses as allCourses } from "../../utils/constants"; // Assuming courses are imported here
+// import { courses as allCourses } from "../../utils/constants"; // Assuming courses are imported here
 import CourseCard from "../../components/home/Courses/CourseCard";
 import Navbar from "../../components/common/home/Navbar";
+import Axios from "../../middleware/Axios";
 
 const Courses = () => {
-  const [courses, setCourses] = useState(allCourses); // Original course list
-  const [filteredCourses, setFilteredCourses] = useState(allCourses);
+  const [courses, setCourses] = useState([]); // Original course list
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceRange, setPriceRange] = useState([]);
   const [courseLevels, setCourseLevels] = useState([]);
 
   useEffect(() => {
-    // This function should be called whenever the filters or search term changes
-    const applyFilters = () => {
-      let results = courses;
-
-      // Apply search keyword filter
-      if (searchKeyword) {
-        results = results.filter((course) =>
-          course.title.toLowerCase().includes(searchKeyword.toLowerCase())
-        );
-      }
-
-      // Apply category filter
-      if (selectedCategories.length > 0) {
-        results = results.filter((course) =>
-          selectedCategories.includes(course.categoryId)
-        );
-      }
-
-      // Apply price range filter
-      if (priceRange.length > 0) {
-        results = results.filter((course) => {
-          const price = parseFloat(course.price);
-          return priceRange.some((range) => {
-            const [min, max] = range.split("-").map(Number);
-            return price >= min && (!max || price <= max);
-          });
-        });
-      }
-
-      // Apply course level filter
-      if (courseLevels.length > 0) {
-        results = results.filter((course) =>
-          courseLevels.includes(course.levelId)
-        );
-      }
-
-      setFilteredCourses(results);
+    const fetchCourseData = async () => {
+      // Assuming the course data is fetched from an API endpoint
+      await Axios.get("/api/courses").then((res) => {
+        setFilteredCourses([...res.data.course]);
+      });
     };
 
-    applyFilters();
-  }, [searchKeyword, selectedCategories, priceRange, courseLevels, courses]);
+    // This function should be called whenever the filters or search term changes
+    // const applyFilters = () => {
+    //   let results = courses;
+
+    //   // Apply search keyword filter
+    //   if (searchKeyword) {
+    //     results = results.filter((course) =>
+    //       course.title.toLowerCase().includes(searchKeyword.toLowerCase())
+    //     );
+    //   }
+
+    //   // Apply category filter
+    //   if (selectedCategories.length > 0) {
+    //     results = results.filter((course) =>
+    //       selectedCategories.includes(course.categoryId)
+    //     );
+    //   }
+
+    //   // Apply price range filter
+    //   if (priceRange.length > 0) {
+    //     results = results.filter((course) => {
+    //       const price = parseFloat(course.price);
+    //       return priceRange.some((range) => {
+    //         const [min, max] = range.split("-").map(Number);
+    //         return price >= min && (!max || price <= max);
+    //       });
+    //     });
+    //   }
+
+    //   // Apply course level filter
+    //   if (courseLevels.length > 0) {
+    //     results = results.filter((course) =>
+    //       courseLevels.includes(course.levelId)
+    //     );
+    //   }
+    //   setFilteredCourses([...results]);
+    // };
+
+    fetchCourseData();
+    // applyFilters();
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchKeyword(e.target.value);
@@ -88,7 +96,7 @@ const Courses = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center h-screen px-10 font-poppins gap-10">
+      <div className="flex items-start px-10 pt-[200px] font-poppins gap-10">
         <div className="grid gap-4 w-[400px]">
           {/* Search Bar */}
           <div className="">
@@ -163,7 +171,7 @@ const Courses = () => {
         </div>
 
         {/* Courses List */}
-        <div className="basis-2/3 grid  md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="basis-2/3 grid   md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredCourses.length === 0 ? (
             <div className="container text-center">
               <img
@@ -180,7 +188,7 @@ const Courses = () => {
                 key={course.id}
                 course={course}
                 user={{ favorites: [1] }} // Replace with actual user data
-                onFavoriteToggle={() => handleFavoriteToggle(course.id)}
+                // onFavoriteToggle={() => handleFavoriteToggle(course.id)}
               />
             ))
           )}

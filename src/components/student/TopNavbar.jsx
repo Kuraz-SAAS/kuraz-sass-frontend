@@ -41,7 +41,7 @@ const TopNavbar = () => {
           href="#"
           className="flex items-center text-gray-800 font-semibold text-lg"
         >
-          <span>Falcon Dashboard</span>
+          <span>student Dashboard</span>
         </a>
       </div>
 
