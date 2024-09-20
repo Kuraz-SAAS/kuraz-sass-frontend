@@ -40,7 +40,7 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
             <div className="course-instructor-image rounded-full">
               <img
                 src={
-                  course.instructor.instructor_image ||
+                  course?.instructor?.instructor_image ||
                   "/path/to/default-instructor.png"
                 }
                 // alt={course.instructor.name}
@@ -48,13 +48,13 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
               />
             </div>
             <h5 className="text-md font-normal">
-              {course.instructor.user.name}
+              {course?.instructor?.user?.name}
             </h5>
           </div>
           <div className="font-semibold text-sm underline">
             <span>in</span>
-            <a href={`/courses?category=${course.category.id}`}>
-              {course.category.category_name}
+            <a href={`/courses?category=${course?.category?.id}`}>
+              {course.category?.category_name}
             </a>
           </div>
           <hr />
