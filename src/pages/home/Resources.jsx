@@ -110,15 +110,15 @@ const Resources = () => {
                     openFolders[`grade${grade.grade_id}`] ? "" : "hidden"
                   }`}
                 >
-                  {grade.subjects.map((subject) => (
-                    <li key={subject.subject_id}>
+                  {grade?.subjects?.map((subject) => (
+                    <li key={subject?.subject_id}>
                       <div
                         className="flex items-center gap-2 cursor-pointer group"
                         onClick={() =>
-                          toggleFolder("subject", subject.subject_id)
+                          toggleFolder("subject", subject?.subject_id)
                         }
                       >
-                        {openFolders[`subject${subject.subject_id}`] ? (
+                        {openFolders[`subject${subject?.subject_id}`] ? (
                           <FaFolderOpen className="text-yellow-500" />
                         ) : (
                           <FaFolder className="text-yellow-500" />
