@@ -91,7 +91,7 @@ const Resources = () => {
         {/* Folder list */}
         <div className="w-[300px] bg-[#EEEEEE] rounded-s-lg pr-4 shadow-lg p-6 overflow-y-auto">
           <ul>
-            {schoolGrades.map((grade) => (
+            {schoolGrades?.map((grade) => (
               <li key={grade.grade_id}>
                 <div
                   className="flex items-center gap-2 cursor-pointer group"

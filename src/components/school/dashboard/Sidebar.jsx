@@ -58,21 +58,6 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/school/students"
-              className={({ isActive }) =>
-                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "hover:bg-black hover:text-white"
-                }`
-              }
-            >
-              <FaUserGraduate className="text-green-400 mr-2" />
-              <span className="font-medium text-sm">Students</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
               to="/school/resources"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
@@ -86,6 +71,37 @@ const Sidebar = () => {
               <span className="font-medium text-sm">Resources</span>
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to="/school/subjects"
+              className={({ isActive }) =>
+                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
+                  isActive
+                    ? "bg-black text-white"
+                    : "hover:bg-black hover:text-white"
+                }`
+              }
+            >
+              <FaBook className="text-yellow-400 mr-2" />
+              <span className="font-medium text-sm">Subjects</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/school/students"
+              className={({ isActive }) =>
+                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
+                  isActive
+                    ? "bg-black text-white"
+                    : "hover:bg-black hover:text-white"
+                }`
+              }
+            >
+              <FaUserGraduate className="text-green-400 mr-2" />
+              <span className="font-medium text-sm">Students</span>
+            </NavLink>
+          </li>
+
           <li>
             <NavLink
               to="/school/notices"

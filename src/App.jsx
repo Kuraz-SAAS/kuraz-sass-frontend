@@ -14,6 +14,7 @@ import NoticeStudents from "./pages/dashboard/school/Notices";
 import SingleResource from "./pages/home/SingleCource";
 import CourseViewPage from "./pages/home/CourseViewPage";
 import Grade from "./pages/dashboard/school/Grade";
+import Subject from "./pages/dashboard/school/Subject";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
         <Route path="/school/students" element={<SchoolStudents />} />
         <Route path="/school/notices" element={<NoticeStudents />} />
         <Route path="/school/grades" element={<Grade />} />
+        <Route path="/school/subjects" element={<Subject />} />
 
         <Route path="/student/dashboard" element={<StudentDashboard />} />
       </Routes>
