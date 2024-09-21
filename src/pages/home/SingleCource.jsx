@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/common/home/Navbar";
 import { CourseBannner } from "../../assets/images";
 import { courseImg } from "../../assets/test_img";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 
 const SingleCource = () => {
@@ -122,9 +122,12 @@ const SingleCource = () => {
             <h2 className="text-3xl font-bold text-green-500 ">Free</h2>
 
             {/* Add to Cart Button */}
-            <button className="bg-green-500 text-white rounded-md font-semibold hover:bg-green-600 ">
-              Add to Cart
-            </button>
+            <Link
+              to={"/course/play/" + course.id}
+              className="bg-green-500 text-white rounded-md p-2 font-semibold hover:bg-green-600 "
+            >
+              Start the Course
+            </Link>
 
             {/* Course Includes */}
             <div className="text-left">

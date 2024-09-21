@@ -3,3 +3,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ytp-large-play-button svg path {
+    display: none;
+    fill: #d4cbcb !important; /* Change this to your desired color */
+}
+
+
+.ytp-large-play-button:hover svg path {
+    fill: #1c4b1c !important; /* Change this to your desired hover color */
+}
+
+.ytp-chrome-top-buttons {
+    display: none !important;
+}
