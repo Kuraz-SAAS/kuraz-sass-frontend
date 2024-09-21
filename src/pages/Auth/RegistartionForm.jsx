@@ -116,7 +116,7 @@ const RegistrationForm = () => {
     };
 
     if (userType === "student") {
-      payload.tenant_id = selectedTenant.tenant_id;
+      payload.domain = selectedTenant.domain_name;
     } else if (userType === "school") {
       payload.domain = domainInput.trim();
     }

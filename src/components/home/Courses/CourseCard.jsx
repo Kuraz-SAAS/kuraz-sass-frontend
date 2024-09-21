@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import Axios from "../../../middleware/Axios";
 
 const CourseCard = ({ course, user, onFavoriteToggle }) => {
   const navigate = useNavigate();
@@ -93,16 +94,30 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
         </div>
       </CardBody>
       <CardFooter className="pt-0">
-        <Button
-          onClick={() => {
-            navigate(`/course/${course?.id}`);
-          }}
-          size="lg"
-          className="font-poppins"
-          fullWidth={true}
-        >
-          Enrole
-        </Button>
+        {course?.isEnrolled === 1 ? (
+          <Button
+            onClick={() => {
+              navigate(`/course/${course?.id}`);
+            }}
+            size="lg"
+            className="font-poppins bg-white text-black"
+            fullWidth={true}
+          >
+            Resume
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              Axios.post("/api/enroll/course/" + course?.id);
+              navigate(`/course/${course?.id}`);
+            }}
+            size="lg"
+            className="font-poppins"
+            fullWidth={true}
+          >
+            Enrole
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
