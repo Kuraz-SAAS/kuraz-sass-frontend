@@ -29,7 +29,7 @@ const LoginForm = () => {
   };
   const user = useSiteStore((store) => store.user);
   useEffect(() => {
-    if (user) {
+    if (user && user.user_type) {
       navigate("/courses");
     }
   });
