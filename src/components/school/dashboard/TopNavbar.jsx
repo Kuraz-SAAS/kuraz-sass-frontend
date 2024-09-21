@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown } from "react-icons/fa"; // React Icons
+import { Link } from "react-router-dom";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,12 +38,14 @@ const TopNavbar = () => {
     <nav className="bg-white  py-3 px-4 flex items-center justify-between">
       {/* Logo Section */}
       <div className="flex items-center space-x-3">
-        <a
-          href="#"
-          className="flex items-center text-gray-800 font-semibold text-lg"
+        <Link
+          to={"/courses"}
+          className="flex items-center text-gray-800 font-semibold text-md"
         >
-          <span>Falcon Dashboard</span>
-        </a>
+          <span className="bg-primary text-white p-2 rounded-md">
+            Back To Home
+          </span>
+        </Link>
       </div>
 
       {/* Search Bar */}

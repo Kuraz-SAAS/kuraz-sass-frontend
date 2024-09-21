@@ -12,15 +12,18 @@ import {
   FaCalendarAlt,
   FaLock,
 } from "react-icons/fa";
+import { useSiteStore } from "../../context/siteStore";
 
 const Sidebar = () => {
+  const user = useSiteStore((store) => store.user);
   return (
     <aside className="w-1/5 font-poppins bg-white text-black min-h-screen p-6 flex flex-col">
       {/* student Logo and Name */}
-      <div className="flex flex-col items-center justify-center mb-8">
-        {/* student Name */}
+      <div className="flex flex-col gap-x-28 items-center justify-center mb-8">
+        {/* School Name */}
+        <h1>Students's Dashobard</h1>
         <div className="text-lg font-extrabold tracking-wider">
-          Student Name
+          {user?.name}
         </div>
       </div>
 
@@ -45,7 +48,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/student/students"
+              to="/student/courses"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
                   isActive
@@ -60,7 +63,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/student/notices"
+              to="/student/saved"
               className={({ isActive }) =>
                 `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
                   isActive
@@ -70,7 +73,7 @@ const Sidebar = () => {
               }
             >
               <FaBell className="text-red-400 mr-2" />
-              <span className="font-medium text-sm">Saved Exams</span>
+              <span className="font-medium text-sm">Saved Courses</span>
             </NavLink>
           </li>
           <li>

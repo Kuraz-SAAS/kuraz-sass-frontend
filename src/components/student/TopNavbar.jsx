@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown } from "react-icons/fa"; // React Icons
+import { Link, useNavigate } from "react-router-dom";
+import { useSiteStore } from "../../context/siteStore";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
   const profileMenuButtonRef = useRef(null);
+  const setUser = useSiteStore((store) => store.setUser);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,12 +41,14 @@ const TopNavbar = () => {
     <nav className="bg-white  py-3 px-4 flex items-center justify-between">
       {/* Logo Section */}
       <div className="flex items-center space-x-3">
-        <a
-          href="#"
-          className="flex items-center text-gray-800 font-semibold text-lg"
+        <Link
+          to={"/courses"}
+          className="flex items-center text-gray-800 font-semibold text-md"
         >
-          <span>student Dashboard</span>
-        </a>
+          <span className="bg-primary text-white p-2 rounded-md">
+            Back To Home
+          </span>
+        </Link>
       </div>
 
       {/* Search Bar */}
@@ -97,13 +103,15 @@ const TopNavbar = () => {
             >
               Settings
             </a>
-            <a
-              href="/logout"
+            <button
               className="block px-3 py-1 text-gray-700 hover:bg-gray-100 text-sm"
-              onClick={() => handleNavigation("/logout")}
+              onClick={() => {
+                setUser(null);
+                navigate("/login");
+              }}
             >
               Logout
-            </a>
+            </button>
           </div>
         </div>
       </div>

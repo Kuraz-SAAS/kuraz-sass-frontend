@@ -9,6 +9,9 @@ import Resources from "./pages/home/Resources";
 
 import SchoolDashboard from "./pages/dashboard/school/Dashboard";
 import StudentDashboard from "./pages/dashboard/student/Dashboard";
+import StudentCourses from "./pages/dashboard/student/Courses";
+import SavedCourses from "./pages/dashboard/student/SavedCourses";
+
 import SchoolStudents from "./pages/dashboard/school/Students";
 import NoticeStudents from "./pages/dashboard/school/notice/Notices";
 import SingleResource from "./pages/home/SingleCource";
@@ -26,6 +29,9 @@ import UpdateSubject from "./pages/dashboard/school/subject/UpdateSubject";
 import Notices from "./pages/dashboard/school/notice/Notices";
 import AddNotice from "./pages/dashboard/school/notice/AddNotice";
 import EditNotice from "./pages/dashboard/school/notice/EditNotice";
+import SchoolProtectedRoute from "./protectedRoutes/SchoolProtectedRoute";
+import StudentProtectedRoute from "./protectedRoutes/StudentProtectedRoute";
+import CommonProtectedRoute from "./protectedRoutes/CommonProtectedRoute";
 
 const App = () => {
   return (
@@ -34,37 +40,44 @@ const App = () => {
         <Route path="/" element={<LandingPages />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />
-        <Route path="/books" element={<Books />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/course/:id" element={<SingleResource />} />
-        <Route path="/course/play/:id" element={<CourseViewPage />} />
-        <Route path="/resources" element={<Resources />} />
 
-        <Route path="/school/dashboard" element={<SchoolDashboard />} />
+        <Route element={<CommonProtectedRoute />}>
+          <Route path="/books" element={<Books />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/course/:id" element={<SingleResource />} />
+          <Route path="/course/play/:id" element={<CourseViewPage />} />
+          <Route path="/resources" element={<Resources />} />
+        </Route>
+        <Route element={<SchoolProtectedRoute />}>
+          <Route path="/school/dashboard" element={<SchoolDashboard />} />
 
-        {/* notice routes */}
-        <Route path="/school/notices" element={<Notices />} />
-        <Route path="/school/notices/add" element={<AddNotice />} />
-        <Route path="/school/notices/edit/:id" element={<EditNotice />} />
+          {/* notice routes */}
+          <Route path="/school/notices" element={<Notices />} />
+          <Route path="/school/notices/add" element={<AddNotice />} />
+          <Route path="/school/notices/edit/:id" element={<EditNotice />} />
 
-        <Route path="/school/students" element={<SchoolStudents />} />
+          <Route path="/school/students" element={<SchoolStudents />} />
 
-        {/* resources routes */}
-        <Route path="/school/resources" element={<SchoolResources />} />
-        <Route path="/school/resources/add" element={<AddResources />} />
-        <Route path="/school/resources/edit/:id" element={<AddResources />} />
+          {/* resources routes */}
+          <Route path="/school/resources" element={<SchoolResources />} />
+          <Route path="/school/resources/add" element={<AddResources />} />
+          <Route path="/school/resources/edit/:id" element={<AddResources />} />
 
-        {/* Grade Routes */}
-        <Route path="/school/grades" element={<Grade />} />
-        <Route path="/school/grades/add" element={<AddGrade />} />
-        <Route path="/school/grades/edit/:id" element={<UpdateGrade />} />
+          {/* Grade Routes */}
+          <Route path="/school/grades" element={<Grade />} />
+          <Route path="/school/grades/add" element={<AddGrade />} />
+          <Route path="/school/grades/edit/:id" element={<UpdateGrade />} />
 
-        {/* subject routes */}
-        <Route path="/school/subjects" element={<Subject />} />
-        <Route path="/school/subjects/add" element={<AddSubject />} />
-        <Route path="/school/subjects/edit/:id" element={<UpdateSubject />} />
-
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
+          {/* subject routes */}
+          <Route path="/school/subjects" element={<Subject />} />
+          <Route path="/school/subjects/add" element={<AddSubject />} />
+          <Route path="/school/subjects/edit/:id" element={<UpdateSubject />} />
+        </Route>
+        <Route element={<StudentProtectedRoute />}>
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/courses" element={<StudentCourses />} />
+          <Route path="/student/saved" element={<SavedCourses />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
