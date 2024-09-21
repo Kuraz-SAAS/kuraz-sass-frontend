@@ -153,15 +153,7 @@ const NoticeDatatable = ({ datas, headers, actions }) => {
     <div className="min-h-screen bg-gray-100 flex  justify-center py-10">
       <div className="w-full max-w-7xl px-4">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="bg-gray-200 flex justify-between  items-center p-4 border-b border-gray-300">
-            <div>
-              <Link
-                to={"add"}
-                className="bg-[#bc8c4e] text-white p-2 rounded-md"
-              >
-                Add Grade
-              </Link>
-            </div>
+          <div className="bg-gray-200 flex justify-end  items-center p-4 border-b border-gray-300">
             <div className="flex items-center bg-white border rounded-full shadow-sm">
               <input
                 type="text"
@@ -233,16 +225,16 @@ const NoticeDatatable = ({ datas, headers, actions }) => {
                     <td className="py-3 px-6 text-gray-700">
                       {rowsLimit * currentPage + index + 1}
                     </td>
-                    <td className="py-3 px-6 text-gray-700">{data?.name}</td>
+                    <td className="py-3 px-6 text-gray-700">{data?.title}</td>
                     <td className="py-3 px-6 text-gray-700">
-                      {data?.subjects?.length}
+                      {data?.description}
                     </td>
                     <td className="flex">
                       {actions.map((action, index) => (
                         <div key={index} className="py-3 px-6 text-gray-700">
                           <button
                             onClick={(e) => {
-                              action.function(data?.grade_id);
+                              action.function(data?.notice_id);
                             }}
                           >
                             {action.label}

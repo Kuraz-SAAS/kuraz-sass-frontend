@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Slider from "../../../components/common/dashboard/Slider"; // Adjust the path if needed
 import { AiOutlineFileText } from "react-icons/ai"; // Replace with your desired icons
 import DashboardLayout from "../../layouts/dashboard/student/DashboardLayouts";
+import Axios from "../../../middleware/Axios";
 
 const Dashboard = () => {
+  const fetchDashboardData = async () => {
+    await Axios.get("/api/student/dashboard").then((res) => {
+      console.log(res.data);
+    });
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
   return (
     <DashboardLayout>
       <section className="w-full">

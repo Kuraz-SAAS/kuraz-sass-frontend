@@ -3,17 +3,17 @@ import Datatable from "../../../../components/common/dashboard/Datatable";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import NoticeDatatable from "../../../../components/common/dashboard/NoticeDatatable";
 import Axios from "../../../../middleware/Axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Notices = () => {
-  const [noticeData, setNoticeGradeData] = useState([]);
+  const [noticeData, setNoticeData] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       await Axios.get("/api/schoolNotices").then((res) => {
         console.log(res);
-        setNoticeGradeData(res.data.notices);
+        setNoticeData(res.data.notices);
       });
     };
     fetchData();
@@ -22,10 +22,10 @@ const Notices = () => {
   const headers = ["Title", "Description", "Actions"];
   const editGrade = (id) => {
     console.log(id);
-    navigate("/school/notice/edit/" + id);
+    navigate("/school/notices/edit/" + id);
   };
   const deleteGrade = async (id) => {
-    await Axios.delete("/api/schoolNotice/" + id).then((res) => {
+    await Axios.delete("/api/schoolNotices/" + id).then((res) => {
       console.log(res);
     });
   };
@@ -37,11 +37,18 @@ const Notices = () => {
   return (
     <div>
       <DashboardLayout>
-        <NoticeDatatable
-          datas={noticeData}
-          headers={headers}
-          actions={actions}
-        />
+        <div>
+          <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
+            Add Grade
+          </Link>
+        </div>
+        {noticeData.length > 0 && (
+          <NoticeDatatable
+            datas={noticeData}
+            headers={headers}
+            actions={actions}
+          />
+        )}
       </DashboardLayout>
     </div>
   );

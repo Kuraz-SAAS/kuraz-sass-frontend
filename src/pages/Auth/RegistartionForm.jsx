@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from "../../middleware/Axios";
 import { csrfCatch } from "../../middleware/utilities";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +29,14 @@ const RegistrationForm = () => {
     });
   };
 
+  useEffect(() => {
+    const fetchTenats = async () => {
+      await Axios.get("/api/tenants").then((res) => {
+        console.log(res.data);
+      });
+    };
+    fetchTenats();
+  }, []);
   return (
     <div className="h-screen flex items-center font-poppins justify-center px-5 lg:px-0">
       <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
