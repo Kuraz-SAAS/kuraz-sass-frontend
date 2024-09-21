@@ -32,7 +32,10 @@ const PdfViewer = ({ pdfUrl }) => {
       <Worker
         workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}
       >
-        <Viewer fileUrl={`http://localhost:8000/api/resource/pdf/${pdfUrl}`} />
+        <Viewer
+          fileUrl={`http://localhost:8000/api/resource/pdf/${pdfUrl}`}
+          plugins={[defaultLayout]}
+        />
       </Worker>
     </div>
   );

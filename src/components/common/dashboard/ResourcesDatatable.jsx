@@ -232,14 +232,17 @@ const ResourcesDatatable = ({ datas, headers, actions }) => {
                     </td>
                     <td className="py-3 px-6 text-gray-700">{data?.name}</td>
                     <td className="py-3 px-6 text-gray-700">
-                      {data?.subject_id}
+                      {data?.subjects?.name}
+                    </td>
+                    <td className="py-3 px-6 text-gray-700">
+                      {data?.subjects?.grade_name}
                     </td>
                     <td className="flex">
                       {actions.map((action, index) => (
                         <div key={index} className="py-3 px-6 text-gray-700">
                           <button
                             onClick={(e) => {
-                              action.function(data?.grade_id);
+                              action.function(data?.resource_id);
                             }}
                           >
                             {action.label}
