@@ -16,6 +16,7 @@ const Dashboard = () => {
   const fetchEvents = async () => {
     await Axios.get("/api/tenant/notices").then((res) => {
       console.log(res);
+      setEvents(res.data.notices);
     });
   };
 
@@ -93,7 +94,11 @@ const Dashboard = () => {
 
             {/* Custom Slider Component */}
             <div className="col-span-2">
-              <Slider />
+              {events.length > 0 ? (
+                <Slider events={events} />
+              ) : (
+                <Slider events={[{ title: "no event" }]} />
+              )}
             </div>
           </div>
 

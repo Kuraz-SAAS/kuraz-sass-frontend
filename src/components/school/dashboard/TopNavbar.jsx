@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown } from "react-icons/fa"; // React Icons
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSiteStore } from "../../../context/siteStore";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
   const profileMenuButtonRef = useRef(null);
 
+  const setUser = useSiteStore((store) => store.setUser);
+  const navigate = useNavigate();
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -100,13 +103,15 @@ const TopNavbar = () => {
             >
               Settings
             </a>
-            <a
-              href="/logout"
+            <button
               className="block px-3 py-1 text-gray-700 hover:bg-gray-100 text-sm"
-              onClick={() => handleNavigation("/logout")}
+              onClick={() => {
+                setUser(null);
+                navigate("/login");
+              }}
             >
               Logout
-            </a>
+            </button>
           </div>
         </div>
       </div>

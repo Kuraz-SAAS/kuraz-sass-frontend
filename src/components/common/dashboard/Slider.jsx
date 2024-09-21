@@ -1,22 +1,16 @@
 import React, { useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
-const Slider = () => {
+const Slider = ({ events }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [
-    { content: "No Events" },
-    { content: "Event Details Here" },
-    // Add more slides as needed
-  ];
-
   const goToNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % events.length);
   };
 
   const goToPreviousSlide = () => {
     setCurrentSlide(
-      (prevSlide) => (prevSlide - 1 + slides.length) % slides.length
+      (prevSlide) => (prevSlide - 1 + events.length) % events.length
     );
   };
 
@@ -33,12 +27,17 @@ const Slider = () => {
           className="flex transition-transform duration-300"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {slides.map((slide, index) => (
+          {events?.map((slide, index) => (
             <div
               key={index}
               className="flex-shrink-0 w-full h-32 flex items-center justify-center"
             >
-              <p className="text-xl">{slide.content}</p>
+              <div className="text-center">
+                <p className="text-xl uppercase">{slide.title}</p>
+                <p className="text-sm font-light capitalize">
+                  {slide.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
