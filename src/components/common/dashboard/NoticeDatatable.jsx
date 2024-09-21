@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const Datatable = ({ datas, headers, actions }) => {
+const NoticeDatatable = ({ datas, headers, actions }) => {
   const [searchValue, setSearchValue] = useState();
   const [dataList, setDataList] = useState([...datas]);
   const [rowsLimit] = useState(5);
@@ -312,4 +312,4 @@ const Datatable = ({ datas, headers, actions }) => {
     </div>
   );
 };
-export default Datatable;
+export default NoticeDatatable;

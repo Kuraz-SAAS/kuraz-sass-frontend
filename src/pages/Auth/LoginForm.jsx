@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import Axios from "../../middleware/Axios";
 import { csrfCatch } from "../../middleware/utilities";
 import { useNavigate } from "react-router-dom";
+import { useSiteStore } from "../../context/siteStore";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const setUser = useSiteStore((store) => store.setUser);
+
   const handleSubmit = async () => {
     if (!email || !password) {
       alert("Please enter both email and password");
@@ -17,10 +20,10 @@ const LoginForm = () => {
 
     await Axios.post("login", { email: email, password: password }).then(
       (res) => {
-        if (res.status === 204) {
+        if (res.status === 204 || res.status === 200) {
+          setUser(res.data.user);
           navigate("/courses");
         }
-        console.log(res.status === 204);
       }
     );
   };

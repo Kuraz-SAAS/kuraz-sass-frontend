@@ -13,9 +13,7 @@ const Resources = () => {
   const [openFolders, setOpenFolders] = useState({});
 
   // State to track selected PDF
-  const [selectedPdf, setSelectedPdf] = useState(
-    "http://localhost:5173/downloaded.pdf"
-  );
+  const [selectedPdf, setSelectedPdf] = useState("");
 
   // State to store resources by subject ID
   const [resourcesBySubject, setResourcesBySubject] = useState({});
@@ -110,15 +108,15 @@ const Resources = () => {
                     openFolders[`grade${grade.grade_id}`] ? "" : "hidden"
                   }`}
                 >
-                  {grade.subjects.map((subject) => (
-                    <li key={subject.subject_id}>
+                  {grade?.subjects?.map((subject) => (
+                    <li key={subject?.subject_id}>
                       <div
                         className="flex items-center gap-2 cursor-pointer group"
                         onClick={() =>
-                          toggleFolder("subject", subject.subject_id)
+                          toggleFolder("subject", subject?.subject_id)
                         }
                       >
-                        {openFolders[`subject${subject.subject_id}`] ? (
+                        {openFolders[`subject${subject?.subject_id}`] ? (
                           <FaFolderOpen className="text-yellow-500" />
                         ) : (
                           <FaFolder className="text-yellow-500" />

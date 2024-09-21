@@ -1,17 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../pages/layouts/dashboard/school/DashboardLayout";
+import Axios from "../../../middleware/Axios";
 
 const Dashboard = () => {
-  const students = 12;
-  const grades = 24;
-  const resources = 13;
-  const upcomingEvents = 21;
+  const [dashboardData, setDashboardData] = useState({});
+
+  useEffect(() => {
+    const feachDashboard = async () => {
+      await Axios.get("api/tenant/admin/dashboard").then((res) => {
+        setDashboardData(res.data);
+      });
+    };
+
+    feachDashboard();
+  }, []);
 
   return (
     <DashboardLayout>
       <div className="grid grid-cols-4 gap-4 mb-8">
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">{students}</div>
+          <div className="text-3xl font-semibold mb-2">
+            {dashboardData?.total_students}
+          </div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Total Students</span>
             <svg
@@ -33,7 +43,9 @@ const Dashboard = () => {
 
         {/* Total Grades Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">{grades}</div>
+          <div className="text-3xl font-semibold mb-2">
+            {dashboardData?.total_grades}
+          </div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Total Grades</span>
             <svg
@@ -55,7 +67,9 @@ const Dashboard = () => {
 
         {/* Total Resources Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">{resources}</div>
+          <div className="text-3xl font-semibold mb-2">
+            {dashboardData?.total_resources}
+          </div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Total Resources</span>
             <svg
@@ -77,7 +91,9 @@ const Dashboard = () => {
 
         {/* Upcoming Events Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">{upcomingEvents}</div>
+          <div className="text-3xl font-semibold mb-2">
+            {dashboardData?.total_notices}
+          </div>
           <div className="mt-1 flex items-center text-sm font-medium">
             <span>Upcoming Events</span>
             <svg
