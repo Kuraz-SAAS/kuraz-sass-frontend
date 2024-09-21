@@ -4,7 +4,7 @@ import Axios from "../middleware/Axios";
 
 const siteStore = (set, get) => ({
   courses: [],
-  studentDashboard: {},
+  studentDashboard: null,
   user: {},
   setUser: (user) => set({ user }),
   getCourses: async () => {

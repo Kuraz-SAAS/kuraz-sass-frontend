@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from "../../middleware/Axios";
 import { csrfCatch } from "../../middleware/utilities";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,12 @@ const LoginForm = () => {
       }
     );
   };
+  const user = useSiteStore((store) => store.user);
+  useEffect(() => {
+    if (user) {
+      navigate("/courses");
+    }
+  });
 
   return (
     <div className="h-screen flex items-center font-poppins justify-center px-5 lg:px-0">
