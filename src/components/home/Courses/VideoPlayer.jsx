@@ -17,53 +17,74 @@ const VideoPlayer = ({ videoId }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(true); // State to manage the play button overlay
 
+  // Unique ID for the player div to prevent conflicts
+  const playerId = "youtube-player";
+
+  // Initialize the YouTube Player
   useEffect(() => {
     const onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player("youtube-player", {
-        videoId,
-        playerVars: {
-          controls: 0, // Hide default YouTube controls
-          rel: 0,
-          showinfo: 0,
-          modestbranding: 1,
-        },
-        events: {
-          onReady: (event) => {
-            setVideoDuration(event.target.getDuration());
+      if (!playerRef.current) {
+        playerRef.current = new window.YT.Player(playerId, {
+          videoId,
+          playerVars: {
+            controls: 0, // Hide default YouTube controls
+            rel: 0,
+            showinfo: 0,
+            modestbranding: 1,
           },
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.PLAYING) {
-              setIsPlaying(true);
-              setShowPlayButton(false); // Hide play button when video starts playing
-            } else {
-              setIsPlaying(false);
-            }
+          events: {
+            onReady: (event) => {
+              setVideoDuration(event.target.getDuration());
+            },
+            onStateChange: (event) => {
+              if (event.data === window.YT.PlayerState.PLAYING) {
+                setIsPlaying(true);
+                setShowPlayButton(false); // Hide play button when video starts playing
+              } else {
+                setIsPlaying(false);
+              }
 
-            // Update time every second
-            if (event.data === window.YT.PlayerState.PLAYING) {
-              const intervalId = setInterval(() => {
-                setVideoTime(playerRef.current.getCurrentTime());
-              }, 1000);
-              return () => clearInterval(intervalId);
-            }
+              // Update time every second
+              if (event.data === window.YT.PlayerState.PLAYING) {
+                const intervalId = setInterval(() => {
+                  setVideoTime(playerRef.current.getCurrentTime());
+                }, 1000);
+                // Clear the interval when the video is not playing
+                return () => clearInterval(intervalId);
+              }
+            },
           },
-        },
-      });
+        });
+      }
     };
 
-    // Load the IFrame API
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    // Load the YouTube API script if not already loaded
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    } else {
+      onYouTubeIframeAPIReady(); // If API is already available, initialize immediately
+    }
 
-    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-
+    // Cleanup on unmount
     return () => {
       if (playerRef.current) {
         playerRef.current.destroy();
+        playerRef.current = null;
       }
     };
+  }, []); // Empty dependency array ensures this runs once
+
+  // Update video when videoId changes
+  useEffect(() => {
+    if (playerRef.current && playerRef.current.loadVideoById) {
+      playerRef.current.loadVideoById(videoId);
+      setShowPlayButton(true); // Show play button overlay for new video
+      setVideoTime(0);
+    }
   }, [videoId]);
 
   const handlePlayPause = () => {
@@ -87,28 +108,45 @@ const VideoPlayer = ({ videoId }) => {
   };
 
   const handleSliderChange = (value) => {
-    playerRef.current.seekTo(value);
-    setVideoTime(value);
+    if (playerRef.current && playerRef.current.seekTo) {
+      playerRef.current.seekTo(value, true);
+      setVideoTime(value);
+    }
   };
 
   const startVideo = () => {
-    playerRef.current.playVideo(); // Start the video when play button is clicked
-    setShowPlayButton(false); // Hide the play button overlay
+    if (playerRef.current) {
+      playerRef.current.playVideo(); // Start the video when play button is clicked
+      setShowPlayButton(false); // Hide the play button overlay
+    }
+  };
+
+  const handleFullscreen = () => {
+    const iframe = playerRef.current.getIframe();
+    if (iframe.requestFullscreen) {
+      iframe.requestFullscreen();
+    } else if (iframe.mozRequestFullScreen) {
+      /* Firefox */
+      iframe.mozRequestFullScreen();
+    } else if (iframe.webkitRequestFullscreen) {
+      /* Chrome, Safari & Opera */
+      iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) {
+      /* IE/Edge */
+      iframe.msRequestFullscreen();
+    }
   };
 
   return (
     <div className="relative">
       {/* YouTube Video Player */}
-      <div id="youtube-player" style={{ width: "100%", height: "500px" }} />
+      <div id={playerId} style={{ width: "100%", height: "500px" }} />
 
-      {/* Overlay to prevent copying/clicking */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 z-10  select-none"></div>
-
-      {/* Play Button Overlay (covers the YouTube logo) */}
+      {/* Play Button Overlay */}
       {showPlayButton && (
         <button
           onClick={startVideo}
-          className="absolute inset-0  flex items-center justify-center bg-black  z-30"
+          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30"
         >
           <FaPlay size={80} color="white" />
         </button>
@@ -145,7 +183,7 @@ const VideoPlayer = ({ videoId }) => {
         </button>
 
         {/* Full-Screen Button */}
-        <button onClick={() => playerRef.current.isFullscreen()}>
+        <button onClick={handleFullscreen}>
           <FaExpand size={20} />
         </button>
       </div>
@@ -164,7 +202,7 @@ const VideoPlayer = ({ videoId }) => {
           background-color: #f5a623;
           width: 12px;
           height: 12px;
-          postion: absolute;
+          position: absolute;
           top: -4px;
           border-radius: 50%;
         }

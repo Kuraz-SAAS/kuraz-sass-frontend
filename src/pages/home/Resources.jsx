@@ -87,7 +87,7 @@ const Resources = () => {
       <Navbar />
       <div className="flex font-poppins rounded-lg pt-28 px-9">
         {/* Folder list */}
-        <div className="w-[300px] bg-[#EEEEEE] rounded-s-lg pr-4 shadow-lg p-6 overflow-y-auto">
+        <div className="w-[300px] bg-[#EEEEEE] min-h-[60vh] max-h-[80vh] overflow-y-auto rounded-s-lg pr-4 shadow-lg p-6 ">
           <ul>
             {schoolGrades?.map((grade) => (
               <li key={grade.grade_id}>
@@ -171,11 +171,11 @@ const Resources = () => {
           <img src="http://127.0.0.1:8000/public/hero-img.png" alt="" />
         </div>
         {/* PDF viewer */}
-        <div className="w-full h-screen overflow-y-auto">
+        <div className="w-full overflow-y-auto">
           {selectedPdf ? (
             <PdfViewer pdfUrl={selectedPdf} />
           ) : (
-            <div className="text-center text-gray-500">
+            <div className="text-center border-4 border-gray-500 h-[60vh] flex justify-center items-center text-gray-500">
               Select a resource to view the PDF
             </div>
           )}

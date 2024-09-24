@@ -108,7 +108,7 @@ const SingleCource = () => {
                         className="flex justify-between items-center bg-white shadow-lg p-4 rounded-md"
                       >
                         <div>{section?.section_title}</div>
-                        <div>2 Parts</div>
+                        <div>{section?.videos?.length} Parts</div>
                       </li>
                     ))}
                   </ul>
@@ -132,13 +132,7 @@ const SingleCource = () => {
             {/* Course Includes */}
             <div className="text-left">
               <h3 className="font-bold text-blue-900 mb-2">Course Includes</h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>More than 3 hours of on-demand video</li>
-                <li>Prior JavaScript knowledge</li>
-                <li>Full lifetime access</li>
-                <li>Downloadable resources</li>
-                <li>Certificate of completion</li>
-              </ul>
+              <ul className="space-y-2 text-gray-600">{course?.overview}</ul>
             </div>
           </div>
         </div>

@@ -160,9 +160,6 @@ const SubjectDatatable = ({ datas, headers, actions }) => {
       <div className="w-full max-w-7xl px-4">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="bg-gray-200 flex justify-between items-center p-4 border-b border-gray-300">
-            <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
-              Add Grade
-            </Link>
             <div className="flex items-center bg-white border rounded-full shadow-sm">
               <input
                 type="text"

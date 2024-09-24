@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Menu,
   MenuHandler,
@@ -15,7 +15,6 @@ import {
 import Navbar from "../../components/common/home/Navbar";
 import CourseCard from "../../components/home/Courses/CourseCard";
 import { useSiteStore } from "../../context/siteStore";
-import { debounce } from "lodash"; // Ensure lodash is installed
 
 // Icon Component for Accordion
 function Icon({ id, open }) {
@@ -68,38 +67,22 @@ function List({ options, color, check, onChange }) {
   );
 }
 
-// Sample Data for Filters
-const DATA = {
-  categories: [
-    { name: "Category 1", count: "23", checked: false },
-    { name: "Category 2", count: "15", checked: false },
-  ],
-  priceRanges: [
-    { range: "0-100", count: "12", checked: false },
-    { range: "100-200", count: "8", checked: false },
-    { range: "200-300", count: "5", checked: false },
-  ],
-  courseLevels: [
-    { level: "Beginner", count: "10", checked: false },
-    { level: "Intermediate", count: "7", checked: false },
-    { level: "Advanced", count: "3", checked: false },
-  ],
-};
-
 // Main Component
 const CoursesPage = () => {
   // State Variables
   const [searchKeyword, setSearchKeyword] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(true); // Open by default
   const [open, setOpen] = useState(null);
-  const [categories, setCategories] = useState(DATA.categories);
-  const [priceRanges, setPriceRanges] = useState(DATA.priceRanges);
-  const [courseLevels, setCourseLevels] = useState(DATA.courseLevels);
-  const [filteredCourses, setFilteredCourses] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // New State for Selected Categories
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
   const user = useSiteStore((store) => store.user);
   const courses = useSiteStore((store) => store.courses);
+  const courseCategory = useSiteStore((store) => store.courseCategory);
   const getCourses = useSiteStore((store) => store.getCourses);
 
   useEffect(() => {
@@ -119,93 +102,40 @@ const CoursesPage = () => {
   // Handler Functions
   const handleSearchChange = (e) => {
     setSearchKeyword(e.target.value);
-    // Search logic is handled in useEffect
   };
 
   const handleOpen = (value) => {
     setOpen(open === value ? null : value);
   };
 
-  // Generic handler for checkbox changes
-  const handleCheckboxChange = (filterType, index) => (e) => {
-    e.stopPropagation(); // Prevent Menu from closing
-    const updatedFilter = [...filterType];
-    updatedFilter[index].checked = e.target.checked;
-    // Update the appropriate state
-    if (filterType === categories) {
-      setCategories(updatedFilter);
-    } else if (filterType === priceRanges) {
-      setPriceRanges(updatedFilter);
-    } else if (filterType === courseLevels) {
-      setCourseLevels(updatedFilter);
-    }
+  // New Handler for Category Selection
+  const handleCategoryChange = (category) => {
+    setSelectedCategories((prevSelected) => {
+      if (prevSelected.includes(category.category_name)) {
+        return prevSelected.filter((c) => c !== category.category_name);
+      } else {
+        return [...prevSelected, category.category_name];
+      }
+    });
   };
 
-  // Debounced filtering function
-  useEffect(() => {
-    const debouncedFilter = debounce(() => {
-      // Start with all courses
-      let updatedCourses = [...courses];
-
-      // // Filter by search keyword
-      // if (searchKeyword.trim() !== "") {
-      //   updatedCourses = updatedCourses.filter((course) =>
-      //     course.title.toLowerCase().includes(searchKeyword.toLowerCase())
-      //   );
-      // }
-
-      // Filter by categories
-      const selectedCategories = categories
-        .filter((category) => category.checked)
-        .map((category) => category.name);
-      if (selectedCategories.length > 0) {
-        updatedCourses = updatedCourses.filter((course) =>
-          selectedCategories.includes(course.category)
-        );
-      }
-
-      // // Filter by price ranges
-      // const selectedPriceRanges = priceRanges
-      //   .filter((range) => range.checked)
-      //   .map((range) => range.range.split("-").map(Number));
-      // if (selectedPriceRanges.length > 0) {
-      //   updatedCourses = updatedCourses.filter((course) => {
-      //     return selectedPriceRanges.some(
-      //       ([min, max]) => course.price >= min && course.price <= max
-      //     );
-      //   });
-      // }
-
-      // // Filter by course levels
-      // const selectedLevels = courseLevels
-      //   .filter((level) => level.checked)
-      //   .map((level) => level.level);
-      // if (selectedLevels.length > 0) {
-      //   updatedCourses = updatedCourses.filter((course) =>
-      //     selectedLevels.includes(course.level)
-      //   );
-      // }
-
-      setFilteredCourses(updatedCourses);
-    }, 300); // 300ms debounce
-
-    debouncedFilter();
-
-    return () => {
-      debouncedFilter.cancel();
-    };
-  }, [searchKeyword, categories, priceRanges, courseLevels, courses]);
+  // Filtering Courses Based on Search and Selected Categories
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch = course?.course_title
+      ?.toLowerCase()
+      .includes(searchKeyword?.toLowerCase());
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(course?.category?.category_name);
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div>
-      {/* Navbar */}
       <Navbar />
 
-      {/* Main Content */}
       <div className="flex flex-col lg:flex-row items-start px-20 pt-32 font-poppins gap-10">
-        {/* Sidebar: Search and Filters */}
         <div className="w-full lg:w-[400px] sticky top-[100px]">
-          {/* Search Bar */}
           <div className="mb-4">
             <Input
               label="Search courses..."
@@ -216,7 +146,6 @@ const CoursesPage = () => {
             />
           </div>
 
-          {/* Filter Section */}
           <Menu open={true} handler={setIsMenuOpen} placement="bottom-start">
             <MenuHandler>
               <Button className="font-poppins" fullWidth>
@@ -240,71 +169,15 @@ const CoursesPage = () => {
                     </Typography>
                   </AccordionHeader>
                   <AccordionBody className="!py-1 px-0.5">
-                    {categories.map((category, index) => (
+                    {courseCategory.map((category, index) => (
                       <List
                         key={index}
-                        options={[category.name, category.count]}
+                        options={[category.category_name, category.count]}
                         color="blue-gray"
-                        check={category.checked}
-                        onChange={handleCheckboxChange(categories, index)}
-                      />
-                    ))}
-                  </AccordionBody>
-                </Accordion>
-              </MenuItem>
-
-              {/* Price Range Filter */}
-              <MenuItem className="!cursor-auto">
-                {/* Disable default cursor behavior */}
-                <Accordion open={open === 2} icon={<Icon id={2} open={open} />}>
-                  <AccordionHeader
-                    onClick={() => handleOpen(2)}
-                    className="py-0 !border-0"
-                  >
-                    <Typography
-                      variant="small"
-                      className="font-medium font-poppins text-gray-600"
-                    >
-                      Price Range
-                    </Typography>
-                  </AccordionHeader>
-                  <AccordionBody>
-                    {priceRanges.map((range, index) => (
-                      <List
-                        key={index}
-                        options={[`$${range.range}`, range.count]}
-                        color="blue-gray"
-                        check={range.checked}
-                        onChange={handleCheckboxChange(priceRanges, index)}
-                      />
-                    ))}
-                  </AccordionBody>
-                </Accordion>
-              </MenuItem>
-
-              {/* Course Levels Filter */}
-              <MenuItem className="!cursor-auto">
-                {/* Disable default cursor behavior */}
-                <Accordion open={open === 3} icon={<Icon id={3} open={open} />}>
-                  <AccordionHeader
-                    onClick={() => handleOpen(3)}
-                    className="py-0 !border-0"
-                  >
-                    <Typography
-                      variant="small"
-                      className="font-medium font-poppins text-gray-600"
-                    >
-                      Course Levels
-                    </Typography>
-                  </AccordionHeader>
-                  <AccordionBody>
-                    {courseLevels.map((level, index) => (
-                      <List
-                        key={index}
-                        options={[level.level, level.count]}
-                        color="blue-gray"
-                        check={level.checked}
-                        onChange={handleCheckboxChange(courseLevels, index)}
+                        check={selectedCategories.includes(
+                          category.category_name
+                        )}
+                        onChange={() => handleCategoryChange(category)}
                       />
                     ))}
                   </AccordionBody>
@@ -314,7 +187,6 @@ const CoursesPage = () => {
           </Menu>
         </div>
 
-        {/* Courses List */}
         <div className="basis-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
           {isLoading ? (
             <div className="container text-center">
@@ -338,7 +210,7 @@ const CoursesPage = () => {
               <CourseCard
                 key={course.id}
                 course={course}
-                user={{ favorites: [1] }} // Replace with actual user data
+                user={user ? { favorites: user.favorites } : { favorites: [] }}
                 // onFavoriteToggle={() => handleFavoriteToggle(course.id)}
               />
             ))

@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import Axios from "../../../../middleware/Axios";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AddSubject = () => {
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
   const [grade, setGrade] = useState(null);
   const [grades, setGrades] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
         const res = await Axios.get("/api/schoolGrades");
         setGrades(res.data.school_grades);
+        toast.success("Subject created successfully");
+        navigate(-1);
       } catch (error) {
         console.error("Error fetching subjects:", error);
       }
@@ -28,7 +33,9 @@ const AddSubject = () => {
         name,
         grade_id: grade,
       });
-      console.log("Grade added:", response.data);
+
+      toast.success("Grade deleted successfully");
+      navigate("/school/dashboard");
     } catch (error) {
       console.error("Error adding grade:", error);
     }

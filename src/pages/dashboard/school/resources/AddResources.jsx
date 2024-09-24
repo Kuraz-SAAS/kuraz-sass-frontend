@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import Axios from "../../../../middleware/Axios";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AddResources = () => {
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [file, setFile] = useState(null);
   const [subjects, setSubjects] = useState([]);
+  const navigate = useNavigate(); // Hook for navigating
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -36,7 +39,9 @@ const AddResources = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Grade added:", response.data);
+
+      toast.success("Resources added successfully!");
+      navigate(-1);
     } catch (error) {
       console.error("Error adding grade:", error);
     }
