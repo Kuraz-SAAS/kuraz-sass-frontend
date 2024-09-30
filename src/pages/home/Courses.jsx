@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   MenuHandler,
@@ -15,8 +15,6 @@ import {
 import Navbar from "../../components/common/home/Navbar";
 import CourseCard from "../../components/home/Courses/CourseCard";
 import { useSiteStore } from "../../context/siteStore";
-import axios from "axios";
-import { CgSpinner } from "react-icons/cg";
 import { ImSpinner10 } from "react-icons/im";
 
 // Icon Component for Accordion
@@ -74,13 +72,9 @@ function List({ options, color, check, onChange }) {
 const CoursesPage = () => {
   // State Variables
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [isMenuOpen, setIsMenuOpen] = useState(true); // Open by default
   const [open, setOpen] = useState(null);
-
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // New State for Selected Categories
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const user = useSiteStore((store) => store.user);
@@ -111,7 +105,6 @@ const CoursesPage = () => {
     setOpen(open === value ? null : value);
   };
 
-  // New Handler for Category Selection
   const handleCategoryChange = (category) => {
     setSelectedCategories((prevSelected) => {
       if (prevSelected.includes(category.category_name)) {
@@ -137,8 +130,8 @@ const CoursesPage = () => {
     <div>
       <Navbar />
 
-      <div className="flex flex-col lg:flex-row items-start px-20 pt-32 font-poppins gap-10">
-        <div className="w-full lg:w-[400px] sticky top-[100px]">
+      <div className="flex flex-col lg:flex-row items-start px-4 lg:px-20 pt-10 lg:pt-32 gap-6 lg:gap-10 font-poppins">
+        <div className="w-full lg:w-[300px] mb-4 lg:mb-0 lg:sticky lg:top-[100px]">
           <div className="mb-4">
             <Input
               label="Search courses..."
@@ -149,16 +142,14 @@ const CoursesPage = () => {
             />
           </div>
 
-          <Menu open={true} handler={setIsMenuOpen} placement="bottom-start">
+          <Menu open={true} handler={() => {}} placement="bottom-start">
             <MenuHandler>
-              <Button className="font-poppins" fullWidth>
+              <Button className="font-poppins w-full">
                 Filter by Category
               </Button>
             </MenuHandler>
-            <MenuList className="!w-96">
-              {/* Categories Filter */}
+            <MenuList className="w-[300px]">
               <MenuItem className="!cursor-auto font-poppins">
-                {/* Disable default cursor behavior */}
                 <Accordion open={open === 1} icon={<Icon id={1} open={open} />}>
                   <AccordionHeader
                     onClick={() => handleOpen(1)}
@@ -190,9 +181,9 @@ const CoursesPage = () => {
           </Menu>
         </div>
 
-        <div className="basis-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
+        <div className="basis-2/3 grid grid-cols-1 pt-10 lg:pt-0 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 w-full">
           {isLoading ? (
-            <div className="flex items-center justify-center h-screen w-[700px]">
+            <div className="flex items-center justify-center h-screen w-full">
               <ImSpinner10 className="animate-spin text-primary" size={80} />
             </div>
           ) : error ? (
@@ -203,7 +194,7 @@ const CoursesPage = () => {
                 src="/path/to/notfound.png"
                 alt="No Courses Found"
                 className="mx-auto"
-                style={{ width: "500px" }}
+                style={{ width: "300px" }}
                 loading="lazy"
               />
               <h4 className="mt-4 text-xl text-gray-700">No Course Found</h4>
@@ -214,7 +205,6 @@ const CoursesPage = () => {
                 key={course.id}
                 course={course}
                 user={user ? { favorites: user.favorites } : { favorites: [] }}
-                // onFavoriteToggle={() => handleFavoriteToggle(course.id)}
               />
             ))
           )}
