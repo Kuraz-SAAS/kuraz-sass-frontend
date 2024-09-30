@@ -62,12 +62,6 @@ const TopNavbar = () => {
 
       {/* Right Side Icons */}
       <div className="flex items-center space-x-3">
-        {/* Notifications */}
-        <button className="relative text-gray-800 hover:text-blue-600 text-lg">
-          <FaBell />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-red-600 rounded-full"></span>
-        </button>
-
         {/* Profile Menu */}
         <div className="relative">
           <button

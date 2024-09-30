@@ -14,6 +14,7 @@ Axios.interceptors.request.use(
     const csrfToken = Cookies.get("XSRF-TOKEN"); // Replace with the actual cookie name if different
     if (csrfToken) {
       config.headers["X-XSRF-TOKEN"] = csrfToken; // Add CSRF token to headers
+      config.headers["CSRF-TOKEN"] = csrfToken; // Add CSRF token to headers
     }
 
     return config;

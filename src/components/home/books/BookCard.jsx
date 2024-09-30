@@ -36,9 +36,13 @@ const BookCard = ({ book }) => {
               <p className="text-lg font-bold text-green-600">Free</p>
             )}
           </div>
-          <button className="px-3 py-1 text-white bg-primary rounded-md hover:bg-blue-600 transition duration-200">
-            Add to Cart
-          </button>
+          <Link
+            to={"single/" + book?.id}
+            state={{ book: book }}
+            className="px-3 py-1 text-white bg-primary rounded-md hover:bg-blue-600 transition duration-200"
+          >
+            Read
+          </Link>
         </div>
       </div>
     </div>

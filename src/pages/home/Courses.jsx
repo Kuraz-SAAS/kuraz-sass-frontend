@@ -15,6 +15,9 @@ import {
 import Navbar from "../../components/common/home/Navbar";
 import CourseCard from "../../components/home/Courses/CourseCard";
 import { useSiteStore } from "../../context/siteStore";
+import axios from "axios";
+import { CgSpinner } from "react-icons/cg";
+import { ImSpinner10 } from "react-icons/im";
 
 // Icon Component for Accordion
 function Icon({ id, open }) {
@@ -189,8 +192,8 @@ const CoursesPage = () => {
 
         <div className="basis-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
           {isLoading ? (
-            <div className="container text-center">
-              <p>Loading courses...</p>
+            <div className="flex items-center justify-center h-screen w-[700px]">
+              <ImSpinner10 className="animate-spin text-primary" size={80} />
             </div>
           ) : error ? (
             <div className="container text-center text-red-500">{error}</div>

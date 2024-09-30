@@ -4,13 +4,13 @@ import Navbar from "../../components/common/home/Navbar";
 import BookCard from "../../components/home/books/BookCard";
 import {
   Input,
-  Button,
   Accordion,
   AccordionHeader,
   AccordionBody,
   Typography,
   Checkbox,
 } from "@material-tailwind/react";
+import { ImSpinner10 } from "react-icons/im"; // Importing the spinner icon
 
 const getCategories = (books) => {
   const categories = books.map((book) => book.category.cat_name);
@@ -23,12 +23,20 @@ export const Books = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchBookData = async () => {
-      const res = await Axios.get("/api/books");
-      setBooksData(res.data.Books);
-      setBooksCategoryData(res.data.Book_category);
+      setLoading(true); // Set loading to true before fetching
+      try {
+        const res = await Axios.get("/api/books");
+        setBooksData(res.data.Books);
+        setBooksCategoryData(res.data.Book_category);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
     };
     fetchBookData();
   }, []);
@@ -99,7 +107,11 @@ export const Books = () => {
 
         {/* Books List */}
         <div className="basis-2/3 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {filteredBooks?.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center w-full h-screen">
+              <ImSpinner10 className="animate-spin" size={80} />
+            </div>
+          ) : filteredBooks?.length === 0 ? (
             <div className="container text-center">
               <img
                 src="/path/to/notfound.png"

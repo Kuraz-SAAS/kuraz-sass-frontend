@@ -61,21 +61,7 @@ const Sidebar = () => {
               <span className="font-medium text-sm">Cources</span>
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/student/saved"
-              className={({ isActive }) =>
-                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "hover:bg-black hover:text-white"
-                }`
-              }
-            >
-              <FaBell className="text-red-400 mr-2" />
-              <span className="font-medium text-sm">Saved Courses</span>
-            </NavLink>
-          </li>
+
           <li>
             <NavLink
               to="/student/settings"
