@@ -118,8 +118,19 @@ const Hero = () => {
               alt=""
             />
             {/* Button */}
-            <div>
-              <Link></Link>
+            <div className="flex gap-5">
+              <Link
+                to={"/school/register"}
+                className="text-black p-3 border-white bg-white  border-2 hover:bg-[#F3D598]  hover:border-[#F3D598] relative z-20 "
+              >
+                Sign in a school
+              </Link>
+              <Link
+                to={"/student/register"}
+                className="text-white p-3 border-white border-2 hover:bg-white hover:text-black relative z-20 "
+              >
+                Sign in a student
+              </Link>
             </div>
           </div>
         </div>
