@@ -108,11 +108,11 @@ const SchoolRegistrationForm = () => {
 
     await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
       const payload = {
-        school_name: name,
+        name: schoolName,
         email: email,
         password: password,
         password_confirmation: confirmPassword,
-        user_type: userType,
+        user_type: "school",
       };
 
       try {
@@ -254,15 +254,6 @@ const SchoolRegistrationForm = () => {
                     required
                   />
                 </div>
-                {/* Name Input */}
-                <input
-                  className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  required
-                />
 
                 {/* Email Input */}
                 <input

@@ -108,10 +108,11 @@ const StudentRegistrationForm = () => {
     await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
       const payload = {
         school_name: name,
+        name: schoolInput,
         email: email,
         password: password,
         password_confirmation: confirmPassword,
-        user_type: userType,
+        user_type: "student",
       };
 
       try {
