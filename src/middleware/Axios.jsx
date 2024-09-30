@@ -3,8 +3,8 @@ import Cookies from "js-cookie"; // To handle cookies (install with `npm install
 
 // Create an Axios instance
 const Axios = axios.create({
-  baseURL: "http://localhost/", // Your API base URL
-  withCredentials: true, // Include cookies in requests (important for CSRF protection)
+  baseURL: "http://localhost", // Your API base URL
+  withCredentials: true, // Include cookies in requests (important for CSRF protection
 });
 
 // Request Interceptor
