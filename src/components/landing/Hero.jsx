@@ -81,22 +81,6 @@ const Hero = () => {
             </li>
           </ul>
         </div>
-
-        {/* Sign Up Button */}
-        <div className="flex gap-2">
-          <Link
-            to={"/school/register"}
-            className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-full px-4 py-2  transition duration-300"
-          >
-            Sign up as school
-          </Link>
-          <Link
-            to={"/student/register"}
-            className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-full px-4 py-2 transition duration-300"
-          >
-            Sign up as student
-          </Link>
-        </div>
       </div>
 
       {/* Hero Content */}
@@ -135,9 +119,7 @@ const Hero = () => {
             />
             {/* Button */}
             <div>
-              <button className="text-[20px] md:text-[24px] lg:text-[28px] text-white font-semibold bg-gradient-to-r relative z-50 from-[#F3D598]/80 to-[#242838] px-6 md:px-8 lg:px-10 py-2 rounded-3xl">
-                Learn more
-              </button>
+              <Link></Link>
             </div>
           </div>
         </div>
