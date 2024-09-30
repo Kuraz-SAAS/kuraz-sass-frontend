@@ -14,11 +14,12 @@ const PdfViewer = ({ pdfUrl, path }) => {
   return (
     <div className="pdf-container h-[80vh]">
       <Worker
-        workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}
+        workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
       >
         <Viewer
           fileUrl={`http://localhost:8000/api/${path}/${pdfUrl}`}
           plugins={[defaultLayout]}
+          onLoadSuccess={({ numPages }) => setNumPages(numPages)} // Capture the number of pages
         />
       </Worker>
     </div>
