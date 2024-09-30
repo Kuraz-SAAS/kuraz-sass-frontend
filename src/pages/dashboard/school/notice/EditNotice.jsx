@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import Axios from "../../../../middleware/Axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const EditNotice = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const navigate = useNavigate();
   const params = useParams();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await Axios.patch("/api/schoolNotices/" + params?.id, {
       title,
       description,
     }).then((res) => {
-      console.log(res);
+      toast.success("Notice updated successfully");
+      navigate("/school/dashboard");
     });
   };
 

@@ -4,12 +4,14 @@ import Axios from "../middleware/Axios";
 
 const siteStore = (set, get) => ({
   courses: [],
+  courseCategory: [],
   studentDashboard: null,
   user: {},
   setUser: (user) => set({ user }),
   getCourses: async () => {
     const res = await Axios.get("/api/courses");
     set({ courses: res.data.course });
+    set({ courseCategory: res.data.course_category });
   },
   getStudentDashboard: async () => {
     const res = await Axios.get(`/api/student/dashboard`);

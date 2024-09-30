@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Axios from "../../middleware/Axios";
 import { csrfCatch } from "../../middleware/utilities";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -12,27 +14,37 @@ const LoginForm = () => {
 
   const handleSubmit = async () => {
     if (!email || !password) {
-      alert("Please enter both email and password");
+      toast.error("Please enter both email and password");
       return;
     }
-    const response = csrfCatch();
-    console.log(response);
 
-    await Axios.post("login", { email: email, password: password }).then(
-      (res) => {
+    await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
+      try {
+        const res = await Axios.post("login", {
+          email: email,
+          password: password,
+        });
+
         if (res.status === 204 || res.status === 200) {
           setUser(res.data.user);
+          toast.success("Login successful!");
           navigate("/courses");
         }
+      } catch (error) {
+        toast.error("Login failed. Please check your credentials.");
       }
-    );
+    });
   };
+
   const user = useSiteStore((store) => store.user);
+
   useEffect(() => {
-    if (user && user.user_type) {
+    if (user && user.user_type === "student") {
       navigate("/courses");
+    } else if (user && user.user_type === "school") {
+      navigate("/school/dashboard");
     }
-  });
+  }, [user, navigate]);
 
   return (
     <div className="h-screen flex items-center font-poppins justify-center px-5 lg:px-0">
@@ -91,9 +103,9 @@ const LoginForm = () => {
                 </button>
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Don't have an account?{" "}
-                  <a href="/register">
+                  <Link to="/register">
                     <span className="text-blue-900 font-semibold">Sign up</span>
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>

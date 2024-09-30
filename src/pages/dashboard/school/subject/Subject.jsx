@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import SubjectDatatable from "../../../../components/common/dashboard/SubjectDatatable";
 import Axios from "../../../../middleware/Axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Subject = () => {
   const [subjectData, setSubjectGradeData] = useState([]);
@@ -25,7 +26,8 @@ const Subject = () => {
   };
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolSubjects/" + id).then((res) => {
-      console.log(res);
+      toast.success("Subject deleted successfully");
+      navigate("/school/dashboard");
     });
   };
   const actions = [
@@ -36,13 +38,18 @@ const Subject = () => {
   return (
     <div>
       <DashboardLayout>
-        {subjectData.length > 0 && (
-          <SubjectDatatable
-            datas={subjectData}
-            headers={headers}
-            actions={actions}
-          />
-        )}
+        <div>
+          <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
+            Add Subject
+          </Link>
+          {subjectData.length > 0 && (
+            <SubjectDatatable
+              datas={subjectData}
+              headers={headers}
+              actions={actions}
+            />
+          )}
+        </div>
       </DashboardLayout>
     </div>
   );

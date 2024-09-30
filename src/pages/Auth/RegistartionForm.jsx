@@ -1,33 +1,28 @@
 import React, { useEffect, useState, useRef } from "react";
 import Axios from "../../middleware/Axios";
 import { csrfCatch } from "../../middleware/utilities";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useSiteStore } from "../../context/siteStore";
+import { toast } from "react-toastify";
 const RegistrationForm = () => {
-  // Form State
   const [userType, setUserType] = useState("student"); // Default to 'student'
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Tenant Autocomplete State for 'student'
   const [tenants, setTenants] = useState([]);
   const [tenantInput, setTenantInput] = useState("");
   const [filteredTenants, setFilteredTenants] = useState([]);
   const [selectedTenant, setSelectedTenant] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  // Tenant Input State for 'school'
+  const setUser = useSiteStore((store) => store.setUser);
   const [domainInput, setDomainInput] = useState("");
 
-  // Error State
   const [errorMessage, setErrorMessage] = useState("");
-
   const navigate = useNavigate();
   const suggestionsRef = useRef(null);
 
-  // Fetch Tenants on Component Mount
   useEffect(() => {
     const fetchTenants = async () => {
       try {
@@ -41,7 +36,6 @@ const RegistrationForm = () => {
     fetchTenants();
   }, []);
 
-  // Handle Clicks Outside the Suggestions Dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -57,11 +51,10 @@ const RegistrationForm = () => {
     };
   }, []);
 
-  // Handle Tenant Input Change for 'student'
   const handleTenantInputChange = (e) => {
     const input = e.target.value;
     setTenantInput(input);
-    setSelectedTenant(null); // Reset selected tenant
+    setSelectedTenant(null);
     if (input.length > 0) {
       const filtered = tenants.filter((tenant) =>
         tenant.domain_name.toLowerCase().includes(input.toLowerCase())
@@ -74,7 +67,6 @@ const RegistrationForm = () => {
     }
   };
 
-  // Handle Tenant Selection from Suggestions for 'student'
   const handleTenantSelect = (tenant) => {
     setTenantInput(tenant.domain_name);
     setSelectedTenant(tenant);
@@ -82,72 +74,81 @@ const RegistrationForm = () => {
     setShowSuggestions(false);
   };
 
-  // Handle Form Submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    setErrorMessage(""); // Reset error message
+    e.preventDefault();
+    setErrorMessage("");
 
-    // Call the csrf catch
-    csrfCatch();
-
-    // Basic client-side validation
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
     if (userType === "student" && !selectedTenant) {
       setErrorMessage("Please select a valid tenant from the suggestions.");
+      toast.error("Please select a valid tenant.");
       return;
     }
 
     if (userType === "school" && domainInput.trim() === "") {
       setErrorMessage("Please enter a domain name for your school.");
+      toast.error("Please enter a domain name for your school.");
       return;
     }
 
-    // Prepare payload based on userType
-    const payload = {
-      name: name,
-      email: email,
-      password: password,
-      password_confirmation: confirmPassword,
-      user_type: userType,
-    };
+    await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
+      const payload = {
+        name: name,
+        email: email,
+        password: password,
+        password_confirmation: confirmPassword,
+        user_type: userType,
+      };
 
-    if (userType === "student") {
-      payload.domain = selectedTenant.domain_name;
-    } else if (userType === "school") {
-      payload.domain = domainInput.trim();
-    }
-
-    try {
-      const response = await Axios.post("/register", payload);
-
-      if (response.status === 200 || response.status === 204) {
-        navigate("/login");
+      if (userType === "student") {
+        payload.domain = selectedTenant.domain_name;
+      } else if (userType === "school") {
+        payload.domain = domainInput.trim();
       }
-    } catch (error) {
-      console.error("Registration error:", error);
 
-      // Handle specific error for tenant name already taken
-      if (
-        error.response &&
-        error.response.status === 409 && // Assuming 409 Conflict for duplicate tenant
-        error.response.data &&
-        error.response.data.message.includes("domain_name")
-      ) {
-        setErrorMessage("Domain name is already taken. Please choose another.");
-      } else if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage("Registration failed. Please try again.");
+      try {
+        const response = await Axios.post("/register", payload);
+
+        if (response.status === 200 || response.status === 204) {
+          setUser(response.data.user);
+          toast.success("Registration successful!");
+          if (response.data.user.user_type === "student") {
+            navigate("/courses");
+          } else {
+            navigate("/school/dashboard");
+          }
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+
+        if (
+          error.response &&
+          error.response.status === 409 &&
+          error.response.data &&
+          error.response.data.message.includes("domain_name")
+        ) {
+          setErrorMessage(
+            "Domain name is already taken. Please choose another."
+          );
+          toast.error("Domain name is already taken.");
+        } else if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          setErrorMessage(error.response.data.message);
+          toast.error(error.response.data.message);
+        } else {
+          setErrorMessage("Registration failed. Please try again.");
+          toast.error("Registration failed. Please try again.");
+        }
       }
-    }
+    });
   };
 
   return (
@@ -334,9 +335,9 @@ const RegistrationForm = () => {
                 {/* Redirect to Login */}
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Already have an account?{" "}
-                  <a href="/login">
+                  <Link to="/login">
                     <span className="text-blue-900 font-semibold">Sign in</span>
-                  </a>
+                  </Link>
                 </p>
               </div>
             </form>

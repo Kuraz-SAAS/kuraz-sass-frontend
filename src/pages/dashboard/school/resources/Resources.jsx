@@ -3,7 +3,8 @@ import Datatable from "../../../../components/common/dashboard/Datatable";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import Axios from "../../../../middleware/Axios";
 import ResourcesDatatable from "../../../../components/common/dashboard/ResourcesDatatable";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Resources = () => {
   const [resourceData, setResourcesGradeData] = useState([]);
@@ -26,7 +27,8 @@ const Resources = () => {
   };
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolResources/" + id).then((res) => {
-      console.log(res);
+      toast.success("Grade deleted successfully");
+      navigate("/school/dashboard");
     });
   };
   const actions = [
@@ -36,13 +38,18 @@ const Resources = () => {
   return (
     <div>
       <DashboardLayout>
-        {resourceData.length > 0 && (
-          <ResourcesDatatable
-            datas={resourceData}
-            headers={headers}
-            actions={actions}
-          />
-        )}
+        <div>
+          <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
+            Add Resources
+          </Link>
+          {resourceData.length > 0 && (
+            <ResourcesDatatable
+              datas={resourceData}
+              headers={headers}
+              actions={actions}
+            />
+          )}
+        </div>
       </DashboardLayout>
     </div>
   );

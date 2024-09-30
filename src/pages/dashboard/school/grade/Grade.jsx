@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import Axios from "../../../../middleware/Axios";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import Datatable from "../../../../components/common/dashboard/Datatable";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Grade = () => {
   const [gradesData, setGradeData] = useState([]);
   const navigate = useNavigate();
+  const fetchData = async () => {
+    await Axios.get("/api/schoolGrades").then((res) => {
+      setGradeData(res.data.school_grades);
+    });
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      await Axios.get("/api/schoolGrades").then((res) => {
-        console.log(res);
-        setGradeData(res.data.school_grades);
-      });
-    };
     fetchData();
   }, []);
 
@@ -25,7 +25,8 @@ const Grade = () => {
   };
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolGrades/" + id).then((res) => {
-      console.log(res);
+      toast.success("Grade deleted successfully");
+      navigate("/school/dashboard");
     });
   };
   const actions = [
@@ -35,9 +36,14 @@ const Grade = () => {
   return (
     <div>
       <DashboardLayout>
-        {gradesData.length > 0 && (
-          <Datatable datas={gradesData} headers={headers} actions={actions} />
-        )}
+        <div>
+          <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
+            Add Grade
+          </Link>
+          {gradesData.length > 0 && (
+            <Datatable datas={gradesData} headers={headers} actions={actions} />
+          )}
+        </div>
       </DashboardLayout>
     </div>
   );

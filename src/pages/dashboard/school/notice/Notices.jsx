@@ -4,6 +4,7 @@ import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import NoticeDatatable from "../../../../components/common/dashboard/NoticeDatatable";
 import Axios from "../../../../middleware/Axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Notices = () => {
   const [noticeData, setNoticeData] = useState([]);
@@ -12,7 +13,6 @@ const Notices = () => {
   useEffect(() => {
     const fetchData = async () => {
       await Axios.get("/api/schoolNotices").then((res) => {
-        console.log(res);
         setNoticeData(res.data.notices);
       });
     };
@@ -26,7 +26,8 @@ const Notices = () => {
   };
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolNotices/" + id).then((res) => {
-      console.log(res);
+      toast.success("Notice deleted successfully");
+      navigate("/school/dashboard");
     });
   };
   const actions = [
@@ -39,7 +40,7 @@ const Notices = () => {
       <DashboardLayout>
         <div>
           <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
-            Add Grade
+            Add Notice
           </Link>
         </div>
         {noticeData.length > 0 && (

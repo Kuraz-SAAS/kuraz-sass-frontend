@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import Axios from "../../../../middleware/Axios";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const UpdateSubject = () => {
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
   const [grade, setGrade] = useState(null);
   const [grades, setGrades] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -28,7 +31,8 @@ const UpdateSubject = () => {
         name,
         grade_id: grade,
       });
-      console.log("Grade added:", response.data);
+      toast.success("Subject updated successfully");
+      navigate("/school/dashboard");
     } catch (error) {
       console.error("Error adding grade:", error);
     }

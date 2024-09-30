@@ -41,13 +41,6 @@ const App = () => {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />
 
-        <Route element={<CommonProtectedRoute />}>
-          <Route path="/books" element={<Books />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/course/:id" element={<SingleResource />} />
-          <Route path="/course/play/:id" element={<CourseViewPage />} />
-          <Route path="/resources" element={<Resources />} />
-        </Route>
         <Route element={<SchoolProtectedRoute />}>
           <Route path="/school/dashboard" element={<SchoolDashboard />} />
 
@@ -77,6 +70,11 @@ const App = () => {
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/courses" element={<StudentCourses />} />
           <Route path="/student/saved" element={<SavedCourses />} />
+          <Route path="/books" element={<Books />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/course/:id" element={<SingleResource />} />
+          <Route path="/course/play/:id" element={<CourseViewPage />} />
+          <Route path="/resources" element={<Resources />} />
         </Route>
       </Routes>
     </BrowserRouter>

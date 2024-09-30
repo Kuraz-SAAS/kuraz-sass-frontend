@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import Axios from "../../../../middleware/Axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddNotice = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await Axios.post("/api/schoolNotices", { title, description }).then(
       (res) => {
-        console.log(res);
+        toast.success("Notice created successfully");
+        navigate(-1);
       }
     );
   };

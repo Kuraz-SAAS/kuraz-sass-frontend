@@ -5,8 +5,9 @@ import {
   FaEye,
   FaPlayCircle,
 } from "react-icons/fa";
+import Axios from "../../../middleware/Axios";
 
-const CourseContent = () => {
+const CourseContent = ({ section, setCurrentVideos }) => {
   const [isOpen, setIsOpen] = useState([true, false, false]);
 
   const toggleSection = (index) => {
@@ -18,116 +19,59 @@ const CourseContent = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Content</h2>
-
+      <p className="text-[12px] text-gray-500">
+        * Check the eye icon after finishing the each video to mark the video as
+        finihed.
+      </p>
       {/* Introduction to Laravel */}
-      <section>
-        <div
-          className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
-          onClick={() => toggleSection(0)}
-        >
-          <div className="flex items-center space-x-2">
-            <FaPlayCircle size={20} />
-            <h3 className="font-semibold">Introduction To Laravel</h3>
-            <span className="text-sm text-gray-600">(5 Lectures)</span>
+      {section?.map((sec, index) => (
+        <section key={index}>
+          <div
+            className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
+            onClick={() => toggleSection(sec?.id)}
+          >
+            <div className="flex items-center space-x-2">
+              <FaPlayCircle size={20} />
+              <h3 className="font-semibold">{sec?.section_title}</h3>
+              <span className="text-sm text-gray-600">
+                ({sec?.videos?.length}Lectures)
+              </span>
+            </div>
+            {isOpen[sec?.id] ? <FaChevronUp /> : <FaChevronDown />}
           </div>
-          {isOpen[0] ? <FaChevronUp /> : <FaChevronDown />}
-        </div>
-        {isOpen[0] && (
-          <ul className="ml-6 mt-2 space-y-2">
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Welcome To Laravel Course</span>
-              </div>
-              <span className="text-gray-500">10min</span>
-            </li>
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Introduction to Laravel</span>
-              </div>
-              <span className="text-gray-500">10min</span>
-            </li>
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Why Laravel</span>
-              </div>
-              <span className="text-gray-500">11min</span>
-            </li>
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Laravel Setup and Installation</span>
-              </div>
-              <span className="text-gray-500">25min</span>
-            </li>
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Laravel Structure</span>
-              </div>
-              <span className="text-gray-500">16min</span>
-            </li>
-          </ul>
-        )}
-      </section>
-
-      {/* Basics of Laravel CRUD */}
-      <section>
-        <div
-          className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
-          onClick={() => toggleSection(1)}
-        >
-          <div className="flex items-center space-x-2">
-            <FaPlayCircle size={20} />
-            <h3 className="font-semibold">Basics Of Laravel CRUD</h3>
-            <span className="text-sm text-gray-600">(5 Lectures)</span>
-          </div>
-          {isOpen[1] ? <FaChevronUp /> : <FaChevronDown />}
-        </div>
-        {isOpen[1] && (
-          <ul className="ml-6 mt-2 space-y-2">
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Lecture 1</span>
-              </div>
-              <span className="text-gray-500">Time</span>
-            </li>
-            {/* Add more lectures as needed */}
-          </ul>
-        )}
-      </section>
-
-      {/* Template Customization & DB Design */}
-      <section>
-        <div
-          className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
-          onClick={() => toggleSection(2)}
-        >
-          <div className="flex items-center space-x-2">
-            <FaPlayCircle size={20} />
-            <h3 className="font-semibold">
-              Template Customization & DB Design
-            </h3>
-            <span className="text-sm text-gray-600">(6 Lectures)</span>
-          </div>
-          {isOpen[2] ? <FaChevronUp /> : <FaChevronDown />}
-        </div>
-        {isOpen[2] && (
-          <ul className="ml-6 mt-2 space-y-2">
-            <li className="flex justify-between items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <FaEye size={18} />
-                <span>Lecture 1</span>
-              </div>
-              <span className="text-gray-500">Time</span>
-            </li>
-            {/* Add more lectures as needed */}
-          </ul>
-        )}
-      </section>
+          {isOpen[sec?.id] && (
+            <ul className="ml-6 mt-2 space-y-2">
+              {sec?.videos.map((video, index) => (
+                <button
+                  onClick={() => {
+                    setCurrentVideos(video?.video_links[0]);
+                  }}
+                  key={index}
+                  className="flex w-full px-2 justify-between items-center space-x-2"
+                >
+                  <button
+                    onClick={async () => {
+                      await Axios.post(
+                        "/api/video/change-status/" + video?.id,
+                        {
+                          status: 1,
+                        }
+                      );
+                    }}
+                    className="flex items-center space-x-2"
+                  >
+                    <FaEye size={18} />
+                    <span>{video?.video_title}</span>
+                  </button>
+                  <span className="text-gray-500">
+                    {video?.video_duration} (min)
+                  </span>
+                </button>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
     </div>
   );
 };
