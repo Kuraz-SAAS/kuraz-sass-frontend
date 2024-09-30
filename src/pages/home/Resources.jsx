@@ -173,7 +173,7 @@ const Resources = () => {
         {/* PDF viewer */}
         <div className="w-full overflow-y-auto">
           {selectedPdf ? (
-            <PdfViewer pdfUrl={selectedPdf} />
+            <PdfViewer pdfUrl={selectedPdf} path={"resource/pdf"} />
           ) : (
             <div className="text-center border-4 border-gray-500 h-[60vh] flex justify-center items-center text-gray-500">
               Select a resource to view the PDF

@@ -83,12 +83,18 @@ const Hero = () => {
         </div>
 
         {/* Sign Up Button */}
-        <div className="mt-4 md:mt-0">
+        <div className="flex gap-2">
           <Link
-            to={"/register"}
-            className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-lg px-6 md:px-8 lg:px-16 py-2 transition duration-300"
+            to={"/school/register"}
+            className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-full px-4 py-2  transition duration-300"
           >
-            Sign up
+            Sign up as school
+          </Link>
+          <Link
+            to={"/student/register"}
+            className="text-[16px] md:text-[18px] relative z-50 lg:text-[20px] bg-gray-50 text-gray-800 hover:bg-[#F3D598] rounded-full px-4 py-2 transition duration-300"
+          >
+            Sign up as student
           </Link>
         </div>
       </div>

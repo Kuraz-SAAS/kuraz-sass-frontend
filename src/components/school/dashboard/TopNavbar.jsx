@@ -40,16 +40,6 @@ const TopNavbar = () => {
   return (
     <nav className="bg-white  py-3 px-4 flex items-center justify-between">
       {/* Logo Section */}
-      <div className="flex items-center space-x-3">
-        <Link
-          to={"/courses"}
-          className="flex items-center text-gray-800 font-semibold text-md"
-        >
-          <span className="bg-primary text-white p-2 rounded-md">
-            Back To Home
-          </span>
-        </Link>
-      </div>
 
       {/* Search Bar */}
       <div className="flex-1 max-w-md mx-3">
@@ -62,12 +52,6 @@ const TopNavbar = () => {
 
       {/* Right Side Icons */}
       <div className="flex items-center space-x-3">
-        {/* Notifications */}
-        <button className="relative text-gray-800 hover:text-blue-600 text-lg">
-          <FaBell />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-red-600 rounded-full"></span>
-        </button>
-
         {/* Profile Menu */}
         <div className="relative">
           <button
@@ -106,6 +90,10 @@ const TopNavbar = () => {
             <button
               className="block px-3 py-1 text-gray-700 hover:bg-gray-100 text-sm"
               onClick={() => {
+                document.cookie = "XSRF-TOKEN=; Max-Age=0"; // Delete CSRF Token
+                document.cookie = "session=; Max-Age=0"; // Delete session cookie
+                localStorage.clear();
+                sessionStorage.clear();
                 setUser(null);
                 navigate("/login");
               }}

@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPages from "./pages/landing/LandingPages";
 import LoginForm from "./pages/Auth/LoginForm";
-import RegistrationForm from "./pages/Auth/RegistartionForm";
 import { Books } from "./pages/home/Books";
 import Courses from "./pages/home/Courses";
 import Resources from "./pages/home/Resources";
@@ -32,6 +31,11 @@ import EditNotice from "./pages/dashboard/school/notice/EditNotice";
 import SchoolProtectedRoute from "./protectedRoutes/SchoolProtectedRoute";
 import StudentProtectedRoute from "./protectedRoutes/StudentProtectedRoute";
 import CommonProtectedRoute from "./protectedRoutes/CommonProtectedRoute";
+import SingleBook from "./pages/home/SingleBook";
+import ForgetPassword from "./pages/Auth/ForgetPassword";
+import ChangePassword from "./pages/Auth/ChangePassword";
+import SchoolRegistrationForm from "./pages/Auth/SchoolRegistartionForm";
+import StudentRegistrationForm from "./pages/Auth/StudentRegistartionForm";
 
 const App = () => {
   return (
@@ -39,7 +43,10 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPages />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegistrationForm />} />
+        <Route path="/school/register" element={<SchoolRegistrationForm />} />
+        <Route path="/student/register" element={<StudentRegistrationForm />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />
 
         <Route element={<SchoolProtectedRoute />}>
           <Route path="/school/dashboard" element={<SchoolDashboard />} />
@@ -71,6 +78,7 @@ const App = () => {
           <Route path="/student/courses" element={<StudentCourses />} />
           <Route path="/student/saved" element={<SavedCourses />} />
           <Route path="/books" element={<Books />} />
+          <Route path="/books/single/:id" element={<SingleBook />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/course/:id" element={<SingleResource />} />
           <Route path="/course/play/:id" element={<CourseViewPage />} />

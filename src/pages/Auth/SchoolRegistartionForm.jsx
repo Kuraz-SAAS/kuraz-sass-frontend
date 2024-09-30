@@ -4,7 +4,15 @@ import { csrfCatch } from "../../middleware/utilities";
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 import { toast } from "react-toastify";
-const RegistrationForm = () => {
+import {
+  flower,
+  heroBanner,
+  heroImage,
+  kurazLogo,
+  shadow,
+} from "../../assets/images";
+
+const SchoolRegistrationForm = () => {
   const [userType, setUserType] = useState("student"); // Default to 'student'
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,7 +25,7 @@ const RegistrationForm = () => {
   const [selectedTenant, setSelectedTenant] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const setUser = useSiteStore((store) => store.setUser);
-  const [domainInput, setDomainInput] = useState("");
+  const [schoolName, setSchoolName] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -84,32 +92,28 @@ const RegistrationForm = () => {
       return;
     }
 
-    if (userType === "student" && !selectedTenant) {
-      setErrorMessage("Please select a valid tenant from the suggestions.");
-      toast.error("Please select a valid tenant.");
-      return;
-    }
+    // if (userType === "student" && !selectedTenant) {
+    //   setErrorMessage(
+    //     "Your school name does exist in our database please contact your school for a correct school name."
+    //   );
+    //   toast.error("Please enter a correct school name.");
+    //   return;
+    // }
 
-    if (userType === "school" && domainInput.trim() === "") {
-      setErrorMessage("Please enter a domain name for your school.");
-      toast.error("Please enter a domain name for your school.");
+    if (schoolName.trim() === "") {
+      setErrorMessage("Please enter a unique name for your school.");
+      toast.error("Please enter a unique name for your school.");
       return;
     }
 
     await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
       const payload = {
-        name: name,
+        school_name: name,
         email: email,
         password: password,
         password_confirmation: confirmPassword,
         user_type: userType,
       };
-
-      if (userType === "student") {
-        payload.domain = selectedTenant.domain_name;
-      } else if (userType === "school") {
-        payload.domain = domainInput.trim();
-      }
 
       try {
         const response = await Axios.post("/register", payload);
@@ -133,9 +137,9 @@ const RegistrationForm = () => {
           error.response.data.message.includes("domain_name")
         ) {
           setErrorMessage(
-            "Domain name is already taken. Please choose another."
+            "unique school name is already taken. Please choose another."
           );
-          toast.error("Domain name is already taken.");
+          toast.error("unque school name is already taken.");
         } else if (
           error.response &&
           error.response.data &&
@@ -152,28 +156,46 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center font-poppins justify-center px-5 lg:px-0 bg-gray-50">
-      <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
-        <div className="flex-1 bg-blue-900 text-center hidden md:flex">
-          <div
-            className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(https://www.tailwindtap.com/assets/common/marketing.svg)`,
-            }}
-          ></div>
+    <div
+      className="h-screen bg-right bg-cover font-poppins relative overflow-hidden"
+      style={{
+        backgroundImage: `url('${heroBanner}')`,
+      }}
+    >
+      <div className="flex flex-wrap items-center justify-between px-8 md:px-16 lg:px-32 relative">
+        {/* Logo Section */}
+        <div className="flex-shrink-0">
+          <a href="/">
+            <img src={kurazLogo} alt="Kuraz" className="logo w-24 md:w-full" />
+          </a>
         </div>
-        <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-          <div className="flex flex-col items-center">
-            <div className="text-center">
-              <h1 className="text-2xl xl:text-4xl font-extrabold text-blue-900">
+        <div className="z-50 relative">
+          <Link
+            to={"/student/register"}
+            className="bg-white p-2 shadow-lg rounded-md"
+          >
+            Register as a student
+          </Link>
+        </div>
+      </div>
+
+      {/* Hero Content */}
+      <div className="flex justify-center w-full px-4 md:px-16 lg:px-40 h-full relative">
+        <div className="w-[400px]">
+          <div className="flex flex-col gap-3 items-center">
+            <div className="text-center grid gap-3">
+              <p className="text-[25px] font-bold text-white underline underline-offset-2 z-50">
+                Registration form for schools
+              </p>
+              <h1 className="text-2xl xl:text-4xl font-extrabold text-[#F3D598]">
                 Sign Up
               </h1>
               <p className="text-sm text-gray-500">
                 Enter your details to create your account
               </p>
             </div>
-            <form className="w-full flex-1 mt-8" onSubmit={handleSubmit}>
-              <div className="mx-auto max-w-xs flex flex-col gap-4">
+            <form className="w-full" onSubmit={handleSubmit}>
+              <div className=" flex flex-col gap-4">
                 {/* Error Message */}
                 {errorMessage && (
                   <div className="text-red-500 text-sm text-center">
@@ -181,45 +203,8 @@ const RegistrationForm = () => {
                   </div>
                 )}
 
-                {/* User Type Selection */}
-                <div className="mt-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Select User Type
-                  </label>
-                  <div className="flex space-x-4">
-                    {/* User Types: Student, School */}
-                    {["student", "school"].map((type) => (
-                      <label
-                        key={type}
-                        className={`flex items-center cursor-pointer ${
-                          userType === type ? "text-blue-900" : "text-gray-700"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="userType"
-                          value={type}
-                          checked={userType === type}
-                          onChange={() => {
-                            setUserType(type);
-                            setErrorMessage(""); // Reset error on user type change
-                            // Reset tenant inputs when user type changes
-                            setTenantInput("");
-                            setSelectedTenant(null);
-                            setDomainInput("");
-                          }}
-                          className="form-radio h-4 w-4 text-blue-600"
-                        />
-                        <span className="ml-2 capitalize">
-                          {type === "student" ? "Student" : "School"}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Tenant Selection based on User Type */}
-                {userType === "student" ? (
+                {/* {userType === "student" ? (
                   // Autocomplete Input for 'student'
                   <div className="relative">
                     <input
@@ -232,7 +217,7 @@ const RegistrationForm = () => {
                         if (filteredTenants.length > 0)
                           setShowSuggestions(true);
                       }}
-                      placeholder="Enter your domain name"
+                      placeholder="Enter your unique identity school name"
                       className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                       autoComplete="off"
                       required
@@ -254,22 +239,21 @@ const RegistrationForm = () => {
                       </ul>
                     )}
                   </div>
-                ) : (
-                  // Standard Input for 'school'
-                  <div className="mt-4">
-                    <input
-                      type="text"
-                      id="domain"
-                      name="domain"
-                      value={domainInput}
-                      onChange={(e) => setDomainInput(e.target.value)}
-                      placeholder="e.g., yourschooldomain"
-                      className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                      required
-                    />
-                  </div>
-                )}
+                )  */}
 
+                {/* // Standard Input for 'school' */}
+                <div className="mt-4">
+                  <input
+                    type="text"
+                    id="domain"
+                    name="domain"
+                    value={schoolName}
+                    onChange={(e) => setSchoolName(e.target.value)}
+                    placeholder="Enter Your unique identity school name"
+                    className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    required
+                  />
+                </div>
                 {/* Name Input */}
                 <input
                   className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
@@ -315,7 +299,7 @@ const RegistrationForm = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                  className="mt-5 tracking-wide font-semibold bg-[#F3D598] text-black w-full py-4 rounded-lg hover:bg-[#F3D598]/50 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                 >
                   <svg
                     className="w-6 h-6 -ml-2"
@@ -336,16 +320,49 @@ const RegistrationForm = () => {
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Already have an account?{" "}
                   <Link to="/login">
-                    <span className="text-blue-900 font-semibold">Sign in</span>
+                    <span className="text-[#F3D598] font-semibold">
+                      Sign in
+                    </span>
                   </Link>
                 </p>
               </div>
             </form>
           </div>
         </div>
+
+        {/* Right Side */}
+        <div className="right-side flex-1 mt-8 lg:mt-0 hidden lg:flex">
+          {/* Shadow and Flower Images */}
+          <img
+            className="absolute bottom-10 lg:bottom-20"
+            src={shadow}
+            alt=""
+          />
+          <img
+            className="absolute bottom-[300px] md:bottom-[500px] -right-28 md:-right-56 z-40"
+            src={shadow}
+            alt=""
+          />
+          <img
+            className="absolute bottom-[350px] md:bottom-[570px] right-0 w-[100px] md:w-[200px] z-50"
+            src={flower}
+            alt=""
+          />
+          <img
+            className="absolute -bottom-[150px] md:-bottom-[250px] -right-28 md:-right-56 z-40"
+            src={shadow}
+            alt=""
+          />
+          {/* Main Hero Image */}
+          <img
+            src={heroImage}
+            alt=""
+            className="absolute top-0 right-0 md:-right-[100px] lg:-right-[220px] w-full max-w-[400px] md:max-w-[800px] lg:max-w-[1100px] z-30"
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default RegistrationForm;
+export default SchoolRegistrationForm;
