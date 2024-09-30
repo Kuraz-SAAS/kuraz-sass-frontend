@@ -26,19 +26,19 @@ Axios.interceptors.request.use(
 );
 
 // Response Interceptor
-// axiosInstance.interceptors.response.use(
-//   (response) => {
-//     // Handle the response data
-//     return response;
-//   },
-//   (error) => {
-//     // Handle response errors, like 401 Unauthorized
-//     if (error.response && error.response.status === 401) {
-//       console.error('Unauthorized! Redirecting to login...');
-//       window.location.href = '/login'; // Redirect to login page
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+Axios.interceptors.response.use(
+  (response) => {
+    // Handle the response data
+    return response;
+  },
+  (error) => {
+    // Handle response errors, like 401 Unauthorized
+    if (error.response && error.response.status === 401) {
+      localStorage.clear();
+      window.location.href = "/login"; // Redirect to login page
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default Axios;

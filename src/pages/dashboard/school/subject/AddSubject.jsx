@@ -16,8 +16,6 @@ const AddSubject = () => {
       try {
         const res = await Axios.get("/api/schoolGrades");
         setGrades(res.data.school_grades);
-        toast.success("Subject created successfully");
-        navigate(-1);
       } catch (error) {
         console.error("Error fetching subjects:", error);
       }
