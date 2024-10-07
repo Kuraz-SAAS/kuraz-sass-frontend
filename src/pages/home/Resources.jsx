@@ -6,22 +6,11 @@ import Navbar from "../../components/common/home/Navbar";
 import Axios from "../../middleware/Axios";
 
 const Resources = () => {
-  // Initialize schoolGrades as an empty array
   const [schoolGrades, setSchoolGrades] = useState([]);
-
-  // State to track open folders
   const [openFolders, setOpenFolders] = useState({});
-
-  // State to track selected PDF
   const [selectedPdf, setSelectedPdf] = useState("");
-
-  // State to store resources by subject ID
   const [resourcesBySubject, setResourcesBySubject] = useState({});
-
-  // State to track loading state for resources
   const [loadingResources, setLoadingResources] = useState({});
-
-  // State to track errors while fetching resources
   const [errorResources, setErrorResources] = useState({});
 
   useEffect(() => {
@@ -31,21 +20,18 @@ const Resources = () => {
         setSchoolGrades(res.data.school_grades);
       } catch (error) {
         console.error("Error fetching school grades:", error);
-        // Handle error appropriately, e.g., set an error state
       }
     };
 
     fetchResourceData();
   }, []);
 
-  // Toggle folder visibility and fetch resources if necessary
   const toggleFolder = async (folderType, folderId) => {
     setOpenFolders((prev) => ({
       ...prev,
       [`${folderType}${folderId}`]: !prev[`${folderType}${folderId}`],
     }));
 
-    // If toggling a subject and resources are not yet loaded, fetch them
     if (folderType === "subject" && !resourcesBySubject[folderId]) {
       setLoadingResources((prev) => ({
         ...prev,
@@ -55,7 +41,7 @@ const Resources = () => {
         const res = await Axios.get(`/api/subject/resource/${folderId}`);
         setResourcesBySubject((prev) => ({
           ...prev,
-          [folderId]: res.data.school_resources, // Assuming the response has a 'resources' array
+          [folderId]: res.data.school_resources,
         }));
         setLoadingResources((prev) => ({
           ...prev,
@@ -79,15 +65,15 @@ const Resources = () => {
   };
 
   const openPdf = (file) => {
-    setSelectedPdf(file); // Set the selected PDF file
+    setSelectedPdf(file);
   };
 
   return (
     <div>
       <Navbar />
-      <div className="flex font-poppins rounded-lg pt-28 px-9">
+      <div className="flex flex-col lg:flex-row font-poppins pt-28 px-4 lg:px-9 gap-6">
         {/* Folder list */}
-        <div className="w-[300px] bg-[#EEEEEE] min-h-[60vh] max-h-[80vh] overflow-y-auto rounded-s-lg pr-4 shadow-lg p-6 ">
+        <div className="lg:w-[300px] w-full bg-[#EEEEEE] min-h-[60vh] max-h-[80vh] overflow-y-auto rounded-lg pr-4 shadow-lg p-4 lg:p-6">
           <ul>
             {schoolGrades?.map((grade) => (
               <li key={grade.grade_id}>
@@ -167,15 +153,12 @@ const Resources = () => {
             ))}
           </ul>
         </div>
-        <div>
-          <img src="http://127.0.0.1:8000/public/hero-img.png" alt="" />
-        </div>
         {/* PDF viewer */}
-        <div className="w-full overflow-y-auto">
+        <div className="w-full lg:w-2/3 overflow-y-auto">
           {selectedPdf ? (
             <PdfViewer pdfUrl={selectedPdf} path={"resource/pdf"} />
           ) : (
-            <div className="text-center border-4 border-gray-500 h-[60vh] flex justify-center items-center text-gray-500">
+            <div className="text-center border-4 border-gray-500 h-[60vh] lg:h-[80vh] flex justify-center items-center text-gray-500">
               Select a resource to view the PDF
             </div>
           )}

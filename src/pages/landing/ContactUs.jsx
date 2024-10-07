@@ -9,7 +9,7 @@ import {
 } from "../../assets/images";
 import { Link } from "react-router-dom";
 
-const Hero = () => {
+const ContactUs = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -99,44 +99,55 @@ const Hero = () => {
             src={heroTextShadow}
             alt=""
           />
-          {/* Text Content */}
-          <div className="flex flex-col gap-5 px-4 md:px-0">
-            <p className="text-[28px] sm:text-[36px] md:text-[56px] lg:text-[76px] leading-[70px] text-white">
-              <span className="font-[100] text-[24px] sm:text-[28px] md:text-[48px] lg:text-[64px]">
-                Enabling
-              </span>
-              <br />
-              <span className="font-light text-[28px] sm:text-[36px] md:text-[48px]">
-                the Future
-              </span>
-              <br />
-              <span className="font-semibold text-[#F3D598] text-[36px] sm:text-[44px] md:text-[56px] lg:text-[76px]">
-                Generation
-              </span>
-            </p>
-            <p className="text-[16px] md:text-[18px] font-light text-white">
-              Dynamic and inclusive platform nurturing the minds of tomorrow.
-            </p>
-            {/* Flower Image on Smaller Screens */}
-            <img
-              className="absolute -bottom-[240px] hidden lg:block z-50"
-              src="./Frontend/assets/images/flower.svg"
-              alt=""
-            />
-            {/* Button */}
-            <div className="flex gap-5">
-              <Link
-                to={"/school/register"}
-                className="text-black p-3 border-white bg-white transition-all delay-75 rounded-md  border-2 hover:bg-[#F3D598]  hover:border-[#F3D598] relative z-20 "
-              >
-                Sign in a school
-              </Link>
-              <Link
-                to={"/student/register"}
-                className="text-white p-3 border-white border-2 transition-all delay-75 rounded-md hover:bg-white hover:text-black relative z-20 "
-              >
-                Sign in a student
-              </Link>
+
+          <div className="">
+            <div className="flex flex-col items-center">
+              <div className="text-center">
+                <h1 className="text-2xl xl:text-4xl font-extrabold text-[#F3D598]">
+                  Contact Us
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Enter your details to access your account
+                </p>
+              </div>
+              <div className="w-full flex-1 mt-8 relative z-50">
+                <div className="mx-auto  flex flex-col gap-4">
+                  <form>
+                    <div className="mb-6">
+                      <input
+                        type="text"
+                        id="name"
+                        className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                        placeholder="Your Name"
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <input
+                        type="email"
+                        id="email"
+                        className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                        placeholder="Your Email"
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <textarea
+                        id="message"
+                        rows="4"
+                        className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                        placeholder="Your Message"
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <button className="mt-5 tracking-wide font-semibold bg-[#F3D598] text-black w-full py-4 rounded-lg hover:bg-[#F3D598] transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                        <span className="ml-3">Send Message</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -176,4 +187,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default ContactUs;

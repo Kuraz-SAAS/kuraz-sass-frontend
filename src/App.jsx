@@ -36,6 +36,9 @@ import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ChangePassword from "./pages/Auth/ChangePassword";
 import SchoolRegistrationForm from "./pages/Auth/SchoolRegistartionForm";
 import StudentRegistrationForm from "./pages/Auth/StudentRegistartionForm";
+import Addbook from "./pages/home/Addbook";
+import Services from "./pages/landing/Services";
+import ContactUs from "./pages/landing/ContactUs";
 
 const App = () => {
   return (
@@ -47,6 +50,9 @@ const App = () => {
         <Route path="/student/register" element={<StudentRegistrationForm />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/add-book" element={<Addbook />} />
 
         <Route element={<SchoolProtectedRoute />}>
           <Route path="/school/dashboard" element={<SchoolDashboard />} />

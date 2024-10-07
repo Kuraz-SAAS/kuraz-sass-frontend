@@ -9,6 +9,7 @@ import {
   heroBanner,
   heroImage,
   kurazLogo,
+  SchoolImg,
   shadow,
 } from "../../assets/images";
 
@@ -162,7 +163,7 @@ const SchoolRegistrationForm = () => {
         backgroundImage: `url('${heroBanner}')`,
       }}
     >
-      <div className="flex flex-wrap items-center justify-between px-8 md:px-16 lg:px-32 relative">
+      <div className="flex flex-wrap z-50 items-center justify-between px-8 md:px-16 lg:px-32 relative">
         {/* Logo Section */}
         <div className="flex-shrink-0">
           <a href="/">
@@ -180,8 +181,38 @@ const SchoolRegistrationForm = () => {
       </div>
 
       {/* Hero Content */}
-      <div className="flex justify-center w-full px-4 md:px-16 lg:px-40 h-full relative">
-        <div className="w-[400px]">
+      <div className="flex justify-around gap-[400px]">
+        <div className="right-side hidden lg:flex">
+          {/* Shadow and Flower Images */}
+          <img
+            className="absolute bottom-10 lg:bottom-20"
+            src={shadow}
+            alt=""
+          />
+          <img
+            className="absolute bottom-[300px] md:bottom-[500px] -left-28 md:-left-56 z-40"
+            src={shadow}
+            alt=""
+          />
+          <img
+            className="absolute bottom-[350px] md:bottom-[570px] left-0 w-[100px] md:w-[200px] z-50"
+            src={flower}
+            alt=""
+          />
+          <img
+            className="absolute -bottom-[150px] md:-bottom-[250px] -left-28 md:-left-56 z-40"
+            src={shadow}
+            alt=""
+          />
+          {/* Main Hero Image */}
+          <img
+            src={SchoolImg}
+            alt=""
+            className="w-[800px] top-0 left-0 absolute"
+          />
+        </div>
+
+        <div className="w-[400px] z-50">
           <div className="flex flex-col gap-3 items-center">
             <div className="text-center grid gap-3">
               <p className="text-[25px] font-bold text-white underline underline-offset-2 z-50">
@@ -322,35 +353,6 @@ const SchoolRegistrationForm = () => {
         </div>
 
         {/* Right Side */}
-        <div className="right-side flex-1 mt-8 lg:mt-0 hidden lg:flex">
-          {/* Shadow and Flower Images */}
-          <img
-            className="absolute bottom-10 lg:bottom-20"
-            src={shadow}
-            alt=""
-          />
-          <img
-            className="absolute bottom-[300px] md:bottom-[500px] -right-28 md:-right-56 z-40"
-            src={shadow}
-            alt=""
-          />
-          <img
-            className="absolute bottom-[350px] md:bottom-[570px] right-0 w-[100px] md:w-[200px] z-50"
-            src={flower}
-            alt=""
-          />
-          <img
-            className="absolute -bottom-[150px] md:-bottom-[250px] -right-28 md:-right-56 z-40"
-            src={shadow}
-            alt=""
-          />
-          {/* Main Hero Image */}
-          <img
-            src={heroImage}
-            alt=""
-            className="absolute top-0 right-0 md:-right-[100px] lg:-right-[220px] w-full max-w-[400px] md:max-w-[800px] lg:max-w-[1100px] z-30"
-          />
-        </div>
       </div>
     </div>
   );
