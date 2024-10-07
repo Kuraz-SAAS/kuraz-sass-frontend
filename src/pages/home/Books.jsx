@@ -63,9 +63,9 @@ export const Books = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex items-start px-20 pt-32 font-poppins gap-10">
+      <div className="flex flex-col lg:flex-row items-start px-5 lg:px-20 pt-24 lg:pt-32 font-poppins gap-10">
         {/* Sidebar: Search and Filters */}
-        <div className="w-[300px] sticky top-[100px]">
+        <div className="w-full lg:w-[300px] lg:sticky top-[100px] mb-8 lg:mb-0">
           {/* Search Bar */}
           <div className="mb-4">
             <Input
@@ -106,7 +106,7 @@ export const Books = () => {
         </div>
 
         {/* Books List */}
-        <div className="basis-2/3 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="w-full grid  md:grid-cols-3 lg:grid-cols-4 gap-4">
           {loading ? (
             <div className="flex items-center justify-center w-full h-screen">
               <ImSpinner10 className="animate-spin" size={80} />

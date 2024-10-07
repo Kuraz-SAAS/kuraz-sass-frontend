@@ -28,8 +28,8 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <section className="w-full">
-        <div className="font-poppins">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-6">
+        <div className="font-poppins grid">
+          <div className="">
             {/* Total Course Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
               <div className="text-3xl font-semibold">

@@ -6,6 +6,7 @@ import heroTextShadow from "./hero-text-shadow.svg";
 import kurazLogo from "./Kuraz-logo.svg";
 import shadow from "./shadow.svg";
 import CourseBannner from "./courses_banner.png";
+import SchoolImg from "./schoolimg.png";
 
 export {
   devices,
@@ -16,4 +17,5 @@ export {
   kurazLogo,
   shadow,
   CourseBannner,
+  SchoolImg,
 };
