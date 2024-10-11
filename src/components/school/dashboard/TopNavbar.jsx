@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown } from "react-icons/fa"; // React Icons
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../../context/siteStore";
-import { avatar } from "@material-tailwind/react";
+import { avatar } from "../../../assets/images";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
