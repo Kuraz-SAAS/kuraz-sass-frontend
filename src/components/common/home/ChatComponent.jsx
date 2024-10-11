@@ -15,7 +15,7 @@ const ChatComponent = () => {
   const askAboutPdf = async (fileName, question, userId) => {
     try {
       setLoading(true);
-      const response = await fetch("https://chat.saas.kuraztech.com/ask", {
+      const response = await fetch("https://chat.saas.kuraztech.com/api/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
