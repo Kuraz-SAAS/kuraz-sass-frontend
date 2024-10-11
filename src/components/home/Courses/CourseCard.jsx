@@ -10,6 +10,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import Axios from "../../../middleware/Axios";
+import { avatar } from "../../../assets/images";
 
 const CourseCard = ({ course, user, onFavoriteToggle }) => {
   const navigate = useNavigate();
@@ -69,14 +70,7 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
           <div className="flex  items-center gap-3">
             <div className="">
               <div className="course-instructor-image rounded-full">
-                <img
-                  src={
-                    course?.instructor?.instructor_image ||
-                    "/path/to/default-instructor.png"
-                  }
-                  // alt={course.instructor.name}
-                  className="w-[50px] h-[50px] rounded-full"
-                />
+                <img src={avatar} className="w-[50px]" />
               </div>
             </div>
             <div>

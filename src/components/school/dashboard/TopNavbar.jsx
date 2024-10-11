@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown } from "react-icons/fa"; // React Icons
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../../context/siteStore";
+import { avatar } from "@material-tailwind/react";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,11 +60,7 @@ const TopNavbar = () => {
             onClick={handleProfileMenuClick}
             className="flex items-center space-x-1 text-gray-800 hover:text-blue-600 text-sm"
           >
-            <img
-              src="./Frontend/assets/images/kuraz.png"
-              alt="Profile"
-              className="w-7 h-7 rounded-full"
-            />
+            <img src={avatar} alt="Profile" className="w-7 h-7 rounded-full" />
             <span>John Doe</span>
             <FaChevronDown className="text-xs" />
           </button>
@@ -73,22 +70,8 @@ const TopNavbar = () => {
               isMenuOpen ? "block" : "hidden"
             }`}
           >
-            <a
-              href="/profile"
-              className="block px-3 py-1 text-gray-700 hover:bg-gray-100 text-sm"
-              onClick={() => handleNavigation("/profile")}
-            >
-              Profile
-            </a>
-            <a
-              href="/settings"
-              className="block px-3 py-1 text-gray-700 hover:bg-gray-100 text-sm"
-              onClick={() => handleNavigation("/settings")}
-            >
-              Settings
-            </a>
             <button
-              className="block px-3 py-1 text-gray-700 hover:bg-gray-100 text-sm"
+              className="block px-3 py-1 text-gray-700 w-full text-start hover:bg-gray-100 text-sm"
               onClick={() => {
                 document.cookie = "XSRF-TOKEN=; Max-Age=0"; // Delete CSRF Token
                 document.cookie = "session=; Max-Age=0"; // Delete session cookie

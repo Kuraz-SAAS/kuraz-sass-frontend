@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaPaperPlane } from "react-icons/fa";
-import ReactMarkdown from "react-markdown"; // Import ReactMarkdown
+import ReactMarkdown from "react-markdown";
 
 const ChatComponent = () => {
   const [messages, setMessages] = useState([]);
@@ -8,16 +8,14 @@ const ChatComponent = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Scroll to the bottom of the chat when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Function to handle sending a question to the backend
   const askAboutPdf = async (fileName, question, userId) => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/ask", {
+      const response = await fetch("http://localhost:3000/api/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,20 +23,23 @@ const ChatComponent = () => {
         body: JSON.stringify({ fileName, question, userId }),
       });
 
+      // Check for 429 response
+      if (response.status === 429) {
+        throw new Error("Exceeded limit, try in a few minutes please");
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
+      let assistantResponse = ""; // Cumulative response
 
-      // Start the message with an empty string for the bot's response
-      let assistantResponse = "";
-
-      // Add a placeholder for the bot's response in the chat
+      // Add initial temporary bot message
       setMessages((prev) => [
         ...prev,
-        { text: "", sender: "bot", id: "temp-bot" }, // Temporarily add bot message with an empty response
+        { text: "", sender: "bot", id: "temp-bot" },
       ]);
 
       while (true) {
@@ -46,17 +47,24 @@ const ChatComponent = () => {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
+        console.log("Received chunk:", chunk); // Debug log
         assistantResponse += chunk;
 
         // Update the latest bot message in real-time as chunks are received
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.id === "temp-bot" ? { ...msg, text: assistantResponse } : msg
-          )
-        );
+        setMessages((prevMessages) => {
+          const tempBotMessage = prevMessages.find(
+            (msg) => msg.id === "temp-bot"
+          );
+          if (tempBotMessage) {
+            return prevMessages.map((msg) =>
+              msg.id === "temp-bot" ? { ...msg, text: assistantResponse } : msg
+            );
+          }
+          return prevMessages; // Return previous state if temp-bot message is not found
+        });
       }
 
-      // Once the full response is received, update the message id to indicate it's complete
+      // Final update to the bot message
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg.id === "temp-bot" ? { ...msg, id: `bot-${Date.now()}` } : msg
@@ -66,7 +74,7 @@ const ChatComponent = () => {
       console.error("Error occurred:", error.message);
       setMessages((prev) => [
         ...prev,
-        { text: `Error: ${error.message}`, sender: "bot" },
+        { text: `${error.message}`, sender: "bot" },
       ]);
     } finally {
       setLoading(false);
@@ -75,29 +83,26 @@ const ChatComponent = () => {
 
   const handleSend = () => {
     if (input.trim()) {
-      const fileName = "test.pdf"; // Replace with your actual PDF file name
-      const userId = "user123"; // Replace with the actual user ID
+      const fileName = "test.pdf";
+      const userId = "user123";
 
-      // Add user's message to the chat
       setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 
-      // Call the askAboutPdf function to handle the bot's response
       askAboutPdf(fileName, input, userId);
-
-      setInput(""); // Clear the input after sending
+      setInput("");
     }
   };
 
-  // Function to format the assistant's response text with preserved whitespace and newlines
+  // Update the formatAssistantMessage to add line numbers
   const formatAssistantMessage = (message) => {
     if (typeof message !== "string") {
-      return ""; // Return an empty string if it's not a string
+      return "";
     }
 
     return message
-      ?.replace(/</g, "&lt;") // Escape HTML
-      ?.replace(/>/g, "&gt;")
-      ?.replace(/(?:\r\n|\r|\n)/g, "\n"); // Convert new lines to \n for Markdown
+      .split(/\r?\n/) // Split by newlines
+      .map((line, index) => `${index + 1}. ${line}`) // Add line numbers
+      .join("\n"); // Join them back with line breaks
   };
 
   return (

@@ -66,24 +66,6 @@ const Sidebar = () => {
               </span>
             </NavLink>
           </li>
-
-          <li>
-            <NavLink
-              to="/student/settings"
-              className={({ isActive }) =>
-                `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "hover:bg-black hover:text-white"
-                }`
-              }
-            >
-              <FaCog className="text-gray-400 mr-2" />
-              <span className="font-medium text-sm hidden md:block">
-                Settings
-              </span>
-            </NavLink>
-          </li>
         </ul>
       </div>
 
