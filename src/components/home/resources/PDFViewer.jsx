@@ -5,6 +5,7 @@ import axios from "axios";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css"; // Include default layout styles
 import Axios from "../../../middleware/Axios";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const PdfViewer = ({ pdfUrl, path }) => {
   const [numPages, setNumPages] = useState(null);
@@ -45,7 +46,16 @@ const PdfViewer = ({ pdfUrl, path }) => {
           />
         </Worker>
       ) : (
-        <p>Loading PDF...</p> // A loading message while the PDF is being fetched
+        <div className="flex flex-col gap-2 h-full justify-center items-center">
+          <AiOutlineLoading3Quarters
+            className="animate-spin text-gray-500"
+            style={{ width: "50px", height: "50px" }}
+          />
+          <p className="ml-3 text-gray-500">Loading PDF...</p>
+          <p className="text-gray-500">
+            It only take longer on the first time please wait
+          </p>
+        </div>
       )}
     </div>
   );

@@ -11,6 +11,7 @@ import {
   Checkbox,
 } from "@material-tailwind/react";
 import { ImSpinner10 } from "react-icons/im"; // Importing the spinner icon
+import { FaBook } from "react-icons/fa";
 
 const getCategories = (books) => {
   const categories = books.map((book) => book.category.cat_name);
@@ -104,27 +105,26 @@ export const Books = () => {
             </AccordionBody>
           </Accordion>
         </div>
-
+        {loading ? (
+          <div className="flex items-center justify-center w-full h-screen">
+            <ImSpinner10 className="animate-spin" size={80} />
+          </div>
+        ) : filteredBooks?.length === 0 ? (
+          <div className="container text-center h-full">
+            <FaBook
+              className="mx-auto text-gray-400"
+              style={{ width: "100px", height: "100px", color: "#4A90E2" }}
+            />
+            <h4 className="mt-4 text-xl text-gray-700">No Books Found</h4>
+          </div>
+        ) : (
+          <div className="w-full grid  md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredBooks?.map((book) => (
+              <BookCard key={book.id} book={book} />
+            ))}
+          </div>
+        )}
         {/* Books List */}
-        <div className="w-full grid  md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {loading ? (
-            <div className="flex items-center justify-center w-full h-screen">
-              <ImSpinner10 className="animate-spin" size={80} />
-            </div>
-          ) : filteredBooks?.length === 0 ? (
-            <div className="container text-center">
-              <img
-                src="/path/to/notfound.png"
-                alt="No Books Found"
-                className="mx-auto"
-                style={{ width: "500px" }}
-              />
-              <h4 className="mt-4 text-xl text-gray-700">No Books Found</h4>
-            </div>
-          ) : (
-            filteredBooks?.map((book) => <BookCard key={book.id} book={book} />)
-          )}
-        </div>
       </div>
     </div>
   );
