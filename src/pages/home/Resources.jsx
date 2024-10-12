@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa";
-import { AiFillFilePdf } from "react-icons/ai";
+import { AiFillFilePdf, AiOutlineFilePdf } from "react-icons/ai";
 import PdfViewer from "../../components/home/resources/PDFViewer";
 import Navbar from "../../components/common/home/Navbar";
 import Axios from "../../middleware/Axios";
@@ -159,7 +159,13 @@ const Resources = () => {
             <PdfViewer pdfUrl={selectedPdf} path={"resource/pdf"} />
           ) : (
             <div className="text-center border-4 border-gray-500 h-[60vh] lg:h-[80vh] flex justify-center items-center text-gray-500">
-              Select a resource to view the PDF
+              <div className="flex flex-col items-center">
+                <AiOutlineFilePdf
+                  className="mb-4"
+                  style={{ width: "50px", height: "50px", color: "#6B7280" }}
+                />
+                <p>Select a resource to view the PDF</p>
+              </div>
             </div>
           )}
         </div>

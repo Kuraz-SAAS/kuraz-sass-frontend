@@ -6,18 +6,19 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({});
 
   useEffect(() => {
-    const feachDashboard = async () => {
+    const fetchDashboard = async () => {
       await Axios.get("api/tenant/admin/dashboard").then((res) => {
         setDashboardData(res.data);
       });
     };
 
-    feachDashboard();
+    fetchDashboard();
   }, []);
 
   return (
     <DashboardLayout>
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Total Students Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
           <div className="text-3xl font-semibold mb-2">
             {dashboardData?.total_students}

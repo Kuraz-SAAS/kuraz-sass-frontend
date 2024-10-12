@@ -5,36 +5,47 @@ import Axios from "../../../../middleware/Axios";
 import ResourcesDatatable from "../../../../components/common/dashboard/ResourcesDatatable";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner and sad icon
 
 const Resources = () => {
   const [resourceData, setResourcesGradeData] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      await Axios.get("/api/schoolResources").then((res) => {
+      try {
+        const res = await Axios.get("/api/schoolResources");
         console.log(res);
         setResourcesGradeData(res.data.school_resources);
-      });
+      } catch (error) {
+        toast.error("Failed to fetch resources.");
+      } finally {
+        setLoading(false); // Set loading to false after data fetch
+      }
     };
     fetchData();
   }, []);
 
   const headers = ["Name", "Subject", "Grade", "Actions"];
+
   const editGrade = (id) => {
     console.log(id);
     navigate("/school/resources/edit/" + id);
   };
+
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolResources/" + id).then((res) => {
-      toast.success("Grade deleted successfully");
-      navigate("/school/dashboard");
+      toast.success("Resource deleted successfully");
+      fetchData(); // Refresh data after deletion
     });
   };
+
   const actions = [
     { label: "Edit", function: editGrade },
     { label: "Delete", function: deleteGrade },
   ];
+
   return (
     <div>
       <DashboardLayout>
@@ -42,12 +53,23 @@ const Resources = () => {
           <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
             Add Resources
           </Link>
-          {resourceData.length > 0 && (
+          {loading ? ( // Conditional rendering for loading state
+            <div className="flex justify-center items-center h-64">
+              <FaSpinner className="animate-spin text-3xl" />{" "}
+              {/* Spinner icon */}
+            </div>
+          ) : resourceData.length > 0 ? ( // Conditional rendering for resources data
             <ResourcesDatatable
               datas={resourceData}
               headers={headers}
               actions={actions}
             />
+          ) : (
+            // Display no resources message
+            <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+              <FaRegSadCry className="text-6xl mb-2" /> {/* Sad icon */}
+              <p>No resources available.</p>
+            </div>
           )}
         </div>
       </DashboardLayout>

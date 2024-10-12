@@ -16,6 +16,7 @@ import Navbar from "../../components/common/home/Navbar";
 import CourseCard from "../../components/home/Courses/CourseCard";
 import { useSiteStore } from "../../context/siteStore";
 import { ImSpinner10 } from "react-icons/im";
+import { FaGraduationCap } from "react-icons/fa";
 
 // Icon Component for Accordion
 function Icon({ id, open }) {
@@ -181,34 +182,31 @@ const CoursesPage = () => {
           </Menu>
         </div>
 
-        <div className="basis-2/3 grid grid-cols-1 pt-10 lg:pt-0 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 w-full">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-screen w-full">
-              <ImSpinner10 className="animate-spin text-primary" size={80} />
-            </div>
-          ) : error ? (
-            <div className="container text-center text-red-500">{error}</div>
-          ) : filteredCourses.length === 0 ? (
-            <div className="container text-center">
-              <img
-                src="/path/to/notfound.png"
-                alt="No Courses Found"
-                className="mx-auto"
-                style={{ width: "300px" }}
-                loading="lazy"
-              />
-              <h4 className="mt-4 text-xl text-gray-700">No Course Found</h4>
-            </div>
-          ) : (
-            filteredCourses.map((course) => (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-screen w-full">
+            <ImSpinner10 className="animate-spin text-primary" size={80} />
+          </div>
+        ) : error ? (
+          <div className="container text-center text-red-500">{error}</div>
+        ) : filteredCourses.length === 0 ? (
+          <div className="container text-center w-full">
+            <FaGraduationCap
+              className="mx-auto"
+              style={{ width: "100px", height: "100px", color: "#4A90E2" }}
+            />
+            <h4 className="mt-4 text-xl text-gray-700">No Courses Found</h4>
+          </div>
+        ) : (
+          <div className="basis-2/3 grid grid-cols-1 pt-10 lg:pt-0 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 w-full">
+            {filteredCourses.map((course) => (
               <CourseCard
                 key={course.id}
                 course={course}
                 user={user ? { favorites: user.favorites } : { favorites: [] }}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
