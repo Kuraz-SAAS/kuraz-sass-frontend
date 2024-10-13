@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CircleLoader, ClipLoader } from "react-spinners"; // Import the spinner from react-spinners
 import LandingPages from "./pages/landing/LandingPages";
 import LoginForm from "./pages/Auth/LoginForm";
 import { Books } from "./pages/home/Books";
@@ -30,7 +31,6 @@ import AddNotice from "./pages/dashboard/school/notice/AddNotice";
 import EditNotice from "./pages/dashboard/school/notice/EditNotice";
 import SchoolProtectedRoute from "./protectedRoutes/SchoolProtectedRoute";
 import StudentProtectedRoute from "./protectedRoutes/StudentProtectedRoute";
-import CommonProtectedRoute from "./protectedRoutes/CommonProtectedRoute";
 import SingleBook from "./pages/home/SingleBook";
 import ForgetPassword from "./pages/Auth/ForgetPassword";
 import ChangePassword from "./pages/Auth/ChangePassword";
@@ -39,8 +39,29 @@ import StudentRegistrationForm from "./pages/Auth/StudentRegistartionForm";
 import Addbook from "./pages/home/Addbook";
 import Services from "./pages/landing/Services";
 import ContactUs from "./pages/landing/ContactUs";
+import { infiniteSpiner } from "./assets/images";
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate 4 minutes (240000 ms) loading time
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000); // 4 minutes
+
+    // Clean up timer in case the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center bg-secondary items-center h-screen">
+        <img src={infiniteSpiner} alt="" className="max-w-[100px]" />
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Routes>

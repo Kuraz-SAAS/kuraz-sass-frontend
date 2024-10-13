@@ -8,10 +8,15 @@ import shadow from "./shadow.svg";
 import CourseBannner from "./courses_banner.png";
 import SchoolImg from "./schoolimg.png";
 import avatar from "./avatar.png";
-
+import infiniteSpiner from "./infinite-spining.svg";
+import gearSpinner from "./gear-spinner.svg";
+import AI from "./ai.png";
 export {
+  gearSpinner,
+  AI,
   devices,
   flower,
+  infiniteSpiner,
   heroBanner,
   heroImage,
   heroTextShadow,

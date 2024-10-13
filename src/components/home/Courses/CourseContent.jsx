@@ -38,7 +38,7 @@ const CourseContent = ({ section, setCurrentVideos }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-h-[80vh] overflow-y-auto">
       <h2 className="text-xl font-semibold">Content</h2>
       <p className="text-[12px] text-gray-500">
         * Check the eye icon after finishing each video to mark the video as
@@ -47,12 +47,9 @@ const CourseContent = ({ section, setCurrentVideos }) => {
       {/* Loop through the sections */}
       {sections?.map((sec, sectionIndex) => (
         <section key={sec.id}>
-          <div
-            className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
-            onClick={() => toggleSection(sec?.id)}
-          >
+          <div className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer">
             <div className="flex items-center space-x-2">
-              <FaPlayCircle size={20} />
+              <FaPlayCircle size={20} onClick={() => toggleSection(sec?.id)} />
               <h3 className="font-semibold">{sec?.section_title}</h3>
               <span className="text-sm text-gray-600">
                 ({sec?.videos?.length} Lectures)

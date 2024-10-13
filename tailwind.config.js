@@ -13,6 +13,7 @@ export default withMT({
       colors: {
         primary: "#323238",
         secondary: "#323238",
+        black: "#323238",
       },
       fontFamily: {
         poppins: '"Poppins", system-ui',
