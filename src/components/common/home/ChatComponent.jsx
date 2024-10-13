@@ -14,7 +14,7 @@ const ChatComponent = () => {
 
   const askAboutPdf = async (fileName, question, userId) => {
     try {
-      setLoading(true);
+      setLoading(true); // Set loading to true to disable the button
       const response = await fetch("http://localhost:3000/api/ask", {
         method: "POST",
         headers: {
@@ -77,7 +77,7 @@ const ChatComponent = () => {
         { text: `${error.message}`, sender: "bot" },
       ]);
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading back to false after the request is done
     }
   };
 
@@ -106,7 +106,7 @@ const ChatComponent = () => {
   };
 
   return (
-    <div className="flex flex-col h-[80vh] border-l bg-gray-100 rounded-lg w-[500px] border-gray-300 p-4">
+    <div className="flex flex-col h-full border bg-gray-100 rounded-b-lg w-[400px] shadow-md shadow-[#F3D598] border-gray-300 p-4">
       <div className="flex-1 overflow-y-auto">
         {messages.map((msg, index) => (
           <div
@@ -149,16 +149,24 @@ const ChatComponent = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !loading) {
               handleSend();
             }
           }}
+          disabled={loading} // Disable the input field while loading
         />
         <button
-          className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
+          className={`ml-2 p-2 rounded-lg ${
+            loading ? "bg-gray-400" : "bg-primary"
+          } text-white`}
           onClick={handleSend}
+          disabled={loading} // Disable the button while loading
         >
-          <FaPaperPlane />
+          {loading ? (
+            <div className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></div>
+          ) : (
+            <FaPaperPlane />
+          )}
         </button>
       </div>
     </div>
