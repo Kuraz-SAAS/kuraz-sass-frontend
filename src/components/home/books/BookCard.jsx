@@ -9,7 +9,7 @@ const BookCard = ({ book }) => {
         <img
           className="w-full h-72 rounded-t-lg object-cover"
           loading="lazy"
-          src={`https://api.saas.kuraztech.com/storage/BookThumbnail/${book?.book_cover}`}
+          src={`http://saas.kuraztech.com/${book?.book_title?.toLowerCase()}.jpeg`}
           alt={book?.book_cover}
         />
       </Link>
