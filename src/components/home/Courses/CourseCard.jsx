@@ -21,7 +21,10 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
   return (
     <Card className="w-full grid gap-5 font-poppins max-w-[26rem] shadow-lg">
       <CardHeader floated={false} color="blue-gray">
-        <img src={course?.course_cover} alt="ui/ux review check" />
+        <img
+          src={`https://api.saas.kuraztech.com/storage/CourseThumbnail/${course?.course_cover}`}
+          alt={course?.course_cover}
+        />
         <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
         <IconButton
           size="sm"

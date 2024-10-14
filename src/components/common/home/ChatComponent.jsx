@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+import { useSiteStore } from "../../../context/siteStore";
 
-const ChatComponent = () => {
+const ChatComponent = ({ pdfFile }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const user = useSiteStore((store) => store.user);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,7 +31,7 @@ const ChatComponent = () => {
       }
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response}`);
       }
 
       const reader = response.body.getReader();
@@ -83,8 +85,8 @@ const ChatComponent = () => {
 
   const handleSend = () => {
     if (input.trim()) {
-      const fileName = "test.pdf";
-      const userId = "user123";
+      const fileName = pdfFile;
+      const userId = user?.user_id;
 
       setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 

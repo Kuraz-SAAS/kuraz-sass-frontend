@@ -9,8 +9,8 @@ const BookCard = ({ book }) => {
         <img
           className="w-full h-72 rounded-t-lg object-cover"
           loading="lazy"
-          src={bookImg}
-          alt="Book Cover"
+          src={`https://api.saas.kuraztech.com/storage/BookThumbnail/${book?.book_cover}`}
+          alt={book?.book_cover}
         />
       </Link>
       <div className="p-4 flex flex-col">
@@ -18,19 +18,19 @@ const BookCard = ({ book }) => {
           {book.book_title}
         </h5>
         <p className="text-sm text-gray-600 mt-1">
-          {book.book_author && book.book_author.name}
+          {book?.book_author && book?.book_author.name}
         </p>
         <div className="flex items-center text-xs text-gray-500 mt-2">
           <span>Category: </span>
-          <p className="ml-1">{book.book_category_id}</p>
+          <p className="ml-1">{book?.book_category_id}</p>
         </div>
         <div className="flex justify-between items-center mt-4">
           <div>
-            {book.price ? (
+            {book?.price ? (
               <p className="text-lg font-bold text-blue-600">
-                {book.currency === "ETB"
-                  ? `ETB ${book.price}`
-                  : `USD ${book.price}`}
+                {book?.currency === "ETB"
+                  ? `ETB ${book?.price}`
+                  : `USD ${book?.price}`}
               </p>
             ) : (
               <p className="text-lg font-bold text-green-600">Free</p>
