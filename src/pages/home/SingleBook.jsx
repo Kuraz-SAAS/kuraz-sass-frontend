@@ -55,7 +55,10 @@ const SingleBook = () => {
 
           {/* Conditionally render the ChatComponent */}
           {isChatVisible && (
-            <ChatComponent className="transition-all duration-300 ease-in-out" />
+            <ChatComponent
+              pdfName={book?.book_source}
+              className="transition-all duration-300 ease-in-out"
+            />
           )}
         </div>
       </div>
