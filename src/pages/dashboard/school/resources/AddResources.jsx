@@ -9,8 +9,7 @@ const AddResources = () => {
   const [subject, setSubject] = useState("");
   const [file, setFile] = useState(null);
   const [subjects, setSubjects] = useState([]);
-  const navigate = useNavigate(); // Hook for navigating
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
