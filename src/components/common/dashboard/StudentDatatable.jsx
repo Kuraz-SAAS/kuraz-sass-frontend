@@ -4,19 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
 import Axios from "../../../middleware/Axios";
+import CustomPagination from "../CustomPagination";
 
 const StudentDatatable = ({ datas, headers, actions }) => {
   const [searchValue, setSearchValue] = useState();
   const [dataList, setDataList] = useState([...datas]);
-  const [rowsLimit] = useState(5);
+  const [rowsLimit] = useState(8);
   const [rowsToShow, setRowsToShow] = useState(dataList?.slice(0, rowsLimit));
   const [customPagination, setCustomPagination] = useState([]);
   const [activeColumn, setActiveColumn] = useState(["Price"]);
   const [sortingColumn, setSortingColumn] = useState(["Price"]);
-  const [totalPage, setTotalPage] = useState(
-    Math.ceil(dataList?.length / rowsLimit)
-  );
-  const [currentPage, setCurrentPage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStudent, setNewStudent] = useState({
     name: "",
@@ -34,6 +31,16 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const [totalChunks, setTotalChunks] = useState(0);
   const CHUNK_SIZE = 50;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // or whatever number you want
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    const startIndex = pageNumber * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setRowsToShow(dataList.slice(startIndex, endIndex));
+  };
+
   function searchProducts(keyword) {
     keyword = keyword.toLowerCase();
     setSearchValue(keyword);
@@ -49,10 +56,10 @@ const StudentDatatable = ({ datas, headers, actions }) => {
       setDataList(results);
       setRowsToShow(results?.slice(0, rowsLimit));
       setCurrentPage(0);
-      setTotalPage(Math.ceil(results?.length / rowsLimit));
-      setCustomPagination(
-        Array(Math.ceil(results?.length / rowsLimit)).fill(null)
-      );
+      // setTotalPage(Math.ceil(results?.length / rowsLimit));
+      // setCustomPagination(
+      //   Array(Math.ceil(results?.length / rowsLimit)).fill(null)
+      // );
     } else {
       clearData();
     }
@@ -63,107 +70,108 @@ const StudentDatatable = ({ datas, headers, actions }) => {
     setDataList(sortedProducts);
     setRowsToShow(sortedProducts?.slice(0, rowsLimit));
     setCustomPagination(Array(Math.ceil(datas?.length / rowsLimit)).fill(null));
-    setTotalPage(Math.ceil(datas?.length / rowsLimit));
+    // setTotalPage(Math.ceil(datas?.length / rowsLimit));
   };
-  const sortByColumn = (column, changeSortingColumn = true) => {
-    if (column != "Price") {
-      if (sortingColumn?.includes(column) && changeSortingColumn) {
-        const sortData = dataList
-          ?.slice()
-          .sort((a, b) =>
-            b[column].toString().localeCompare(a[column].toString())
-          );
-        setRowsToShow(
-          sortData?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
-          )
-        );
-        if (changeSortingColumn) {
-          setSortingColumn([]);
-          setDataList(sortData);
-        }
-      } else {
-        const sortData = dataList
-          ?.slice()
-          .sort((a, b) =>
-            a[column].toString().localeCompare(b[column].toString())
-          );
-        setRowsToShow(
-          sortData?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
-          )
-        );
-        if (changeSortingColumn) {
-          setDataList(sortData);
-          setSortingColumn([`${column}`]);
-        }
-      }
-    } else {
-      if (sortingColumn?.includes(column)) {
-        const sortedProducts = dataList
-          ?.slice()
-          .sort((a, b) => b.Price - a.Price);
-        setRowsToShow(
-          sortedProducts?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
-          )
-        );
-        if (changeSortingColumn) {
-          setSortingColumn([]);
-          setDataList(sortedProducts);
-        }
-      } else {
-        const sortedProducts = dataList
-          ?.slice()
-          .sort((a, b) => a.Price - b.Price);
-        setRowsToShow(
-          sortedProducts?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
-          )
-        );
-        if (changeSortingColumn) {
-          setSortingColumn([`${column}`]);
-          setDataList(sortedProducts);
-        }
-      }
-    }
-    setActiveColumn([`${column}`]);
-    // setCurrentPage(0);
-  };
-  const nextPage = () => {
-    const startIndex = rowsLimit * (currentPage + 1);
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(currentPage + 1);
-  };
-  const changePage = (value) => {
-    const startIndex = value * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(value);
-  };
-  const previousPage = () => {
-    const startIndex = (currentPage - 1) * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    } else {
-      setCurrentPage(0);
-    }
-  };
+  // const sortByColumn = (column, changeSortingColumn = true) => {
+  //   if (column != "Price") {
+  //     if (sortingColumn?.includes(column) && changeSortingColumn) {
+  //       const sortData = dataList
+  //         ?.slice()
+  //         .sort((a, b) =>
+  //           b[column].toString().localeCompare(a[column].toString())
+  //         );
+  //       setRowsToShow(
+  //         sortData?.slice(
+  //           currentPage * rowsLimit,
+  //           (currentPage + 1) * rowsLimit
+  //         )
+  //       );
+  //       if (changeSortingColumn) {
+  //         setSortingColumn([]);
+  //         setDataList(sortData);
+  //       }
+  //     } else {
+  //       const sortData = dataList
+  //         ?.slice()
+  //         .sort((a, b) =>
+  //           a[column].toString().localeCompare(b[column].toString())
+  //         );
+  //       setRowsToShow(
+  //         sortData?.slice(
+  //           currentPage * rowsLimit,
+  //           (currentPage + 1) * rowsLimit
+  //         )
+  //       );
+  //       if (changeSortingColumn) {
+  //         setDataList(sortData);
+  //         setSortingColumn([`${column}`]);
+  //       }
+  //     }
+  //   } else {
+  //     if (sortingColumn?.includes(column)) {
+  //       const sortedProducts = dataList
+  //         ?.slice()
+  //         .sort((a, b) => b.Price - a.Price);
+  //       setRowsToShow(
+  //         sortedProducts?.slice(
+  //           currentPage * rowsLimit,
+  //           (currentPage + 1) * rowsLimit
+  //         )
+  //       );
+  //       if (changeSortingColumn) {
+  //         setSortingColumn([]);
+  //         setDataList(sortedProducts);
+  //       }
+  //     } else {
+  //       const sortedProducts = dataList
+  //         ?.slice()
+  //         .sort((a, b) => a.Price - b.Price);
+  //       setRowsToShow(
+  //         sortedProducts?.slice(
+  //           currentPage * rowsLimit,
+  //           (currentPage + 1) * rowsLimit
+  //         )
+  //       );
+  //       if (changeSortingColumn) {
+  //         setSortingColumn([`${column}`]);
+  //         setDataList(sortedProducts);
+  //       }
+  //     }
+  //   }
+  //   setActiveColumn([`${column}`]);
+  //   // setCurrentPage(0);
+  // };
+  // const nextPage = () => {
+  //   const startIndex = rowsLimit * (currentPage + 1);
+  //   const endIndex = startIndex + rowsLimit;
+  //   const newArray = datas?.slice(startIndex, endIndex);
+  //   setRowsToShow(newArray);
+  //   setCurrentPage(currentPage + 1);
+  // };
+  // const changePage = (value) => {
+  //   const startIndex = value * rowsLimit;
+  //   const endIndex = startIndex + rowsLimit;
+  //   const newArray = datas?.slice(startIndex, endIndex);
+  //   setRowsToShow(newArray);
+  //   setCurrentPage(value);
+  // };
+  // const previousPage = () => {
+  //   const startIndex = (currentPage - 1) * rowsLimit;
+  //   const endIndex = startIndex + rowsLimit;
+  //   const newArray = datas?.slice(startIndex, endIndex);
+  //   setRowsToShow(newArray);
+  //   if (currentPage > 1) {
+  //     setCurrentPage(currentPage - 1);
+  //   } else {
+  //     setCurrentPage(0);
+  //   }
+  // };
   useMemo(() => {
     setCustomPagination(
       Array(Math.ceil(dataList?.length / rowsLimit)).fill(null)
     );
   }, []);
+
   useEffect(() => {
     const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
     setDataList(sortedProducts);
@@ -438,51 +446,11 @@ const StudentDatatable = ({ datas, headers, actions }) => {
               {Math.min((currentPage + 1) * rowsLimit, dataList?.length)} of{" "}
               {dataList?.length} entries
             </div>
-            <div className="flex items-center">
-              <button
-                className={`p-2 rounded-full border border-gray-300 ${
-                  currentPage === 0
-                    ? "bg-gray-200 cursor-not-allowed"
-                    : "bg-white cursor-pointer"
-                }`}
-                onClick={previousPage}
-                disabled={currentPage === 0}
-              >
-                <img
-                  src="https://www.tailwindtap.com/assets/travelagency-admin/leftarrow.svg"
-                  alt="Previous"
-                />
-              </button>
-              <ul className="flex mx-4">
-                {customPagination?.map((_, index) => (
-                  <li
-                    key={index}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 cursor-pointer ${
-                      currentPage === index
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white"
-                    }`}
-                    onClick={() => changePage(index)}
-                  >
-                    {index + 1}
-                  </li>
-                ))}
-              </ul>
-              <button
-                className={`p-2 rounded-full border border-gray-300 ${
-                  currentPage === totalPage - 1
-                    ? "bg-gray-200 cursor-not-allowed"
-                    : "bg-white cursor-pointer"
-                }`}
-                onClick={nextPage}
-                disabled={currentPage === totalPage - 1}
-              >
-                <img
-                  src="https://www.tailwindtap.com/assets/travelagency-admin/rightarrow.svg"
-                  alt="Next"
-                />
-              </button>
-            </div>
+            <CustomPagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(datas?.length / itemsPerPage)}
+              onPageChange={handlePageChange}
+            />
           </div>
           <AnimatePresence>
             {isModalOpen && (
