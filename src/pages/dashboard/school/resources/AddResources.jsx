@@ -10,6 +10,7 @@ const AddResources = () => {
   const [file, setFile] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
