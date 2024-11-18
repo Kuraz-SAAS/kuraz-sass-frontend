@@ -5,17 +5,27 @@ import NoticeDatatable from "../../../../components/common/dashboard/NoticeDatat
 import Axios from "../../../../middleware/Axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
+import AddNoticeModal from "./AddNoticeModal";
 
 const Notices = () => {
   const [noticeData, setNoticeData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  const fetchData = async () => {
+    try {
+      const res = await Axios.get("/api/schoolNotices");
+      setNoticeData(res.data.school_notices);
+    } catch (error) {
+      toast.error("Failed to fetch notices.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      await Axios.get("/api/schoolNotices").then((res) => {
-        setNoticeData(res.data.notices);
-      });
-    };
     fetchData();
   }, []);
 
@@ -39,17 +49,34 @@ const Notices = () => {
     <div>
       <DashboardLayout>
         <div>
-          <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#bc8c4e] text-white p-2 rounded-md"
+          >
             Add Notice
-          </Link>
+          </button>
+
+          <AnimatePresence>
+            {isModalOpen && (
+              <AddNoticeModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={() => {
+                  setIsModalOpen(false);
+                  fetchData();
+                }}
+              />
+            )}
+          </AnimatePresence>
+
+          {noticeData?.length > 0 && (
+            <NoticeDatatable
+              datas={noticeData}
+              headers={headers}
+              actions={actions}
+            />
+          )}
         </div>
-        {noticeData.length > 0 && (
-          <NoticeDatatable
-            datas={noticeData}
-            headers={headers}
-            actions={actions}
-          />
-        )}
       </DashboardLayout>
     </div>
   );

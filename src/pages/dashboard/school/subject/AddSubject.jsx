@@ -3,13 +3,14 @@ import Axios from "../../../../middleware/Axios";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaSpinner } from "react-icons/fa";
 
-const AddSubject = () => {
+const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
   const [name, setName] = useState("");
-  const [file, setFile] = useState(null);
-  const [grade, setGrade] = useState(null);
+  const [grade, setGrade] = useState("");
   const [grades, setGrades] = useState([]);
-  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -25,62 +26,133 @@ const AddSubject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      const response = await Axios.post("/api/schoolSubjects", {
+      await Axios.post("/api/schoolSubjects", {
         name,
         grade_id: grade,
       });
 
-      toast.success("Grade deleted successfully");
-      navigate("/school/dashboard");
+      toast.success("Subject added successfully");
+      onSuccess();
+      // Reset form
+      setName("");
+      setGrade("");
     } catch (error) {
-      console.error("Error adding grade:", error);
+      toast.error("Error adding subject");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <DashboardLayout>
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-sm pt-10 mx-auto grid gap-6"
-      >
-        <label className="block text-sm font-medium text-gray-900 dark:text-white">
-          Subject Name
-        </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Enter grade name"
-        />
+    <motion.div
+      className="fixed inset-0 z-50 overflow-y-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Overlay */}
+      <motion.div
+        className="fixed inset-0 bg-black bg-opacity-50"
+        onClick={onClose}
+      />
 
-        <label className="block text-sm font-medium text-gray-900 dark:text-white">
-          Subject
-        </label>
-        <select
-          value={grade}
-          onChange={(e) => setGrade(e.target.value)} // Store subject_id in state
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      {/* Modal content */}
+      <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+        <motion.div
+          className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{
+            type: "spring",
+            duration: 0.3,
+            delay: 0.15,
+            bounce: 0.25,
+          }}
         >
-          <option value="">Select Grade</option>
-          {grades.map((grade) => (
-            <option key={grade.grade_id} value={grade.grade_id}>
-              {grade.name}
-            </option>
-          ))}
-        </select>
+          <motion.h2
+            className="text-xl font-bold mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            Add Subject
+          </motion.h2>
+          <motion.form
+            onSubmit={handleSubmit}
+            className="space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            {/* Subject Name Input */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-900">
+                Subject Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                required
+              />
+            </div>
 
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Add Subject
-        </button>
-      </form>
-    </DashboardLayout>
+            {/* Grade Select */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-900">
+                Grade
+              </label>
+              <select
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                required
+              >
+                <option value="">Select Grade</option>
+                {grades.map((grade) => (
+                  <option key={grade.grade_id} value={grade.grade_id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <FaSpinner className="animate-spin h-5 w-5" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save"
+                )}
+              </button>
+            </div>
+          </motion.form>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 };
 
-export default AddSubject;
+export default AddSubjectModal;

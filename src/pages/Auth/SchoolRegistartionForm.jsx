@@ -38,7 +38,6 @@ const SchoolRegistrationForm = () => {
         email: email,
         password: password,
         password_confirmation: confirmPassword,
-        user_type: "school",
       };
 
       try {

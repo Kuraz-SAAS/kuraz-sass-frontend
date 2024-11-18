@@ -27,7 +27,6 @@ import AddResources from "./pages/dashboard/school/resources/AddResources";
 import AddSubject from "./pages/dashboard/school/subject/AddSubject";
 import UpdateSubject from "./pages/dashboard/school/subject/UpdateSubject";
 import Notices from "./pages/dashboard/school/notice/Notices";
-import AddNotice from "./pages/dashboard/school/notice/AddNotice";
 import EditNotice from "./pages/dashboard/school/notice/EditNotice";
 import SchoolProtectedRoute from "./protectedRoutes/SchoolProtectedRoute";
 import StudentProtectedRoute from "./protectedRoutes/StudentProtectedRoute";
@@ -79,7 +78,6 @@ const App = () => {
 
           {/* notice routes */}
           <Route path="/school/notices" element={<Notices />} />
-          <Route path="/school/notices/add" element={<AddNotice />} />
           <Route path="/school/notices/edit/:id" element={<EditNotice />} />
 
           <Route path="/school/students" element={<SchoolStudents />} />
