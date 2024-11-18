@@ -10,15 +10,6 @@ import CustomPagination from "../../../components/common/CustomPagination";
 const Students = () => {
   const [studentData, setStudentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // or whatever number you want
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // If you're fetching data from API:
-    // fetchData(pageNumber);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
