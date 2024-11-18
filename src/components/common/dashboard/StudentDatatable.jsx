@@ -36,7 +36,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    const startIndex = pageNumber * itemsPerPage;
+    const startIndex = (pageNumber - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     setRowsToShow(dataList.slice(startIndex, endIndex));
   };
@@ -398,59 +398,114 @@ const StudentDatatable = ({ datas, headers, actions }) => {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-300">
+            <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3 px-6 text-left text-gray-600 font-semibold">
-                    ID
-                  </th>
-                  <th className="py-3 px-6 text-left text-gray-600 font-semibold">
-                    Name
-                  </th>
-                  <th className="py-3 px-6 text-left text-gray-600 font-semibold">
-                    Email
-                  </th>
-                  <th className="py-3 px-6 text-left text-gray-600 font-semibold">
-                    User Type
-                  </th>
-                  <th className="py-3 px-6 text-left text-gray-600 font-semibold">
-                    Domain Name
-                  </th>
+                  {headers.map((header, index) => (
+                    <th
+                      key={index}
+                      className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        {header}
+                        {/* Add sort indicators if needed */}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-300">
-                {rowsToShow?.map((student, index) => (
+              <tbody className="bg-white divide-y divide-gray-200">
+                {rowsToShow?.map((item, index) => (
                   <tr
-                    key={student.user_id}
-                    className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                    key={index}
+                    className="hover:bg-gray-50 transition-colors"
                   >
-                    <td className="py-3 px-6 text-gray-700">
-                      {student.user_id}
-                    </td>
-                    <td className="py-3 px-6 text-gray-700">{student.name}</td>
-                    <td className="py-3 px-6 text-gray-700">{student.email}</td>
-                    <td className="py-3 px-6 text-gray-700">
-                      {student.user_type}
-                    </td>
-                    <td className="py-3 px-6 text-gray-700">
-                      {student.tenant.domain_name}
-                    </td>
+                    {headers.map((header, cellIndex) => (
+                      <td
+                        key={cellIndex}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                      >
+                        {item[header.toLowerCase()]}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <div className="flex justify-between items-center p-4 border-t border-gray-300">
-            <div className="text-gray-600">
-              Showing {currentPage * rowsLimit + 1} to{" "}
-              {Math.min((currentPage + 1) * rowsLimit, dataList?.length)} of{" "}
-              {dataList?.length} entries
+          <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+            <div className="flex items-center">
+              <span className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-medium">
+                  {(currentPage - 1) * itemsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium">
+                  {Math.min(currentPage * itemsPerPage, dataList?.length)}
+                </span>{" "}
+                of <span className="font-medium">{dataList?.length}</span>{" "}
+                results
+              </span>
             </div>
-            <CustomPagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(datas?.length / itemsPerPage)}
-              onPageChange={handlePageChange}
-            />
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md 
+                  ${
+                    currentPage === 1
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+              >
+                Previous
+              </button>
+
+              {Array.from({
+                length: Math.ceil(dataList?.length / itemsPerPage),
+              })
+                .slice(
+                  Math.max(0, currentPage - 3),
+                  Math.min(
+                    currentPage + 2,
+                    Math.ceil(dataList?.length / itemsPerPage)
+                  )
+                )
+                .map((_, idx) => {
+                  const pageNumber = Math.max(1, currentPage - 2) + idx;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                        ${
+                          currentPage === pageNumber
+                            ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                            : "text-gray-700 hover:bg-gray-50"
+                        }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={
+                  currentPage >= Math.ceil(dataList?.length / itemsPerPage)
+                }
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                  ${
+                    currentPage >= Math.ceil(dataList?.length / itemsPerPage)
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
           <AnimatePresence>
             {isModalOpen && (

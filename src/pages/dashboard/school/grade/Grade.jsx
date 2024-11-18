@@ -14,6 +14,11 @@ const Grade = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedGrade, setSelectedGrade] = useState(null);
+  const [updateName, setUpdateName] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Add this state
+  const [gradeToDelete, setGradeToDelete] = useState(null); // Add this state
 
   const fetchData = async () => {
     try {
@@ -33,15 +38,28 @@ const Grade = () => {
   const headers = ["Name", "Number Of subjects", "Actions"];
 
   const editGrade = (id) => {
-    console.log(id);
-    navigate("/school/grades/edit/" + id);
+    const grade = gradesData.find((g) => g.grade_id === id);
+    setSelectedGrade(grade);
+    setUpdateName(grade?.name);
+    setIsUpdateModalOpen(true);
   };
 
   const deleteGrade = async (id) => {
-    await Axios.delete("/api/schoolGrades/" + id).then((res) => {
+    setGradeToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await Axios.delete("/api/schoolGrades/" + gradeToDelete);
       toast.success("Grade deleted successfully");
-      fetchData(); // Refresh data after deletion
-    });
+      fetchData();
+    } catch (error) {
+      toast.error("Failed to delete grade");
+    } finally {
+      setIsDeleteModalOpen(false);
+      setGradeToDelete(null);
+    }
   };
 
   const actions = [
@@ -61,6 +79,23 @@ const Grade = () => {
       setName("");
     } catch (err) {
       toast.error("Failed to add grade. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await Axios.patch(`/api/schoolGrades/${selectedGrade.id}`, {
+        name: updateName,
+      });
+      toast.success("Grade updated successfully!");
+      setIsUpdateModalOpen(false);
+      fetchData();
+    } catch (err) {
+      toast.error("Failed to update grade. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -164,6 +199,154 @@ const Grade = () => {
                         </button>
                       </div>
                     </motion.form>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Update Grade Modal */}
+          <AnimatePresence>
+            {isUpdateModalOpen && (
+              <motion.div
+                className="fixed inset-0 z-50 overflow-y-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.div
+                  className="fixed inset-0 bg-black bg-opacity-50"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setIsUpdateModalOpen(false)}
+                />
+
+                <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+                  <motion.div
+                    className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
+                    onClick={(e) => e.stopPropagation()}
+                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.3,
+                      delay: 0.15,
+                      bounce: 0.25,
+                    }}
+                  >
+                    <motion.h2
+                      className="text-xl font-bold mb-4"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      Update Grade
+                    </motion.h2>
+                    <motion.form
+                      onSubmit={handleUpdate}
+                      className="space-y-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-900">
+                          Grade Name
+                        </label>
+                        <input
+                          type="text"
+                          value={updateName}
+                          onChange={(e) => setUpdateName(e.target.value)}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          required
+                        />
+                      </div>
+
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsUpdateModalOpen(false)}
+                          className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <FaSpinner className="animate-spin h-5 w-5" />
+                              Updating...
+                            </>
+                          ) : (
+                            "Update"
+                          )}
+                        </button>
+                      </div>
+                    </motion.form>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Add this Delete Confirmation Modal */}
+          <AnimatePresence>
+            {isDeleteModalOpen && (
+              <motion.div
+                className="fixed inset-0 z-50 overflow-y-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.div
+                  className="fixed inset-0 bg-black bg-opacity-50"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setIsDeleteModalOpen(false)}
+                />
+
+                <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+                  <motion.div
+                    className="bg-white p-8 rounded-lg w-[400px] shadow-xl"
+                    onClick={(e) => e.stopPropagation()}
+                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.3,
+                      delay: 0.15,
+                      bounce: 0.25,
+                    }}
+                  >
+                    <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+                    <p className="mb-6">
+                      Are you sure you want to delete this grade?
+                    </p>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setIsDeleteModalOpen(false)}
+                        className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={confirmDelete}
+                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </motion.div>
                 </div>
               </motion.div>
