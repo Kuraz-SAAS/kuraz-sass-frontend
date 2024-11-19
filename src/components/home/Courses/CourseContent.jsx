@@ -46,10 +46,10 @@ const CourseContent = ({ section, setCurrentVideos }) => {
       </p>
       {/* Loop through the sections */}
       {sections?.map((sec, sectionIndex) => (
-        <section key={sec.id}>
+        <section key={sec.id} onClick={() => toggleSection(sec?.id)}>
           <div className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer">
             <div className="flex items-center space-x-2">
-              <FaPlayCircle size={20} onClick={() => toggleSection(sec?.id)} />
+              <FaPlayCircle size={20} />
               <h3 className="font-semibold">{sec?.section_title}</h3>
               <span className="text-sm text-gray-600">
                 ({sec?.videos?.length} Lectures)

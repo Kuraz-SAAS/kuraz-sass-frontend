@@ -3,13 +3,12 @@ import { FaPaperPlane } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useSiteStore } from "../../../context/siteStore";
 
-const ChatComponent = ({ pdfFile }) => {
+const ChatComponent = ({ pdfName }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const user = useSiteStore((store) => store.user);
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -85,7 +84,7 @@ const ChatComponent = ({ pdfFile }) => {
 
   const handleSend = () => {
     if (input.trim()) {
-      const fileName = pdfFile;
+      const fileName = pdfName ? pdfName : "test.pdf";
       const userId = user?.user_id;
 
       setMessages((prev) => [...prev, { text: input, sender: "user" }]);
@@ -108,7 +107,7 @@ const ChatComponent = ({ pdfFile }) => {
   };
 
   return (
-    <div className="flex flex-col h-full border bg-gray-100 rounded-b-lg w-[400px] shadow-md shadow-[#F3D598] border-gray-300 p-4">
+    <div className="flex flex-col h-[80vh] overflow-scroll border bg-gray-100 rounded-b-lg w-[400px] shadow-md shadow-[#F3D598] border-gray-300 p-4">
       <div className="flex-1 overflow-y-auto">
         {messages.map((msg, index) => (
           <div
