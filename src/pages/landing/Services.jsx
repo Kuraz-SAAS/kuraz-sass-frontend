@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { heroBanner, kurazLogo } from "../../assets/images";
+import { kurazLogo } from "../../assets/images";
 import { Link } from "react-router-dom";
 
 const Service = () => {
@@ -10,12 +10,7 @@ const Service = () => {
   };
 
   return (
-    <div
-      className="h-full bg-right bg-cover font-poppins"
-      style={{
-        backgroundImage: `url('${heroBanner}')`,
-      }}
-    >
+    <div className="h-full bg-right bg-primary font-poppins">
       <div className="flex flex-wrap items-center justify-between px-8 md:px-16 lg:px-32 relative">
         {/* Logo Section */}
         <div className="flex-shrink-0">

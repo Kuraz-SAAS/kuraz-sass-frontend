@@ -16,23 +16,28 @@ const SchoolRegistrationForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+    setIsSigningIn(true);
 
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match!");
-      toast.error("Passwords do not match!");
-      return;
-    }
+    try {
+      if (password !== confirmPassword) {
+        setErrorMessage("Passwords do not match!");
+        toast.error("Passwords do not match!");
+        return;
+      }
 
-    if (schoolName.trim() === "") {
-      setErrorMessage("Please enter a unique name for your school.");
-      toast.error("Please enter a unique name for your school.");
-      return;
-    }
+      if (schoolName.trim() === "") {
+        setErrorMessage("Please enter a unique name for your school.");
+        toast.error("Please enter a unique name for your school.");
+        return;
+      }
 
-    await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
+      await Axios.get("/sanctum/csrf-cookie");
+
       const payload = {
         name: schoolName,
         email: email,
@@ -40,44 +45,44 @@ const SchoolRegistrationForm = () => {
         password_confirmation: confirmPassword,
       };
 
-      try {
-        const response = await Axios.post("/register", payload);
+      const response = await Axios.post("/register", payload);
 
-        if (response.status === 200 || response.status === 204) {
-          setUser(response.data.user);
-          toast.success("Registration successful!");
-          if (response.data.user.user_type === "student") {
-            navigate("/courses");
-          } else {
-            navigate("/school/dashboard");
-          }
-        }
-      } catch (error) {
-        console.error("Registration error:", error);
-
-        if (
-          error.response &&
-          error.response.status === 409 &&
-          error.response.data &&
-          error.response.data.message.includes("domain_name")
-        ) {
-          setErrorMessage(
-            "unique school name is already taken. Please choose another."
-          );
-          toast.error("unque school name is already taken.");
-        } else if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          setErrorMessage(error.response.data.message);
-          toast.error(error.response.data.message);
+      if (response.status === 200 || response.status === 204) {
+        setUser(response.data.user);
+        toast.success("Registration successful!");
+        if (response.data.user.user_type === "student") {
+          navigate("/courses");
         } else {
-          setErrorMessage("Registration failed. Please try again.");
-          toast.error("Registration failed. Please try again.");
+          navigate("/school/dashboard");
         }
       }
-    });
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      if (
+        error.response &&
+        error.response.status === 409 &&
+        error.response.data &&
+        error.response.data.message.includes("domain_name")
+      ) {
+        setErrorMessage(
+          "unique school name is already taken. Please choose another."
+        );
+        toast.error("unque school name is already taken.");
+      } else if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setErrorMessage(error.response.data.message);
+        toast.error(error.response.data.message);
+      } else {
+        setErrorMessage("Registration failed. Please try again.");
+        toast.error("Registration failed. Please try again.");
+      }
+    } finally {
+      setIsSigningIn(false);
+    }
   };
 
   return (
@@ -127,7 +132,7 @@ const SchoolRegistrationForm = () => {
           <img
             src={SchoolImg}
             alt=""
-            className="w-[800px] top-0 left-0 absolute"
+            className="w-[800px] top-0 left-0 absolute mix-blend-normal"
           />
         </div>
 
@@ -240,21 +245,28 @@ const SchoolRegistrationForm = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="mt-5 tracking-wide font-semibold bg-[#F3D598] text-black w-full py-4 rounded-lg hover:bg-[#F3D598]/50 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                  disabled={isSigningIn}
+                  className="mt-5 tracking-wide font-semibold bg-[#F3D598] text-black w-full py-4 rounded-lg hover:bg-[#F3D598]/50 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50"
                 >
-                  <svg
-                    className="w-6 h-6 -ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                    <circle cx="8.5" cy="7" r="4" />
-                    <path d="M20 8v6M23 11h-6" />
-                  </svg>
-                  <span className="ml-3">Sign Up</span>
+                  {isSigningIn ? (
+                    <span>Signing up...</span>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-6 h-6 -ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <path d="M20 8v6M23 11h-6" />
+                      </svg>
+                      <span className="ml-3">Sign Up</span>
+                    </>
+                  )}
                 </button>
 
                 {/* Redirect to Login */}

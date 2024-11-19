@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   flower,
-  heroBanner,
   heroImage,
   heroTextShadow,
   kurazLogo,
@@ -17,12 +16,7 @@ const ContactUs = () => {
   };
 
   return (
-    <div
-      className="h-screen bg-right bg-cover font-poppins relative overflow-hidden"
-      style={{
-        backgroundImage: `url('${heroBanner}')`,
-      }}
-    >
+    <div className="h-screen bg-right bg-primary font-poppins relative overflow-hidden">
       <div className="flex flex-wrap items-center justify-between px-8 md:px-16 lg:px-32 relative">
         {/* Logo Section */}
         <div className="flex-shrink-0">
