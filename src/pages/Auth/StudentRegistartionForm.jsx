@@ -1,16 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import Axios from "../../middleware/Axios";
-import { csrfCatch } from "../../middleware/utilities";
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 import { toast } from "react-toastify";
-import {
-  flower,
-  heroBanner,
-  heroImage,
-  kurazLogo,
-  shadow,
-} from "../../assets/images";
+import { flower, heroImage, kurazLogo, shadow } from "../../assets/images";
 
 const StudentRegistrationForm = () => {
   const [userType, setUserType] = useState("student"); // Default to 'student'

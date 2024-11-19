@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   flower,
-  heroBanner,
   heroImage,
   heroTextShadow,
   kurazLogo,
@@ -163,7 +162,7 @@ const Hero = () => {
           <img
             src={heroImage}
             alt=""
-            className="absolute top-0 right-0 md:-right-[100px] lg:-right-[220px] w-full max-w-[400px] md:max-w-[800px] lg:max-w-[1100px] z-30"
+            className="absolute right-0 bottom-16 w-[800px]  z-30"
           />
         </div>
       </div>

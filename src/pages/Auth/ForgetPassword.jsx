@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  flower,
-  heroBanner,
-  heroImage,
-  heroTextShadow,
-  kurazLogo,
-  shadow,
-} from "../../assets/images";
+import { heroTextShadow, kurazLogo } from "../../assets/images";
 import { Link, useNavigate } from "react-router-dom";
 import Axios from "../../middleware/Axios";
 

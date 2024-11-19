@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Axios from "../../middleware/Axios";
-import { csrfCatch } from "../../middleware/utilities";
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   flower,
-  heroBanner,
   heroImage,
   heroTextShadow,
   kurazLogo,
@@ -17,6 +15,7 @@ import {
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const setUser = useSiteStore((store) => store.setUser);
 
@@ -25,6 +24,8 @@ const LoginForm = () => {
       toast.error("Please enter both email and password");
       return;
     }
+
+    setIsLoading(true);
 
     await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
       try {
@@ -40,8 +41,16 @@ const LoginForm = () => {
         }
       } catch (error) {
         toast.error("Login failed. Please check your credentials.");
+      } finally {
+        setIsLoading(false);
       }
     });
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
   };
 
   const user = useSiteStore((store) => store.user);
@@ -93,6 +102,7 @@ const LoginForm = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     placeholder="Enter your email"
                   />
                   <input
@@ -100,26 +110,34 @@ const LoginForm = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     placeholder="Password"
                   />
                   <div>
                     <button
                       onClick={handleSubmit}
-                      className="mt-5 tracking-wide font-semibold bg-[#F3D598] text-black w-full py-4 rounded-lg hover:bg-[#F3D598] transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                      disabled={isLoading}
+                      className="mt-5 tracking-wide font-semibold bg-[#F3D598] text-black w-full py-4 rounded-lg hover:bg-[#F3D598] transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-70"
                     >
-                      <svg
-                        className="w-6 h-6 -ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                        <circle cx="8.5" cy="7" r="4" />
-                        <path d="M20 8v6M23 11h-6" />
-                      </svg>
-                      <span className="ml-3">Sign In</span>
+                      {isLoading ? (
+                        <span>Signing in...</span>
+                      ) : (
+                        <>
+                          <svg
+                            className="w-6 h-6 -ml-2"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="8.5" cy="7" r="4" />
+                            <path d="M20 8v6M23 11h-6" />
+                          </svg>
+                          <span className="ml-3">Sign In</span>
+                        </>
+                      )}
                     </button>
                     <div className="flex justify-end">
                       <Link to={"/forget-password"}>
@@ -171,7 +189,7 @@ const LoginForm = () => {
           <img
             src={heroImage}
             alt=""
-            className="absolute top-0 right-0 md:-right-[100px] lg:-right-[220px] w-full max-w-[400px] md:max-w-[800px] lg:max-w-[1100px] z-30"
+            className="absolute right-0 bottom-16 w-[800px]  z-30"
           />
         </div>
       </div>
