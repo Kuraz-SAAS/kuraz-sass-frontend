@@ -5,11 +5,14 @@ import Axios from "../../../../middleware/Axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner and sad icon
+import { motion, AnimatePresence } from "framer-motion"; // Add this import
+import AddSubjectModal from "./AddSubject"; // Add this import
 
 const Subject = () => {
   const [subjectData, setSubjectGradeData] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,9 +52,26 @@ const Subject = () => {
     <div>
       <DashboardLayout>
         <div>
-          <Link to={"add"} className="bg-[#bc8c4e] text-white p-2 rounded-md">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#bc8c4e] text-white p-2 rounded-md"
+          >
             Add Subject
-          </Link>
+          </button>
+
+          <AnimatePresence>
+            {isModalOpen && (
+              <AddSubjectModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={() => {
+                  setIsModalOpen(false);
+                  fetchData();
+                }}
+              />
+            )}
+          </AnimatePresence>
+
           {loading ? ( // Conditional rendering for loading state
             <div className="flex justify-center items-center h-64">
               <FaSpinner className="animate-spin text-3xl" />{" "}

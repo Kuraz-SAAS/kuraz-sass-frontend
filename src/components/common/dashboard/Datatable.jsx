@@ -4,15 +4,17 @@ import { Link } from "react-router-dom";
 const Datatable = ({ datas, headers, actions }) => {
   const [searchValue, setSearchValue] = useState();
   const [dataList, setDataList] = useState([...datas]);
-  const [rowsLimit] = useState(5);
-  const [rowsToShow, setRowsToShow] = useState(dataList?.slice(0, rowsLimit));
+  const [itemsPerPage] = useState(5);
+  const [rowsToShow, setRowsToShow] = useState(
+    dataList?.slice(0, itemsPerPage)
+  );
   const [customPagination, setCustomPagination] = useState([]);
   const [activeColumn, setActiveColumn] = useState(["Price"]);
   const [sortingColumn, setSortingColumn] = useState(["Price"]);
   const [totalPage, setTotalPage] = useState(
-    Math.ceil(dataList?.length / rowsLimit)
+    Math.ceil(dataList?.length / itemsPerPage)
   );
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   function searchProducts(keyword) {
     keyword = keyword.toLowerCase();
     setSearchValue(keyword);
@@ -27,11 +29,11 @@ const Datatable = ({ datas, headers, actions }) => {
         );
       });
       setDataList(results);
-      setRowsToShow(results?.slice(0, rowsLimit));
+      setRowsToShow(results?.slice(0, itemsPerPage));
       setCurrentPage(0);
-      setTotalPage(Math.ceil(results?.length / rowsLimit));
+      setTotalPage(Math.ceil(results?.length / itemsPerPage));
       setCustomPagination(
-        Array(Math.ceil(results?.length / rowsLimit)).fill(null)
+        Array(Math.ceil(results?.length / itemsPerPage)).fill(null)
       );
     } else {
       clearData();
@@ -41,9 +43,11 @@ const Datatable = ({ datas, headers, actions }) => {
     setSearchValue("");
     const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
     setDataList(sortedProducts);
-    setRowsToShow(sortedProducts?.slice(0, rowsLimit));
-    setCustomPagination(Array(Math.ceil(datas?.length / rowsLimit)).fill(null));
-    setTotalPage(Math.ceil(datas?.length / rowsLimit));
+    setRowsToShow(sortedProducts?.slice(0, itemsPerPage));
+    setCustomPagination(
+      Array(Math.ceil(datas?.length / itemsPerPage)).fill(null)
+    );
+    setTotalPage(Math.ceil(datas?.length / itemsPerPage));
   };
   const sortByColumn = (column, changeSortingColumn = true) => {
     if (column != "Price") {
@@ -55,8 +59,8 @@ const Datatable = ({ datas, headers, actions }) => {
           );
         setRowsToShow(
           sortData?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -71,8 +75,8 @@ const Datatable = ({ datas, headers, actions }) => {
           );
         setRowsToShow(
           sortData?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -87,8 +91,8 @@ const Datatable = ({ datas, headers, actions }) => {
           .sort((a, b) => b.Price - a.Price);
         setRowsToShow(
           sortedProducts?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -101,8 +105,8 @@ const Datatable = ({ datas, headers, actions }) => {
           .sort((a, b) => a.Price - b.Price);
         setRowsToShow(
           sortedProducts?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -114,43 +118,24 @@ const Datatable = ({ datas, headers, actions }) => {
     setActiveColumn([`${column}`]);
     // setCurrentPage(0);
   };
-  const nextPage = () => {
-    const startIndex = rowsLimit * (currentPage + 1);
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(currentPage + 1);
-  };
-  const changePage = (value) => {
-    const startIndex = value * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(value);
-  };
-  const previousPage = () => {
-    const startIndex = (currentPage - 1) * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    } else {
-      setCurrentPage(0);
-    }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    const startIndex = pageNumber * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setRowsToShow(dataList.slice(startIndex, endIndex));
   };
   useMemo(() => {
     setCustomPagination(
-      Array(Math.ceil(dataList?.length / rowsLimit)).fill(null)
+      Array(Math.ceil(dataList?.length / itemsPerPage)).fill(null)
     );
   }, []);
   useEffect(() => {
     const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
     setDataList(sortedProducts);
-    setRowsToShow(sortedProducts?.slice(0, rowsLimit));
-  }, []);
+    setRowsToShow(sortedProducts?.slice(0, itemsPerPage));
+  }, [datas, itemsPerPage]);
   return (
-    <div className="min-h-screen bg-gray-100 flex  justify-center py-10">
+    <div className="min-h-screen bg-gray-100 flex justify-center py-10">
       <div className="w-full max-w-7xl px-4">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="bg-gray-200 flex justify-between  items-center p-4 border-b border-gray-300">
@@ -182,48 +167,28 @@ const Datatable = ({ datas, headers, actions }) => {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-300">
+            <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3 px-6 text-left text-gray-600 font-semibold">
-                    ID
-                  </th>
-                  {headers.map((header) => (
+                  {headers.map((header, index) => (
                     <th
-                      key={header}
-                      className="py-3 px-6 text-left text-gray-600 font-semibold"
+                      key={index}
+                      className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => sortByColumn(header)}
                     >
-                      <div
-                        className="flex items-center cursor-pointer"
-                        onClick={() => sortByColumn("Company")}
-                      >
-                        <svg
-                          className={`w-4 h-4 transform ${
-                            sortingColumn === "Company"
-                              ? "rotate-180"
-                              : "rotate-0"
-                          } transition-transform duration-200`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M19 14l-7 7-7-7" />
-                        </svg>
-                        <span className="ml-2">{header}</span>
-                      </div>
+                      <div className="flex items-center gap-2">{header}</div>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-300">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {rowsToShow?.map((data, index) => (
                   <tr
                     key={index}
-                    className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                    className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="py-3 px-6 text-gray-700">
-                      {rowsLimit * currentPage + index + 1}
+                      {itemsPerPage * currentPage + index + 1}
                     </td>
                     <td className="py-3 px-6 text-gray-700">{data?.name}</td>
                     <td className="py-3 px-6 text-gray-700">
@@ -247,55 +212,76 @@ const Datatable = ({ datas, headers, actions }) => {
               </tbody>
             </table>
           </div>
-          <div className="flex justify-between items-center p-4 border-t border-gray-300">
-            <div className="text-gray-600">
-              Showing {currentPage * rowsLimit + 1} to{" "}
-              {Math.min((currentPage + 1) * rowsLimit, dataList?.length)} of{" "}
-              {dataList?.length} entries
-            </div>
+          <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
             <div className="flex items-center">
+              <span className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-medium">
+                  {currentPage * itemsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium">
+                  {Math.min((currentPage + 1) * itemsPerPage, dataList?.length)}
+                </span>{" "}
+                of <span className="font-medium">{dataList?.length}</span>{" "}
+                results
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
               <button
-                className={`p-2 rounded-full border border-gray-300 ${
-                  currentPage === 0
-                    ? "bg-gray-200 cursor-not-allowed"
-                    : "bg-white cursor-pointer"
-                }`}
-                onClick={previousPage}
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 0}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md 
+                  ${
+                    currentPage === 0
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
               >
-                <img
-                  src="https://www.tailwindtap.com/assets/travelagency-admin/leftarrow.svg"
-                  alt="Previous"
-                />
+                Previous
               </button>
-              <ul className="flex mx-4">
-                {customPagination?.map((_, index) => (
-                  <li
-                    key={index}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 cursor-pointer ${
-                      currentPage === index
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white"
-                    }`}
-                    onClick={() => changePage(index)}
+
+              {Array.from({
+                length: Math.min(5, Math.ceil(dataList?.length / itemsPerPage)),
+              }).map((_, idx) => {
+                const pageNumber = currentPage - 2 + idx;
+                if (
+                  pageNumber < 0 ||
+                  pageNumber >= Math.ceil(dataList?.length / itemsPerPage)
+                )
+                  return null;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handlePageChange(pageNumber)}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                      ${
+                        currentPage === pageNumber
+                          ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`}
                   >
-                    {index + 1}
-                  </li>
-                ))}
-              </ul>
+                    {pageNumber + 1}
+                  </button>
+                );
+              })}
+
               <button
-                className={`p-2 rounded-full border border-gray-300 ${
-                  currentPage === totalPage - 1
-                    ? "bg-gray-200 cursor-not-allowed"
-                    : "bg-white cursor-pointer"
-                }`}
-                onClick={nextPage}
-                disabled={currentPage === totalPage - 1}
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={
+                  currentPage >= Math.ceil(dataList?.length / itemsPerPage) - 1
+                }
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                  ${
+                    currentPage >=
+                    Math.ceil(dataList?.length / itemsPerPage) - 1
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
               >
-                <img
-                  src="https://www.tailwindtap.com/assets/travelagency-admin/rightarrow.svg"
-                  alt="Next"
-                />
+                Next
               </button>
             </div>
           </div>

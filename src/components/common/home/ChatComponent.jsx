@@ -3,7 +3,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useSiteStore } from "../../../context/siteStore";
 
-const ChatComponent = ({ pdfName }) => {
+const ChatComponent = ({ pdfFile, bookId }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ const ChatComponent = ({ pdfName }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const askAboutPdf = async (fileName, question, userId) => {
+  const askAboutPdf = async (bookId, question, userId) => {
     try {
       setLoading(true);
       const response = await fetch("https://chat.saas.kuraztech.com/api/ask", {
@@ -21,7 +21,7 @@ const ChatComponent = ({ pdfName }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fileName, question, userId }),
+        body: JSON.stringify({ bookId, question, userId }),
       });
 
       // Check for 429 response
@@ -84,12 +84,11 @@ const ChatComponent = ({ pdfName }) => {
 
   const handleSend = () => {
     if (input.trim()) {
-      const fileName = pdfName ? pdfName : "test.pdf";
       const userId = user?.user_id;
 
       setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 
-      askAboutPdf(fileName, input, userId);
+      askAboutPdf(bookId, input, userId);
       setInput("");
     }
   };

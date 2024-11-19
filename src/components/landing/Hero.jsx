@@ -121,16 +121,16 @@ const Hero = () => {
             {/* Button */}
             <div className="flex gap-5">
               <Link
+                to={"/login"}
+                className=" p-3 border-white text-white  transition-all delay-75 rounded-md w-[150px] text-center hover:text-black  border-2 hover:bg-[#F3D598]  hover:border-[#F3D598] relative z-20 "
+              >
+                Sign in
+              </Link>
+              <Link
                 to={"/school/register"}
                 className="text-black p-3 border-white bg-white transition-all delay-75 rounded-md  border-2 hover:bg-[#F3D598]  hover:border-[#F3D598] relative z-20 "
               >
-                Sign in a school
-              </Link>
-              <Link
-                to={"/student/register"}
-                className="text-white p-3 border-white border-2 transition-all delay-75 rounded-md hover:bg-white hover:text-black relative z-20 "
-              >
-                Sign in a student
+                Register as school
               </Link>
             </div>
           </div>

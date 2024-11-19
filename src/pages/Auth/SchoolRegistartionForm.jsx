@@ -1,87 +1,20 @@
 import React, { useEffect, useState, useRef } from "react";
 import Axios from "../../middleware/Axios";
-import { csrfCatch } from "../../middleware/utilities";
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 import { toast } from "react-toastify";
-import {
-  flower,
-  heroBanner,
-  heroImage,
-  kurazLogo,
-  SchoolImg,
-  shadow,
-} from "../../assets/images";
+import { flower, kurazLogo, SchoolImg, shadow } from "../../assets/images";
 
 const SchoolRegistrationForm = () => {
-  const [userType, setUserType] = useState("student"); // Default to 'student'
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [tenants, setTenants] = useState([]);
-  const [tenantInput, setTenantInput] = useState("");
-  const [filteredTenants, setFilteredTenants] = useState([]);
-  const [selectedTenant, setSelectedTenant] = useState(null);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const setUser = useSiteStore((store) => store.setUser);
   const [schoolName, setSchoolName] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const suggestionsRef = useRef(null);
-
-  useEffect(() => {
-    const fetchTenants = async () => {
-      try {
-        const res = await Axios.get("/api/tenants");
-        setTenants(res.data.tenants);
-      } catch (error) {
-        console.error("Error fetching tenants:", error);
-        setErrorMessage("Failed to load tenants. Please try again later.");
-      }
-    };
-    fetchTenants();
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target)
-      ) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleTenantInputChange = (e) => {
-    const input = e.target.value;
-    setTenantInput(input);
-    setSelectedTenant(null);
-    if (input.length > 0) {
-      const filtered = tenants.filter((tenant) =>
-        tenant.domain_name.toLowerCase().includes(input.toLowerCase())
-      );
-      setFilteredTenants(filtered);
-      setShowSuggestions(true);
-    } else {
-      setFilteredTenants([]);
-      setShowSuggestions(false);
-    }
-  };
-
-  const handleTenantSelect = (tenant) => {
-    setTenantInput(tenant.domain_name);
-    setSelectedTenant(tenant);
-    setFilteredTenants([]);
-    setShowSuggestions(false);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,14 +25,6 @@ const SchoolRegistrationForm = () => {
       toast.error("Passwords do not match!");
       return;
     }
-
-    // if (userType === "student" && !selectedTenant) {
-    //   setErrorMessage(
-    //     "Your school name does exist in our database please contact your school for a correct school name."
-    //   );
-    //   toast.error("Please enter a correct school name.");
-    //   return;
-    // }
 
     if (schoolName.trim() === "") {
       setErrorMessage("Please enter a unique name for your school.");
@@ -113,7 +38,6 @@ const SchoolRegistrationForm = () => {
         email: email,
         password: password,
         password_confirmation: confirmPassword,
-        user_type: "school",
       };
 
       try {
