@@ -4,16 +4,17 @@ import { Link } from "react-router-dom";
 const Datatable = ({ datas, headers, actions }) => {
   const [searchValue, setSearchValue] = useState();
   const [dataList, setDataList] = useState([...datas]);
-  const [rowsLimit] = useState(5);
-  const [rowsToShow, setRowsToShow] = useState(dataList?.slice(0, rowsLimit));
+  const [itemsPerPage] = useState(5);
+  const [rowsToShow, setRowsToShow] = useState(
+    dataList?.slice(0, itemsPerPage)
+  );
   const [customPagination, setCustomPagination] = useState([]);
   const [activeColumn, setActiveColumn] = useState(["Price"]);
   const [sortingColumn, setSortingColumn] = useState(["Price"]);
   const [totalPage, setTotalPage] = useState(
-    Math.ceil(dataList?.length / rowsLimit)
+    Math.ceil(dataList?.length / itemsPerPage)
   );
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
   function searchProducts(keyword) {
     keyword = keyword.toLowerCase();
     setSearchValue(keyword);
@@ -28,11 +29,11 @@ const Datatable = ({ datas, headers, actions }) => {
         );
       });
       setDataList(results);
-      setRowsToShow(results?.slice(0, rowsLimit));
+      setRowsToShow(results?.slice(0, itemsPerPage));
       setCurrentPage(0);
-      setTotalPage(Math.ceil(results?.length / rowsLimit));
+      setTotalPage(Math.ceil(results?.length / itemsPerPage));
       setCustomPagination(
-        Array(Math.ceil(results?.length / rowsLimit)).fill(null)
+        Array(Math.ceil(results?.length / itemsPerPage)).fill(null)
       );
     } else {
       clearData();
@@ -42,9 +43,11 @@ const Datatable = ({ datas, headers, actions }) => {
     setSearchValue("");
     const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
     setDataList(sortedProducts);
-    setRowsToShow(sortedProducts?.slice(0, rowsLimit));
-    setCustomPagination(Array(Math.ceil(datas?.length / rowsLimit)).fill(null));
-    setTotalPage(Math.ceil(datas?.length / rowsLimit));
+    setRowsToShow(sortedProducts?.slice(0, itemsPerPage));
+    setCustomPagination(
+      Array(Math.ceil(datas?.length / itemsPerPage)).fill(null)
+    );
+    setTotalPage(Math.ceil(datas?.length / itemsPerPage));
   };
   const sortByColumn = (column, changeSortingColumn = true) => {
     if (column != "Price") {
@@ -56,8 +59,8 @@ const Datatable = ({ datas, headers, actions }) => {
           );
         setRowsToShow(
           sortData?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -72,8 +75,8 @@ const Datatable = ({ datas, headers, actions }) => {
           );
         setRowsToShow(
           sortData?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -88,8 +91,8 @@ const Datatable = ({ datas, headers, actions }) => {
           .sort((a, b) => b.Price - a.Price);
         setRowsToShow(
           sortedProducts?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -102,8 +105,8 @@ const Datatable = ({ datas, headers, actions }) => {
           .sort((a, b) => a.Price - b.Price);
         setRowsToShow(
           sortedProducts?.slice(
-            currentPage * rowsLimit,
-            (currentPage + 1) * rowsLimit
+            currentPage * itemsPerPage,
+            (currentPage + 1) * itemsPerPage
           )
         );
         if (changeSortingColumn) {
@@ -115,31 +118,6 @@ const Datatable = ({ datas, headers, actions }) => {
     setActiveColumn([`${column}`]);
     // setCurrentPage(0);
   };
-  const nextPage = () => {
-    const startIndex = rowsLimit * (currentPage + 1);
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(currentPage + 1);
-  };
-  const changePage = (value) => {
-    const startIndex = value * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(value);
-  };
-  const previousPage = () => {
-    const startIndex = (currentPage - 1) * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = datas?.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    } else {
-      setCurrentPage(0);
-    }
-  };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     const startIndex = pageNumber * itemsPerPage;
@@ -148,14 +126,14 @@ const Datatable = ({ datas, headers, actions }) => {
   };
   useMemo(() => {
     setCustomPagination(
-      Array(Math.ceil(dataList?.length / rowsLimit)).fill(null)
+      Array(Math.ceil(dataList?.length / itemsPerPage)).fill(null)
     );
   }, []);
   useEffect(() => {
     const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
     setDataList(sortedProducts);
-    setRowsToShow(sortedProducts?.slice(0, rowsLimit));
-  }, []);
+    setRowsToShow(sortedProducts?.slice(0, itemsPerPage));
+  }, [datas, itemsPerPage]);
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center py-10">
       <div className="w-full max-w-7xl px-4">
@@ -210,7 +188,7 @@ const Datatable = ({ datas, headers, actions }) => {
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="py-3 px-6 text-gray-700">
-                      {rowsLimit * currentPage + index + 1}
+                      {itemsPerPage * currentPage + index + 1}
                     </td>
                     <td className="py-3 px-6 text-gray-700">{data?.name}</td>
                     <td className="py-3 px-6 text-gray-700">
@@ -239,11 +217,11 @@ const Datatable = ({ datas, headers, actions }) => {
               <span className="text-sm text-gray-700">
                 Showing{" "}
                 <span className="font-medium">
-                  {currentPage * rowsLimit + 1}
+                  {currentPage * itemsPerPage + 1}
                 </span>{" "}
                 to{" "}
                 <span className="font-medium">
-                  {Math.min((currentPage + 1) * rowsLimit, dataList?.length)}
+                  {Math.min((currentPage + 1) * itemsPerPage, dataList?.length)}
                 </span>{" "}
                 of <span className="font-medium">{dataList?.length}</span>{" "}
                 results

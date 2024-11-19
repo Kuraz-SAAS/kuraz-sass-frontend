@@ -4,7 +4,7 @@ import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import Datatable from "../../../../components/common/dashboard/Datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner icon from React Icons
+import { FaRegSadCry, FaSpinner, FaCheck } from "react-icons/fa"; // Importing spinner icon from React Icons
 import { motion, AnimatePresence } from "framer-motion"; // Add this import
 
 const Grade = () => {
@@ -19,6 +19,13 @@ const Grade = () => {
   const [updateName, setUpdateName] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Add this state
   const [gradeToDelete, setGradeToDelete] = useState(null); // Add this state
+  const [selectedGrades, setSelectedGrades] = useState([]); // Add this state
+  const [isSavingGrades, setIsSavingGrades] = useState(false);
+
+  const staticGrades = Array.from({ length: 12 }, (_, i) => ({
+    grade_id: i + 1,
+    name: `Grade ${i + 1}`,
+  }));
 
   const fetchData = async () => {
     try {
@@ -98,6 +105,38 @@ const Grade = () => {
       toast.error("Failed to update grade. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Add this function to handle grade selection
+  const toggleGradeSelection = (gradeId) => {
+    setSelectedGrades((prev) => {
+      if (prev.includes(gradeId)) {
+        return prev.filter((id) => id !== gradeId);
+      } else {
+        return [...prev, gradeId];
+      }
+    });
+  };
+
+  // Add this function to handle sending selections to backend
+  const handleSaveSelections = async () => {
+    setIsSavingGrades(true);
+    try {
+      const selectedGradeNames = selectedGrades.map(
+        (gradeId) =>
+          staticGrades.find((grade) => grade.grade_id === gradeId)?.name
+      );
+      await Axios.post("/api/grades/import", {
+        grades: selectedGradeNames,
+      });
+      await fetchData(); // Wait for the data to be fetched
+      toast.success("Grade suggestions saved successfully!");
+      setSelectedGrades([]); // Reset selections after saving
+    } catch (error) {
+      toast.error("Failed to save grade suggestions.");
+    } finally {
+      setIsSavingGrades(false);
     }
   };
 
@@ -353,13 +392,70 @@ const Grade = () => {
             )}
           </AnimatePresence>
 
+          {/* Add this section before the data table */}
+          <div className="mt-8 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Suggested Grades</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {staticGrades
+                .filter(
+                  (grade) =>
+                    !gradesData.some(
+                      (g) => g.name.toLowerCase() === grade.name.toLowerCase()
+                    )
+                )
+                .map((grade) => (
+                  <div
+                    key={grade.grade_id}
+                    onClick={() => toggleGradeSelection(grade.grade_id)}
+                    className={`border border-primary border-dashed p-4 rounded-lg cursor-pointer transition-all ${
+                      selectedGrades.includes(grade.grade_id)
+                        ? "bg-[#bc8c4e] text-white"
+                        : "bg-gray-100 hover:bg-gray-200"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span>{grade.name}</span>
+                      {selectedGrades.includes(grade.grade_id) && (
+                        <FaCheck className="text-white" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
+            {selectedGrades.length > 0 && (
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={handleSaveSelections}
+                  disabled={isSavingGrades}
+                  className="bg-[#bc8c4e] text-white px-4 py-2 rounded-md hover:bg-[#a67b43] disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isSavingGrades ? (
+                    <>
+                      <FaSpinner className="animate-spin h-5 w-5" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Grades"
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
           {loading ? ( // Conditional rendering for loading state
             <div className="flex justify-center items-center h-64">
               <FaSpinner className="animate-spin text-3xl" />{" "}
               {/* Spinner icon */}
             </div>
           ) : gradesData.length > 0 ? ( // Conditional rendering for grades data
-            <Datatable datas={gradesData} headers={headers} actions={actions} />
+            <Datatable
+              datas={gradesData.map((grade) => ({
+                ...grade,
+                columns: [grade.name, grade.subjects_count || 0],
+              }))}
+              headers={headers}
+              actions={actions}
+            />
           ) : (
             // Display no grades message
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">

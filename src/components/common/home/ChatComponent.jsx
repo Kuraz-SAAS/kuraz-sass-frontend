@@ -3,7 +3,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useSiteStore } from "../../../context/siteStore";
 
-const ChatComponent = ({ pdfFile }) => {
+const ChatComponent = ({ pdfFile, bookId }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ const ChatComponent = ({ pdfFile }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const askAboutPdf = async (fileName, question, userId) => {
+  const askAboutPdf = async (bookId, question, userId) => {
     try {
       setLoading(true); // Set loading to true to disable the button
       const response = await fetch("http://localhost:3000/api/ask", {
@@ -22,7 +22,7 @@ const ChatComponent = ({ pdfFile }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fileName, question, userId }),
+        body: JSON.stringify({ bookId, question, userId }),
       });
 
       // Check for 429 response
@@ -85,12 +85,11 @@ const ChatComponent = ({ pdfFile }) => {
 
   const handleSend = () => {
     if (input.trim()) {
-      const fileName = pdfFile;
       const userId = user?.user_id;
 
       setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 
-      askAboutPdf(fileName, input, userId);
+      askAboutPdf(bookId, input, userId);
       setInput("");
     }
   };

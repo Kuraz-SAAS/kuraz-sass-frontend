@@ -16,8 +16,8 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const [sortingColumn, setSortingColumn] = useState(["Price"]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStudent, setNewStudent] = useState({
-    name: "",
-    email: "",
+    first_name: "",
+    last_name: "",
   });
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [excelFile, setExcelFile] = useState(null);
@@ -36,7 +36,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    const startIndex = (pageNumber - 1) * itemsPerPage;
+    const startIndex = pageNumber * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     setRowsToShow(dataList.slice(startIndex, endIndex));
   };
@@ -183,7 +183,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await Axios.post("/api/students", newStudent);
+      const response = await Axios.post("/api/student/register", newStudent);
 
       if (response.data) {
         // Add the new student to the local data
@@ -195,11 +195,13 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
         // Close modal and reset form
         setIsModalOpen(false);
-        setNewStudent({ name: "", email: "" });
+        setNewStudent({ first_name: "", last_name: "" });
       }
     } catch (error) {
       console.error("Error adding student:", error);
       toast.error(error.response?.data?.message || "Failed to add student");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -405,29 +407,39 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                     <th
                       key={index}
                       className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort(header)}
                     >
                       <div className="flex items-center gap-2">
                         {header}
-                        {/* Add sort indicators if needed */}
+                        {/* Add sort indicators here if needed */}
                       </div>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {rowsToShow?.map((item, index) => (
+                {rowsToShow?.map((student, index) => (
                   <tr
-                    key={index}
+                    key={student.user_id}
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    {headers.map((header, cellIndex) => (
-                      <td
-                        key={cellIndex}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                      >
-                        {item[header.toLowerCase()]}
-                      </td>
-                    ))}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {student.user_id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {student.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {student.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        {student.user_type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {student.tenant.domain_name}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -438,11 +450,11 @@ const StudentDatatable = ({ datas, headers, actions }) => {
               <span className="text-sm text-gray-700">
                 Showing{" "}
                 <span className="font-medium">
-                  {(currentPage - 1) * itemsPerPage + 1}
+                  {currentPage * rowsLimit + 1}
                 </span>{" "}
                 to{" "}
                 <span className="font-medium">
-                  {Math.min(currentPage * itemsPerPage, dataList?.length)}
+                  {Math.min((currentPage + 1) * rowsLimit, dataList?.length)}
                 </span>{" "}
                 of <span className="font-medium">{dataList?.length}</span>{" "}
                 results
@@ -452,10 +464,10 @@ const StudentDatatable = ({ datas, headers, actions }) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
+                disabled={currentPage === 0}
                 className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md 
                   ${
-                    currentPage === 1
+                    currentPage === 0
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
@@ -464,41 +476,40 @@ const StudentDatatable = ({ datas, headers, actions }) => {
               </button>
 
               {Array.from({
-                length: Math.ceil(dataList?.length / itemsPerPage),
-              })
-                .slice(
-                  Math.max(0, currentPage - 3),
-                  Math.min(
-                    currentPage + 2,
-                    Math.ceil(dataList?.length / itemsPerPage)
-                  )
+                length: Math.min(5, Math.ceil(dataList?.length / itemsPerPage)),
+              }).map((_, idx) => {
+                const pageNumber = currentPage - 2 + idx;
+                if (
+                  pageNumber < 0 ||
+                  pageNumber >= Math.ceil(dataList?.length / itemsPerPage)
                 )
-                .map((_, idx) => {
-                  const pageNumber = Math.max(1, currentPage - 2) + idx;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => handlePageChange(pageNumber)}
-                      className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
-                        ${
-                          currentPage === pageNumber
-                            ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                            : "text-gray-700 hover:bg-gray-50"
-                        }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
+                  return null;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handlePageChange(pageNumber)}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                      ${
+                        currentPage === pageNumber
+                          ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                  >
+                    {pageNumber + 1}
+                  </button>
+                );
+              })}
 
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={
-                  currentPage >= Math.ceil(dataList?.length / itemsPerPage)
+                  currentPage >= Math.ceil(dataList?.length / itemsPerPage) - 1
                 }
                 className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
                   ${
-                    currentPage >= Math.ceil(dataList?.length / itemsPerPage)
+                    currentPage >=
+                    Math.ceil(dataList?.length / itemsPerPage) - 1
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
@@ -557,15 +568,17 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                       className="space-y-4"
                     >
                       <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">Name</label>
+                        <label className="block text-gray-700 mb-2">
+                          First Name
+                        </label>
                         <input
                           type="text"
                           className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={newStudent.name}
+                          value={newStudent.first_name}
                           onChange={(e) =>
                             setNewStudent({
                               ...newStudent,
-                              name: e.target.value,
+                              first_name: e.target.value,
                             })
                           }
                           required
@@ -573,21 +586,22 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                       </div>
                       <div className="mb-4">
                         <label className="block text-gray-700 mb-2">
-                          Email
+                          Last Name
                         </label>
                         <input
-                          type="email"
+                          type="text"
                           className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={newStudent.email}
+                          value={newStudent.last_name}
                           onChange={(e) =>
                             setNewStudent({
                               ...newStudent,
-                              email: e.target.value,
+                              last_name: e.target.value,
                             })
                           }
                           required
                         />
                       </div>
+
                       <div className="flex justify-end gap-2">
                         <button
                           type="button"
@@ -599,7 +613,9 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                         <button
                           type="submit"
                           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
-                          disabled={!newStudent.name || !newStudent.email}
+                          disabled={
+                            !newStudent.first_name || !newStudent.last_name
+                          }
                         >
                           {isSubmitting ? (
                             <>
