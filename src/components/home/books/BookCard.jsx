@@ -15,7 +15,7 @@ const BookCard = ({ book }) => {
         />
       </Link>
       <div className="p-4 flex flex-col">
-        <h5 className="font-semibold text-lg text-gray-800 truncate">
+        <h5 className="font-semibold text-md text-gray-800 truncate">
           {book.book_title}
         </h5>
         <p className="text-sm text-gray-600 mt-1">
