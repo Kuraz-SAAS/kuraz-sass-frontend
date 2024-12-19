@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import Axios from "../../../middleware/Axios";
 import { avatar, VideoImage } from "../../../assets/images";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaPersonBooth } from "react-icons/fa";
+import { GoPerson } from "react-icons/go";
 import { useSiteStore } from "../../../context/siteStore";
+import { IoIosArrowRoundForward } from "react-icons/io";
 
 const CourseCard = ({ course, user, onFavoriteToggle }) => {
   const navigate = useNavigate();
@@ -19,23 +21,23 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
         <div className="absolute inset-0 h-full w-full" />
       </div>
       <div className="p-4">
-        <h5 className="font-semibold text-lg text-blue-gray-800">
+        <h5 className="font-semibold text-md text-blue-gray-800">
           {course?.course_title}
         </h5>
-        <p className="text-gray-600 mt-1">
+        <p className="text-gray-600 mt-1 text-sm">
           {course?.course_description?.slice(0, 50)}...
         </p>
         <div className="flex items-center mt-3">
           <div className="course-instructor-image rounded-full overflow-hidden">
-            <img src={avatar} className="w-[50px] h-[50px] object-cover" />
+            <GoPerson size={24} />
           </div>
           <div className="ml-3">
-            <h5 className="text-md font-medium">
+            <h5 className="text-xs font-medium ">
               {course?.instructor?.user?.name}
             </h5>
-            <div className="font-semibold text-sm text-gray-500">
+            <div className="font-semibold text-xs text-gray-500">
               <span>in </span>
-              <a className="text-blue-600 hover:underline">
+              <a className="text-blue-600 text-xs hover:underline">
                 {course.category?.category_name}
               </a>
             </div>
@@ -48,9 +50,10 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
             onClick={() => {
               navigate(`/course/${course?.id}`);
             }}
-            className="font-poppins bg-blue-600 text-white w-full py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="font-poppins bg-blue-600 gap-5 flex items-center justify-center text-white w-full py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Continue
+            <IoIosArrowRoundForward size={24} />
           </button>
         ) : (
           <button
@@ -58,15 +61,16 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
               Axios.post("/api/enroll/course/" + course?.id);
               navigate(`/course/${course?.id}`);
             }}
-            className="font-poppins bg-black text-white w-full py-2 rounded-lg hover:bg-green-700 transition-colors"
+            className="font-poppins bg-black gap-5 items-center flex justify-center text-white w-full py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
             Enroll
+            <IoIosArrowRoundForward size={24} />
           </button>
         )}
         <button className="bg-black p-2 rounded-lg">
           {course?.isFavorite ? (
             <FaHeart
-              size={24}
+              size={20}
               className="text-white"
               onClick={async () => {
                 toggleFavorite(course?.id);
@@ -81,7 +85,7 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
             />
           ) : (
             <FaHeart
-              size={24}
+              size={20}
               className="text-red-500"
               onClick={async () => {
                 toggleFavorite(course?.id);
