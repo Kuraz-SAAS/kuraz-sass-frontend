@@ -21,19 +21,17 @@ const CourseContent = ({ section, setCurrentVideos }) => {
   // Function to handle the video status change
   const handleVideoStatusChange = async (video, sectionIndex, videoIndex) => {
     try {
-      // Optimistically update the video status locally before the API call
       const updatedSections = [...sections];
-      updatedSections[sectionIndex].videos[videoIndex].status =
-        video.status === 1 ? 0 : 1;
+      const newStatus = video.status === 1 ? 0 : 1;
+      updatedSections[sectionIndex].videos[videoIndex].status = newStatus;
       setSections(updatedSections);
 
-      // Send the API request to change the status on the backend
+      // Send the API request
       await Axios.post("/api/video/change-status/" + video.id, {
-        status: video.status === 1 ? 0 : 1,
+        status: newStatus,
       });
     } catch (error) {
       console.error("Error changing video status:", error);
-      // Optionally: Roll back changes if the API call fails
     }
   };
 
@@ -47,52 +45,51 @@ const CourseContent = ({ section, setCurrentVideos }) => {
       {/* Loop through the sections */}
       {sections?.map((sec, sectionIndex) => (
         <section key={sec.id}>
-          <div className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer">
+          <div
+            className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
+            onClick={() => toggleSection(sectionIndex)}
+          >
             <div className="flex items-center space-x-2">
-              <FaPlayCircle size={20} onClick={() => toggleSection(sec?.id)} />
+              <FaPlayCircle size={20} />
               <h3 className="font-semibold">{sec?.section_title}</h3>
               <span className="text-sm text-gray-600">
                 ({sec?.videos?.length} Lectures)
               </span>
             </div>
-            {isOpen[sec?.id] ? <FaChevronUp /> : <FaChevronDown />}
+            {isOpen[sectionIndex] ? <FaChevronUp /> : <FaChevronDown />}
           </div>
-          {isOpen[sec?.id] && (
+          {isOpen[sectionIndex] && (
             <ul className="ml-6 mt-2 space-y-2">
               {sec?.videos.map((video, videoIndex) => (
-                <button
-                  onClick={() => {
-                    setCurrentVideos(video?.video_links[0]);
-                  }}
+                <div
                   key={video.id}
-                  className="flex w-full px-2 justify-between items-center space-x-2"
+                  className="flex justify-between items-center space-x-2 px-2 cursor-pointer"
+                  onClick={() => setCurrentVideos(video?.video_links[0])}
                 >
-                  {video?.status ? (
+                  <div className="flex items-center space-x-2">
+                    {/* Status Change Button */}
                     <button
-                      onClick={() =>
-                        handleVideoStatusChange(video, sectionIndex, videoIndex)
-                      }
-                      className="flex items-center space-x-2"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent the parent onClick
+                        handleVideoStatusChange(
+                          video,
+                          sectionIndex,
+                          videoIndex
+                        );
+                      }}
                     >
-                      <GiCheckedShield size={18} />
-                      <span>{video?.video_title}</span>
+                      {video?.status ? (
+                        <GiCheckedShield size={18} />
+                      ) : (
+                        <FaEye size={18} />
+                      )}
                     </button>
-                  ) : (
-                    <button
-                      onClick={() =>
-                        handleVideoStatusChange(video, sectionIndex, videoIndex)
-                      }
-                      className="flex items-center space-x-2"
-                    >
-                      <FaEye size={18} />
-                      <span>{video?.video_title}</span>
-                    </button>
-                  )}
-
+                    <span>{video?.video_title}</span>
+                  </div>
                   <span className="text-gray-500">
                     {video?.video_duration} (min)
                   </span>
-                </button>
+                </div>
               ))}
             </ul>
           )}

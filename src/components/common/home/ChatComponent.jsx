@@ -3,42 +3,54 @@ import { FaPaperPlane } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useSiteStore } from "../../../context/siteStore";
 
-const ChatComponent = ({ pdfFile, bookId }) => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-  const user = useSiteStore((store) => store.user);
+const ChatComponent = ({ bookId }) => {
+  const [messages, setMessages] = useState([]); // Chat messages
+  const [input, setInput] = useState(""); // User input
+  const [loading, setLoading] = useState(false); // Loading state
+  const messagesEndRef = useRef(null); // Scroll reference
+  const user = useSiteStore((store) => store.user); // Fetch user data
 
   useEffect(() => {
+    // Auto-scroll to the latest message
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const askAboutPdf = async (bookId, question, userId) => {
+  // Function to ask a question about the PDF
+  const askAboutPdf = async (question) => {
+    if (!question.trim()) return; // Prevent empty questions
+    setLoading(true);
+
     try {
-      setLoading(true); // Set loading to true to disable the button
-      const response = await fetch("http://localhost:3000/api/ask", {
+      // Add the user's question to the messages
+      setMessages((prev) => [...prev, { text: question, sender: "user" }]);
+
+      // Send the question to the backend
+      const response = await fetch("http://localhost:3000/api/ask-pdf", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ bookId, question, userId }),
+        body: JSON.stringify({
+          documentId: "55ca0006-923e-4303-bf53-39ce01f79e14",
+          question,
+          userId: user?.user_id,
+        }),
       });
 
-      // Check for 429 response
+      // Handle rate limits or HTTP errors
       if (response.status === 429) {
-        throw new Error("Exceeded limit, try in a few minutes please");
+        throw new Error("Rate limit exceeded. Try again in a few minutes.");
       }
-
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response}`);
+        throw new Error(`HTTP Error: ${response.status}`);
       }
 
+      // Read and stream the response
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
-      let assistantResponse = ""; // Cumulative response
+      let assistantResponse = "";
 
-      // Add initial temporary bot message
+      // Add an initial placeholder for the bot's message
       setMessages((prev) => [
         ...prev,
         { text: "", sender: "bot", id: "temp-bot" },
@@ -49,65 +61,59 @@ const ChatComponent = ({ pdfFile, bookId }) => {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        console.log("Received chunk:", chunk); // Debug log
-        assistantResponse += chunk;
+        const lines = chunk.split("\n");
 
-        // Update the latest bot message in real-time as chunks are received
-        setMessages((prevMessages) => {
-          const tempBotMessage = prevMessages.find(
-            (msg) => msg.id === "temp-bot"
-          );
-          if (tempBotMessage) {
-            return prevMessages.map((msg) =>
-              msg.id === "temp-bot" ? { ...msg, text: assistantResponse } : msg
-            );
+        // Extract only "content" data from streamed lines
+        lines.forEach((line) => {
+          if (line.startsWith("data: ")) {
+            try {
+              const parsed = JSON.parse(line.replace("data: ", "").trim());
+              if (parsed.content) {
+                assistantResponse += parsed.content;
+
+                // Update the temporary bot message with streamed data
+                setMessages((prev) =>
+                  prev.map((msg) =>
+                    msg.id === "temp-bot"
+                      ? { ...msg, text: assistantResponse }
+                      : msg
+                  )
+                );
+              }
+            } catch (err) {
+              console.error("Error parsing chunk:", err);
+            }
           }
-          return prevMessages; // Return previous state if temp-bot message is not found
         });
       }
 
-      // Final update to the bot message
-      setMessages((prevMessages) =>
-        prevMessages.map((msg) =>
+      // Finalize the bot's message
+      setMessages((prev) =>
+        prev.map((msg) =>
           msg.id === "temp-bot" ? { ...msg, id: `bot-${Date.now()}` } : msg
         )
       );
     } catch (error) {
-      console.error("Error occurred:", error.message);
+      console.error("Error:", error.message);
       setMessages((prev) => [
         ...prev,
-        { text: `${error.message}`, sender: "bot" },
+        { text: `Error: ${error.message}`, sender: "bot" },
       ]);
     } finally {
-      setLoading(false); // Set loading back to false after the request is done
+      setLoading(false);
     }
   };
 
   const handleSend = () => {
     if (input.trim()) {
-      const userId = user?.user_id;
-
-      setMessages((prev) => [...prev, { text: input, sender: "user" }]);
-
-      askAboutPdf(bookId, input, userId);
-      setInput("");
+      askAboutPdf(input);
+      setInput(""); // Clear input field
     }
-  };
-
-  // Update the formatAssistantMessage to add line numbers
-  const formatAssistantMessage = (message) => {
-    if (typeof message !== "string") {
-      return "";
-    }
-
-    return message
-      .split(/\r?\n/) // Split by newlines
-      .map((line, index) => `${index + 1}. ${line}`) // Add line numbers
-      .join("\n"); // Join them back with line breaks
   };
 
   return (
-    <div className="flex flex-col h-full border bg-gray-100 rounded-b-lg w-[400px] shadow-md shadow-[#F3D598] border-gray-300 p-4">
+    <div className="flex flex-col h-[80vh] overflow-y-scroll border bg-gray-100 rounded-lg w-full max-w-md shadow-md p-4">
+      {/* Messages Display */}
       <div className="flex-1 overflow-y-auto">
         {messages.map((msg, index) => (
           <div
@@ -123,12 +129,11 @@ const ChatComponent = ({ pdfFile, bookId }) => {
                   : "bg-gray-200 text-black"
               }`}
             >
+              {/* Render Markdown for assistant responses */}
               {msg.sender === "bot" ? (
-                <ReactMarkdown>
-                  {formatAssistantMessage(msg.text)}
-                </ReactMarkdown>
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
               ) : (
-                <span style={{ whiteSpace: "pre-wrap" }}>{msg.text}</span>
+                <span>{msg.text}</span>
               )}
             </span>
           </div>
@@ -136,12 +141,14 @@ const ChatComponent = ({ pdfFile, bookId }) => {
         {loading && (
           <div className="text-left mb-2">
             <span className="inline-block px-4 py-2 rounded-lg bg-gray-300 text-black">
-              generating...
+              Generating...
             </span>
           </div>
         )}
-        <div ref={messagesEndRef} /> {/* Scroll reference */}
+        <div ref={messagesEndRef} /> {/* Auto-scroll reference */}
       </div>
+
+      {/* Input Field and Send Button */}
       <div className="flex items-center mt-4">
         <input
           type="text"
@@ -149,19 +156,15 @@ const ChatComponent = ({ pdfFile, bookId }) => {
           placeholder="Ask a question..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter" && !loading) {
-              handleSend();
-            }
-          }}
-          disabled={loading} // Disable the input field while loading
+          onKeyDown={(e) => e.key === "Enter" && !loading && handleSend()}
+          disabled={loading}
         />
         <button
           className={`ml-2 p-2 rounded-lg ${
-            loading ? "bg-gray-400" : "bg-primary"
+            loading ? "bg-gray-400" : "bg-blue-500"
           } text-white`}
           onClick={handleSend}
-          disabled={loading} // Disable the button while loading
+          disabled={loading}
         >
           {loading ? (
             <div className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></div>
