@@ -1,15 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { bookImg } from "../../../assets/test_img";
+import { BookImage, VideoImage } from "../../../assets/images";
 
 const BookCard = ({ book }) => {
   return (
     <div className="max-w-sm w-full bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
       <Link to={`/books/${book.id}`} className="block relative">
         <img
-          className="w-full h-72 rounded-t-lg object-cover"
+          className="rounded-t-lg object-cover"
           loading="lazy"
-          src={`http://saas.kuraztech.com/${book?.book_title?.toLowerCase()}.jpeg`}
+          src={VideoImage}
           alt={book?.book_cover}
         />
       </Link>

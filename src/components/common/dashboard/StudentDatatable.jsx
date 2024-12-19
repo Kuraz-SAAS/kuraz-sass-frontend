@@ -50,7 +50,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
           student.name.toLowerCase().includes(keyword) ||
           student.email.toLowerCase().includes(keyword) ||
           student.user_type.toLowerCase().includes(keyword) ||
-          student.tenant.domain_name.toLowerCase().includes(keyword)
+          student?.tenant?.domain_name.toLowerCase().includes(keyword)
         );
       });
       setDataList(results);
@@ -187,8 +187,8 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
       if (response.data) {
         // Add the new student to the local data
-        setDataList([...dataList, response.data]);
-        setRowsToShow([...rowsToShow, response.data].slice(0, rowsLimit));
+        setDataList([...dataList, response.data.user]);
+        setRowsToShow([...rowsToShow, response.data.user].slice(0, rowsLimit));
 
         // Show success message
         toast.success("Student added successfully!");
@@ -438,7 +438,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {student.tenant.domain_name}
+                      {student?.tenant?.domain_name}
                     </td>
                   </tr>
                 ))}

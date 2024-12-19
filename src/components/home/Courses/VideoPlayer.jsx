@@ -20,6 +20,13 @@ const VideoPlayer = ({ videoId }) => {
   // Unique ID for the player div to prevent conflicts
   const playerId = "youtube-player";
 
+  // Helper function to format time into minutes and seconds
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+
   // Initialize the YouTube Player
   useEffect(() => {
     const onYouTubeIframeAPIReady = () => {
@@ -174,7 +181,7 @@ const VideoPlayer = ({ videoId }) => {
 
         {/* Time Display */}
         <span className="mr-4">
-          {Math.floor(videoTime)} / {Math.floor(videoDuration)}s
+          {formatTime(videoTime)} / {formatTime(videoDuration)}
         </span>
 
         {/* Volume Control */}
