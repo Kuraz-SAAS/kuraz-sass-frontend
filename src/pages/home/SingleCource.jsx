@@ -4,9 +4,21 @@ import { CourseBannner } from "../../assets/images";
 import { courseImg } from "../../assets/test_img";
 import { Link, useParams } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
+import { BsArrowDownRight, BsInfoCircle } from "react-icons/bs";
+import {
+  MdContentCopy,
+  MdContentCut,
+  MdRestartAlt,
+  MdStart,
+} from "react-icons/md";
 
 const HtmlRenderer = ({ htmlString }) => {
-  return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
+  return (
+    <div
+      className="text-sm font-light"
+      dangerouslySetInnerHTML={{ __html: htmlString }}
+    />
+  );
 };
 
 const SingleCource = () => {
@@ -41,21 +53,21 @@ const SingleCource = () => {
           }}
         >
           <div className="grid gap-6  p-20">
-            <h1 className="text-3xl font-bold ">{course?.course_title}</h1>
+            <h1 className="text-3xl font-light ">{course?.course_title}</h1>
             <div className="grid gap-5">
               <p className="font-light">
                 in{" "}
-                <span className="underline underline-offset-2">
+                <span className="underline underline-offset-2 font-light">
                   {course?.category?.category_name}
                 </span>
               </p>
-              <p>
+              <p className="font-light">
                 Created By{" "}
-                <span className="underline underline-offset-2">
+                <span className="underline underline-offset-2 font-light">
                   {course?.instructor?.user?.name}
                 </span>
               </p>
-              <p>
+              <p className="font-light">
                 Last Updated: {formatDate(course?.instructor?.user?.updated_at)}
               </p>
             </div>
@@ -73,7 +85,7 @@ const SingleCource = () => {
             {/* Tab Navigation */}
             <div className="flex justify-between p-3 rounded-md border-b bg-black text-white border-gray-300">
               <button
-                className={`px-4 py-2 font-semibold ${
+                className={`px-4 py-2 font-light ${
                   activeTab === "information"
                     ? "text-yellow-500 border-b-2 border-yellow-500"
                     : "text-gray-500"
@@ -83,7 +95,7 @@ const SingleCource = () => {
                 Information
               </button>
               <button
-                className={`px-4 py-2 font-semibold ${
+                className={`px-4 py-2 font-light ${
                   activeTab === "content"
                     ? "text-yellow-500 border-b-2 border-yellow-500"
                     : "text-gray-500"
@@ -97,8 +109,10 @@ const SingleCource = () => {
             {/* Tab Content */}
             <div className="p-4">
               {activeTab === "information" && (
-                <div>
-                  <h2 className="text-lg font-bold">Information</h2>
+                <div className="grid gap-2">
+                  <h2 className="font-light flex  gap-2 items-center text-lg">
+                    <BsInfoCircle /> Information
+                  </h2>
                   <p>
                     <HtmlRenderer htmlString={course?.course_description} />
                   </p>
@@ -106,15 +120,21 @@ const SingleCource = () => {
               )}
               {activeTab === "content" && (
                 <div>
-                  <h2 className="text-lg font-bold">Content</h2>
+                  <h2 className="text-lg flex items-center gap-2 font-light">
+                    <MdContentCopy /> Content
+                  </h2>
                   <ul className="space-y-4">
                     {course?.course_section?.map((section, index) => (
                       <li
                         key={index}
                         className="flex justify-between items-center bg-white shadow-lg p-4 rounded-md"
                       >
-                        <div>{section?.section_title}</div>
-                        <div>{section?.videos?.length} Parts</div>
+                        <div className="font-light">
+                          {section?.section_title}
+                        </div>
+                        <div className="font-light">
+                          {section?.videos?.length} Parts
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -124,20 +144,18 @@ const SingleCource = () => {
           </div>
 
           <div className="bg-white w-[400px] shadow-lg  gap-5 rounded-lg p-6 font-poppins text-center grid">
-            {/* Price */}
-            <h2 className="text-3xl font-bold text-green-500 ">Free</h2>
-
             {/* Add to Cart Button */}
             <Link
               to={"/course/play/" + course.id}
-              className="bg-green-500 text-white rounded-md p-2 font-semibold hover:bg-green-600 "
+              className="bg-primary flex items-center justify-center gap-3 text-white rounded-md p-2 font-light hover:bg-green-600 "
             >
+              <BsArrowDownRight />
               Start the Course
             </Link>
 
             {/* Course Includes */}
             <div className="text-left">
-              <h3 className="font-bold text-blue-900 mb-2">Course Includes</h3>
+              <h3 className="font-light text-blue-900 mb-2">Course Includes</h3>
               <ul className="space-y-2 text-gray-600">{course?.overview}</ul>
             </div>
           </div>

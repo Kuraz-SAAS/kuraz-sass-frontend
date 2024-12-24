@@ -7,6 +7,7 @@ import ResourcesDatatable from "../../../../components/common/dashboard/Resource
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner and sad icon
+import { MdAdd } from "react-icons/md";
 
 const Resources = () => {
   const [resourceData, setResourcesGradeData] = useState([]);
@@ -98,8 +99,9 @@ const Resources = () => {
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#bc8c4e] text-white p-2 rounded-md"
+            className="bg-primary flex items-center gap-2 text-sm font-light text-white p-2 rounded-md"
           >
+            <MdAdd />
             Add Resources
           </button>
 

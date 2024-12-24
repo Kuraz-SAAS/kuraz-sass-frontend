@@ -25,11 +25,10 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
         <div className="absolute inset-0 h-full w-full" />
       </div>
       <div className="p-4">
-        <h5 className="font-semibold text-md text-blue-gray-800">
-          {course?.course_title}
-        </h5>
-        <p className="text-gray-600 mt-1 text-sm">
-          <HtmlRenderer htmlString={course?.course_description?.slice(0, 50)} />
+        <h5 className="text-md text-blue-gray-800">{course?.course_title}</h5>
+        <p className="text-gray-600 mt-1 text-xs font-light">
+          <HtmlRenderer htmlString={course?.course_description?.slice(0, 40)} />
+
           {/* {course?.course_description?.slice(0, 50)}... */}
         </p>
         <div className="flex items-center mt-3">
@@ -37,10 +36,10 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
             <GoPerson size={24} />
           </div>
           <div className="ml-3">
-            <h5 className="text-xs font-medium ">
+            <h5 className="text-xs font-light ">
               {course?.instructor?.user?.name}
             </h5>
-            <div className="font-semibold text-xs text-gray-500">
+            <div className="font-light text-xs text-gray-500">
               <span>in </span>
               <a className="text-blue-600 text-xs hover:underline">
                 {course.category?.category_name}
@@ -55,7 +54,7 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
             onClick={() => {
               navigate(`/course/${course?.id}`);
             }}
-            className="font-poppins bg-blue-600 gap-5 flex items-center justify-center text-white w-full py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="font-poppins font-light text-sm bg-blue-600 gap-5 flex items-center justify-center text-white w-full py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Continue
             <IoIosArrowRoundForward size={24} />
@@ -66,7 +65,7 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
               Axios.post("/api/enroll/course/" + course?.id);
               navigate(`/course/${course?.id}`);
             }}
-            className="font-poppins bg-black gap-5 items-center flex justify-center text-white w-full py-2 rounded-lg hover:bg-green-700 transition-colors"
+            className="font-poppins font-light text-sm bg-black gap-5 items-center flex justify-center text-white w-full py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
             Enroll
             <IoIosArrowRoundForward size={24} />

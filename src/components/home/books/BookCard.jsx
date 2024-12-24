@@ -5,7 +5,7 @@ import { BookImage, VideoImage } from "../../../assets/images";
 
 const BookCard = ({ book }) => {
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow ">
       <Link to={`/books/${book.id}`} className="block relative">
         <img
           className="rounded-t-lg object-cover"
@@ -15,14 +15,14 @@ const BookCard = ({ book }) => {
         />
       </Link>
       <div className="p-4 flex flex-col">
-        <h5 className="font-semibold text-md text-gray-800 truncate">
+        <h5 className="font-light text-md text-gray-800 truncate">
           {book.book_title}
         </h5>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm font-light text-gray-600 mt-1">
           {book?.book_author && book?.book_author.name}
         </p>
         <div className="flex items-center text-xs text-gray-500 mt-2">
-          <span>Category: </span>
+          <span className="font-light">Category: </span>
           <p className="ml-1">{book?.book_category_id}</p>
         </div>
         <div className="flex justify-between items-center mt-4">
@@ -34,13 +34,13 @@ const BookCard = ({ book }) => {
                   : `USD ${book?.price}`}
               </p>
             ) : (
-              <p className="text-lg font-bold text-green-600">Free</p>
+              <p className="text-sm text-green-600 font-light">Free</p>
             )}
           </div>
           <Link
             to={"single/" + book?.id}
             state={{ book: book }}
-            className="px-3 py-1 text-white bg-primary rounded-md hover:bg-blue-600 transition duration-200"
+            className="px-3 py-1 text-sm font-light text-white bg-primary rounded-md hover:bg-blue-600 transition"
           >
             Read
           </Link>

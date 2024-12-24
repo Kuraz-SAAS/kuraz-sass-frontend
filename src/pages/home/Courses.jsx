@@ -53,7 +53,7 @@ function List({ options, color, check, onChange }) {
           <Typography
             variant="small"
             color={color}
-            className="font-medium font-poppins"
+            className="font-light font-poppins"
           >
             {options[0]}
           </Typography>
@@ -145,11 +145,11 @@ const CoursesPage = () => {
 
           <Menu open={true} handler={() => {}} placement="bottom-start">
             <MenuHandler>
-              <Button className="font-poppins w-full">
+              <Button className="font-poppins w-full font-light ">
                 Filter by Category
               </Button>
             </MenuHandler>
-            <MenuList className="w-[300px]">
+            <MenuList className="w-[300px] ">
               <MenuItem className="!cursor-auto font-poppins">
                 <Accordion open={open === 1} icon={<Icon id={1} open={open} />}>
                   <AccordionHeader
@@ -158,7 +158,7 @@ const CoursesPage = () => {
                   >
                     <Typography
                       variant="small"
-                      className="font-medium font-poppins text-gray-600"
+                      className="font-medium font-poppins font-light text-gray-600"
                     >
                       Categories
                     </Typography>
@@ -168,7 +168,7 @@ const CoursesPage = () => {
                       <List
                         key={index}
                         options={[category.category_name, category.count]}
-                        color="blue-gray"
+                        color="blue-gray font-light"
                         check={selectedCategories.includes(
                           category.category_name
                         )}

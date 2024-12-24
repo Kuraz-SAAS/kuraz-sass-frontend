@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../layouts/dashboard/student/DashboardLayouts";
 import { useSiteStore } from "../../../context/siteStore";
 import { MdOutlineMenuBook } from "react-icons/md"; // Import the book icon
+import { VideoImage } from "../../../assets/images";
 
 const Courses = () => {
   const [activeTab, setActiveTab] = useState("active");
@@ -56,7 +57,7 @@ const Courses = () => {
                   {/* Image section */}
                   <div className="w-24 h-24 mb-4 sm:mb-0">
                     <img
-                      src="https://via.placeholder.com/100"
+                      src={VideoImage}
                       alt="Course"
                       className="w-full h-full rounded-lg object-cover"
                     />
@@ -71,13 +72,13 @@ const Courses = () => {
                       {crs?.instructor}
                     </p>
                     <div className="bg-green-500 text-white py-1 px-3 rounded-full text-xs inline-block mt-2">
-                      {crs?.category?.category_title}
+                      {crs?.category}
                     </div>
                   </div>
 
                   {/* Progress circle */}
                   <div className="flex-shrink-0 w-12 h-12 border-4 border-green-400 rounded-full flex items-center justify-center text-sm font-semibold">
-                    0.0%
+                    {crs?.total_percentage.toFixed(0)}%
                   </div>
                 </div>
               ))

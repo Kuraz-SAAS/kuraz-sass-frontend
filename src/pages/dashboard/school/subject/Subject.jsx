@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner and sad icon
 import { motion, AnimatePresence } from "framer-motion"; // Add this import
 import AddSubjectModal from "./AddSubject"; // Add this import
+import { MdAdd } from "react-icons/md";
 
 const Subject = () => {
   const [subjectData, setSubjectGradeData] = useState([]);
@@ -54,8 +55,9 @@ const Subject = () => {
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#bc8c4e] text-white p-2 rounded-md"
+            className="bg-primary flex items-center gap-2 font-light text-sm text-white p-2 rounded-md"
           >
+            <MdAdd />
             Add Subject
           </button>
 

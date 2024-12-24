@@ -32,62 +32,60 @@ const Dashboard = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {/* Total Course Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-semibold">
-                {student?.total_course}
-              </div>
+              <div className="text-3xl font-light">{student?.total_course}</div>
               <div className="mt-2 flex items-center">
-                <span className="text-lg">Total Courses</span>
+                <span className="text-md font-light">Total Courses</span>
                 <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
               </div>
             </div>
 
             {/* OnGoing Course Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-semibold">
+              <div className="text-3xl font-light">
                 {student?.ongoing_course_count}
               </div>
               <div className="mt-2 flex items-center">
-                <span className="text-lg">OnGoing Courses</span>
+                <span className="text-md font-light">OnGoing Courses</span>
                 <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
               </div>
             </div>
 
             {/* Completed Course Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-bold">
+              <div className="text-3xl font-light">
                 {student?.completed_course_count}
               </div>
               <div className="mt-2 flex items-center">
-                <span className="text-lg">Completed Courses</span>
+                <span className="text-md font-light">Completed Courses</span>
                 <AiOutlineFileText className="ml-2 w-6 h-6" />
               </div>
             </div>
 
             {/* Saved Courses Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-semibold">
+              <div className="text-3xl font-light">
                 {student?.saved_courses_count}
               </div>
               <div className="mt-2 flex items-center">
-                <span className="text-lg">Saved Courses</span>
+                <span className="text-md font-light">Saved Courses</span>
                 <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
               </div>
             </div>
 
             {/* Books Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-semibold">0</div>
+              <div className="text-3xl font-light">0</div>
               <div className="mt-2 flex items-center">
-                <span className="text-lg">Books</span>
+                <span className="text-md font-light">Books</span>
                 <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
               </div>
             </div>
 
             {/* School's Resources Card */}
             <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-bold">0</div>
+              <div className="text-3xl font-light">0</div>
               <div className="mt-2 flex items-center">
-                <span className="text-lg">School's Resources</span>
+                <span className="text-md font-light">School's Resources</span>
                 <AiOutlineFileText className="ml-2 w-6 h-6" />
               </div>
             </div>
@@ -105,7 +103,7 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row gap-6 p-6">
             {/* Recent Activities Section */}
             <div className="w-full md:w-1/2 bg-white rounded-lg shadow p-6">
-              <h2 className="text-primary font-semibold mb-3">
+              <h2 className="text-primary font-light mb-3">
                 RECENT ACTIVITIES
               </h2>
               <div className="border-t pt-2 text-gray-600">

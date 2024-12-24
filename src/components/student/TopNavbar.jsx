@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
-import { avatar } from "@material-tailwind/react";
+import { avatar } from "../../assets/images";
+import { GoHomeFill } from "react-icons/go";
+import { BsPerson } from "react-icons/bs";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
   const profileMenuButtonRef = useRef(null);
+  const user = useSiteStore((store) => store.user);
   const setUser = useSiteStore((store) => store.setUser);
   const navigate = useNavigate();
 
@@ -41,22 +44,10 @@ const TopNavbar = () => {
           to="/courses"
           className="flex items-center text-gray-800 dark:text-white font-semibold text-md"
         >
-          <span className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition">
-            Back To Home
+          <span className="bg-primary flex items-center gap-2 font-light text-sm  text-white p-2 rounded-md hover:bg-primary transition">
+            <GoHomeFill /> Back To Home
           </span>
         </Link>
-      </div>
-
-      {/* Search Bar */}
-      <div className="flex-1 max-w-md mx-3">
-        <div className="relative">
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm"
-          />
-        </div>
       </div>
 
       {/* Right Side Icons */}
@@ -71,10 +62,10 @@ const TopNavbar = () => {
           <button
             ref={profileMenuButtonRef}
             onClick={handleProfileMenuClick}
-            className="flex items-center space-x-2 text-gray-800 dark:text-white hover:text-blue-600 text-sm"
+            className="flex items-center gap-2 text-gray-800 dark:text-white hover:text-blue-600 text-sm"
           >
-            <img src={avatar} alt="Profile" className="w-8 h-8 rounded-full" />
-            <span>John Doe</span>
+            <BsPerson size={22} />
+            <span className="capitalize">{user?.name}</span>
             <FaChevronDown className="text-xs" />
           </button>
           <div

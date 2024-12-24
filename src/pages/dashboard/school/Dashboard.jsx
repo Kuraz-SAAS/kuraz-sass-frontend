@@ -20,11 +20,11 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Total Students Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">
+          <div className="text-3xl font-light mb-2">
             {dashboardData?.total_students}
           </div>
           <div className="mt-1 flex items-center text-sm font-medium">
-            <span>Total Students</span>
+            <span className="font-light">Total Students</span>
             <svg
               className="ml-1 w-5 h-5 text-white opacity-80"
               fill="none"
@@ -44,11 +44,11 @@ const Dashboard = () => {
 
         {/* Total Grades Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">
+          <div className="text-3xl font-light mb-2">
             {dashboardData?.total_grades}
           </div>
           <div className="mt-1 flex items-center text-sm font-medium">
-            <span>Total Grades</span>
+            <span className="font-light">Total Grades</span>
             <svg
               className="ml-1 w-5 h-5 text-white opacity-80"
               fill="none"
@@ -68,11 +68,11 @@ const Dashboard = () => {
 
         {/* Total Resources Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">
+          <div className="text-3xl font-light mb-2">
             {dashboardData?.total_resources}
           </div>
           <div className="mt-1 flex items-center text-sm font-medium">
-            <span>Total Resources</span>
+            <span className="font-light">Total Resources</span>
             <svg
               className="ml-1 w-5 h-5 text-white opacity-80"
               fill="none"
@@ -92,11 +92,11 @@ const Dashboard = () => {
 
         {/* Upcoming Events Card */}
         <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-          <div className="text-3xl font-semibold mb-2">
+          <div className="text-3xl font-light mb-2">
             {dashboardData?.total_notices}
           </div>
           <div className="mt-1 flex items-center text-sm font-medium">
-            <span>Upcoming Events</span>
+            <span className="font-light">Upcoming Events</span>
             <svg
               className="ml-1 w-5 h-5 text-white opacity-80"
               fill="none"
