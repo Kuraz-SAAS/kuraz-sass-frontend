@@ -94,14 +94,6 @@ const SchoolRegistrationForm = () => {
             <img src={kurazLogo} alt="Kuraz" className="logo w-24 md:w-full" />
           </a>
         </div>
-        <div className="z-50 relative">
-          <Link
-            to={"/student/register"}
-            className="bg-white p-2 shadow-lg rounded-md"
-          >
-            Register as a student
-          </Link>
-        </div>
       </div>
 
       {/* Hero Content */}
