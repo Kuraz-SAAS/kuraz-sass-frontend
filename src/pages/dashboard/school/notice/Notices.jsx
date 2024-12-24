@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import AddNoticeModal from "./AddNoticeModal";
+import { MdAdd } from "react-icons/md";
 
 const Notices = () => {
   const [noticeData, setNoticeData] = useState([]);
@@ -51,8 +52,9 @@ const Notices = () => {
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#bc8c4e] text-white p-2 rounded-md"
+            className="bg-primary font-light text-sm flex items-center gap-2 text-white p-2 rounded-md"
           >
+            <MdAdd />
             Add Notice
           </button>
 

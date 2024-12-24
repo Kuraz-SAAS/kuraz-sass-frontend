@@ -17,7 +17,7 @@ const Slider = ({ events }) => {
   return (
     <div className="relative overflow-hidden bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
       <div className="flex justify-between items-center mb-4">
-        <p>Upcoming Events</p>
+        <p className="font-light">Upcoming Events</p>
         <a href="#" className="underline underline-offset-2 cursor-pointer">
           History
         </a>
@@ -33,7 +33,7 @@ const Slider = ({ events }) => {
               className="flex-shrink-0 w-full h-32 flex items-center justify-center"
             >
               <div className="text-center">
-                <p className="text-xl uppercase">{slide.title}</p>
+                <p className="text-xl font-light uppercase">{slide.title}</p>
                 <p className="text-sm font-light capitalize">
                   {slide.description}
                 </p>

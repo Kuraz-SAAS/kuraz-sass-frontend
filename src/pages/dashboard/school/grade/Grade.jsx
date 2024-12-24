@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaRegSadCry, FaSpinner, FaCheck } from "react-icons/fa"; // Importing spinner icon from React Icons
 import { motion, AnimatePresence } from "framer-motion"; // Add this import
+import { MdAdd } from "react-icons/md";
 
 const Grade = () => {
   const [gradesData, setGradeData] = useState([]);
@@ -146,8 +147,9 @@ const Grade = () => {
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#bc8c4e] text-white p-2 rounded-md"
+            className="bg-primary font-light flex  items-center gap-2 text-sm text-white p-2 rounded-md"
           >
+            <MdAdd />
             Add Grade
           </button>
 
@@ -186,7 +188,7 @@ const Grade = () => {
                     }}
                   >
                     <motion.h2
-                      className="text-xl font-bold mb-4"
+                      className="text-xl font-light mb-4"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
@@ -278,7 +280,7 @@ const Grade = () => {
                     }}
                   >
                     <motion.h2
-                      className="text-xl font-bold mb-4"
+                      className="text-xl font-light mb-4"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
@@ -368,7 +370,7 @@ const Grade = () => {
                       bounce: 0.25,
                     }}
                   >
-                    <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+                    <h2 className="text-xl font-light mb-4">Confirm Delete</h2>
                     <p className="mb-6">
                       Are you sure you want to delete this grade?
                     </p>

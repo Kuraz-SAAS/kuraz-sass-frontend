@@ -5,6 +5,7 @@ import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
 import Axios from "../../../middleware/Axios";
 import CustomPagination from "../CustomPagination";
+import { MdAdd } from "react-icons/md";
 
 const StudentDatatable = ({ datas, headers, actions }) => {
   const [searchValue, setSearchValue] = useState();
@@ -361,14 +362,16 @@ const StudentDatatable = ({ datas, headers, actions }) => {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                className="bg-primary text-sm flex items-center gap-2 font-light text-white px-4 py-2 rounded-lg hover:bg-blue-600"
               >
+                <MdAdd />
                 Add Student
               </button>
               <button
                 onClick={() => setIsExcelModalOpen(true)}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                className="bg-primary font-light text-sm flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-green-600"
               >
+                <MdAdd />
                 Import Excel
               </button>
             </div>

@@ -25,7 +25,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800 capitalize flex items-center space-x-2">
           <FaHome className="text-secondary" />
-          <p>{user?.name || "MyApp"}</p>
+          <p className="font-light">{user?.name || "MyApp"}</p>
         </div>
 
         {/* Desktop Menu */}
@@ -37,7 +37,7 @@ const Navbar = () => {
                 className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
               >
                 <FaBook />
-                <span>Courses</span>
+                <span className="font-light">Courses</span>
               </Link>
             </li>
             <li>
@@ -46,7 +46,7 @@ const Navbar = () => {
                 className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
               >
                 <FaBook />
-                <span>Books</span>
+                <span className="font-light">Books</span>
               </Link>
             </li>
             <li>
@@ -55,7 +55,7 @@ const Navbar = () => {
                 className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
               >
                 <FaUser />
-                <span>Resources</span>
+                <span className="font-light">Resources</span>
               </Link>
             </li>
           </ul>
@@ -73,7 +73,7 @@ const Navbar = () => {
               className="flex items-center space-x-2  px-3 py-2 rounded-lg "
             >
               <FaPersonBooth />
-              <span>Dashboard</span>
+              <span className="font-light">Dashboard</span>
             </Link>
           ) : (
             <Link to="/login" className="text-gray-800 hover:text-blue-600">
