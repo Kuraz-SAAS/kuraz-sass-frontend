@@ -22,24 +22,28 @@ const CourseViewPage = () => {
   );
 
   return (
-    <div className="flex h-screen font-poppins py-10 px-20 bg-gray-100">
+    <div className="flex flex-col lg:flex-row h-screen font-poppins py-6 px-4 lg:py-10 lg:px-20 bg-gray-100">
       {/* Main content */}
-      <main className="flex-1 grid gap-5 p-6">
-        <div className="flex  items-center gap-2 ">
+      <main className="flex-1 grid gap-4 lg:gap-5 p-4 lg:p-6">
+        <div className="flex items-center gap-2">
           <BsBack size={24} />
-          <Link to={"/courses"} className="underline underline-offset-4">
+          <Link
+            to={"/courses"}
+            className="underline underline-offset-4 text-sm lg:text-base"
+          >
             Back to Courses
           </Link>
         </div>
-        <h2 className="text-lg font-semibold text-gray-700">
+        <h2 className="text-base lg:text-lg font-semibold text-gray-700">
           {firstVideo?.videos[0].video_title}
         </h2>
-        <div className="mt-4 shadow-md rounded-xl">
+        <div className="mt-4 shadow-md rounded-xl aspect-w-16 aspect-h-9">
           <VideoPlayer videoId={currentVideos} />
         </div>
       </main>
 
-      <aside className="w-2/5 p-4">
+      {/* Sidebar */}
+      <aside className="w-full lg:w-2/5 p-4 mt-6 lg:mt-0 lg:p-4 ">
         <CourseContent
           section={course?.course_section}
           setCurrentVideos={setCurrentVideos}

@@ -1,82 +1,85 @@
 import React, { useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
-import { FaSearch } from "react-icons/fa";
+import {
+  FaSearch,
+  FaBook,
+  FaHome,
+  FaUser,
+  FaPersonBooth,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { bookImg } from "../../../assets/test_img";
 import { useSiteStore } from "../../../context/siteStore";
+import { bookImg } from "../../../assets/test_img";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const user = useSiteStore((store) => store.user);
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 left-0 z-50 font-poppins">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-around">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <div className="text-2xl font-bold text-gray-800">
-          <p>{user?.name}</p>
+        <div className="text-xl font-bold text-gray-800 capitalize flex items-center space-x-2">
+          <FaHome className="text-secondary" />
+          <p>{user?.name || "MyApp"}</p>
         </div>
-
-        {/* Search Bar */}
-        {/* <div className="hidden md:flex flex-1 mx-4">
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            />
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-          </div>
-        </div> */}
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
           <ul className="flex space-x-6">
             <li>
               <Link
-                to={"/courses"}
-                className="text-gray-800 hover:text-blue-600"
+                to="/courses"
+                className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
               >
-                Courses
-              </Link>
-            </li>
-            <li>
-              <Link to={"/books"} className="text-gray-800 hover:text-blue-600">
-                Books
+                <FaBook />
+                <span>Courses</span>
               </Link>
             </li>
             <li>
               <Link
-                to={"/resources"}
-                className="text-gray-800 hover:text-blue-600"
+                to="/books"
+                className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
               >
-                Resources
+                <FaBook />
+                <span>Books</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/resources"
+                className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
+              >
+                <FaUser />
+                <span>Resources</span>
               </Link>
             </li>
           </ul>
         </div>
+
         {/* User Profile */}
         <div className="flex items-center space-x-4">
-          <>
+          {user ? (
             <Link
               to={
                 user?.user_type === "student"
                   ? "/student/dashboard"
                   : "/school/dashboard"
               }
-              className="flex items-center space-x-2 bg-[#bc8c4a] px-2 py-1 rounded-lg text-white"
+              className="flex items-center space-x-2  px-3 py-2 rounded-lg "
             >
-              <img
-                src={bookImg}
-                alt={bookImg}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              <span className="">{"Dashboard"}</span>
+              <FaPersonBooth />
+              <span>Dashboard</span>
             </Link>
-          </>
+          ) : (
+            <Link to="/login" className="text-gray-800 hover:text-blue-600">
+              Login
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -94,26 +97,38 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed top-0 right-0 w-2/3 md:hidden bg-white shadow-lg transition-transform transform ${
+        className={`fixed top-0 right-0 h-full w-2/3 bg-white shadow-lg transition-transform transform md:hidden z-40 ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-4">
-          <ul className="space-y-4">
+        <div className="p-6">
+          <ul className="space-y-6">
             <li>
-              <a href="#" className="text-gray-800 hover:text-blue-600">
-                Courses
-              </a>
+              <Link
+                to="/courses"
+                className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
+              >
+                <FaBook />
+                <span>Courses</span>
+              </Link>
             </li>
             <li>
-              <a href="#" className="text-gray-800 hover:text-blue-600">
-                Books
-              </a>
+              <Link
+                to="/books"
+                className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
+              >
+                <FaBook />
+                <span>Books</span>
+              </Link>
             </li>
             <li>
-              <a href="#" className="text-gray-800 hover:text-blue-600">
-                Resources
-              </a>
+              <Link
+                to="/resources"
+                className="flex items-center space-x-2 text-gray-800 hover:text-blue-600"
+              >
+                <FaUser />
+                <span>Resources</span>
+              </Link>
             </li>
           </ul>
         </div>

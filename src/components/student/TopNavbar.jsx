@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaBell, FaChevronDown } from "react-icons/fa"; // React Icons
+import { FaBell, FaChevronDown, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 import { avatar } from "@material-tailwind/react";
@@ -33,20 +33,15 @@ const TopNavbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleNavigation = (path) => {
-    history.push(path);
-    setIsMenuOpen(false); // Close menu after navigation
-  };
-
   return (
-    <nav className="bg-white  py-3 px-4 flex items-center justify-between">
+    <nav className="bg-white dark:bg-gray-800 shadow-md py-3 px-4 flex items-center justify-between">
       {/* Logo Section */}
       <div className="flex items-center space-x-3">
         <Link
-          to={"/courses"}
-          className="flex items-center text-gray-800 font-semibold text-md"
+          to="/courses"
+          className="flex items-center text-gray-800 dark:text-white font-semibold text-md"
         >
-          <span className="bg-primary text-white p-2 rounded-md">
+          <span className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition">
             Back To Home
           </span>
         </Link>
@@ -54,40 +49,49 @@ const TopNavbar = () => {
 
       {/* Search Bar */}
       <div className="flex-1 max-w-md mx-3">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full py-1 px-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-150 text-sm"
-        />
+        <div className="relative">
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 text-sm"
+          />
+        </div>
       </div>
 
       {/* Right Side Icons */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-5">
+        {/* Notifications Icon */}
+        <button className="text-gray-800 dark:text-white hover:text-blue-600 transition">
+          <FaBell className="text-lg" />
+        </button>
+
         {/* Profile Menu */}
         <div className="relative">
           <button
             ref={profileMenuButtonRef}
             onClick={handleProfileMenuClick}
-            className="flex items-center space-x-1 text-gray-800 hover:text-blue-600 text-sm"
+            className="flex items-center space-x-2 text-gray-800 dark:text-white hover:text-blue-600 text-sm"
           >
-            <img src={avatar} alt="Profile" className="w-7 h-7 rounded-full" />
+            <img src={avatar} alt="Profile" className="w-8 h-8 rounded-full" />
             <span>John Doe</span>
             <FaChevronDown className="text-xs" />
           </button>
           <div
             ref={profileMenuRef}
-            className={`absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg ${
-              isMenuOpen ? "block" : "hidden"
-            }`}
+            className={`absolute right-0 mt-2 w-44 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg transition-transform transform ${
+              isMenuOpen ? "scale-100" : "scale-0"
+            } origin-top-right`}
           >
             <button
-              className="block px-3 py-1 text-gray-700 w-full text-start hover:bg-gray-100 text-sm"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-200 w-full text-start hover:bg-gray-100 dark:hover:bg-gray-600 text-sm"
               onClick={() => {
                 setUser(null);
                 navigate("/login");
               }}
             >
-              Logout
+              <FaSignOutAlt />
+              <span>Logout</span>
             </button>
           </div>
         </div>
