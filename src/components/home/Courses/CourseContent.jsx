@@ -59,7 +59,7 @@ const CourseContent = ({ section, setCurrentVideos }) => {
             {isOpen[sectionIndex] ? <FaChevronUp /> : <FaChevronDown />}
           </div>
           {isOpen[sectionIndex] && (
-            <ul className="ml-6 mt-2 space-y-2">
+            <ul className="ml-6 mt-2 space-y-2 text-sm font-light">
               {sec?.videos.map((video, videoIndex) => (
                 <div
                   key={video.id}

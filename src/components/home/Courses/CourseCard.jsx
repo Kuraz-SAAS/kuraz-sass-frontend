@@ -6,6 +6,10 @@ import { GoPerson } from "react-icons/go";
 import { useSiteStore } from "../../../context/siteStore";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
+const HtmlRenderer = ({ htmlString }) => {
+  return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
+};
+
 const CourseCard = ({ course, user, onFavoriteToggle }) => {
   const navigate = useNavigate();
   const toggleFavorite = useSiteStore((store) => store.toggleFavorite);
@@ -25,7 +29,8 @@ const CourseCard = ({ course, user, onFavoriteToggle }) => {
           {course?.course_title}
         </h5>
         <p className="text-gray-600 mt-1 text-sm">
-          {course?.course_description?.slice(0, 50)}...
+          <HtmlRenderer htmlString={course?.course_description?.slice(0, 50)} />
+          {/* {course?.course_description?.slice(0, 50)}... */}
         </p>
         <div className="flex items-center mt-3">
           <div className="course-instructor-image rounded-full overflow-hidden">

@@ -5,6 +5,10 @@ import { courseImg } from "../../assets/test_img";
 import { Link, useParams } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 
+const HtmlRenderer = ({ htmlString }) => {
+  return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
+};
+
 const SingleCource = () => {
   const [activeTab, setActiveTab] = useState("information");
   const params = useParams();
@@ -64,7 +68,7 @@ const SingleCource = () => {
             />
           </div>
         </div>
-        <div className="flex gap-[45px] pb-5 justify-center">
+        <div className="flex gap-[45px] items-start pb-5 justify-center">
           <div className="w-[700px] font-poppins relative -top-10">
             {/* Tab Navigation */}
             <div className="flex justify-between p-3 rounded-md border-b bg-black text-white border-gray-300">
@@ -95,7 +99,9 @@ const SingleCource = () => {
               {activeTab === "information" && (
                 <div>
                   <h2 className="text-lg font-bold">Information</h2>
-                  <p>{course?.course_description}.</p>
+                  <p>
+                    <HtmlRenderer htmlString={course?.course_description} />
+                  </p>
                 </div>
               )}
               {activeTab === "content" && (
