@@ -31,8 +31,8 @@ export const Books = () => {
       setLoading(true); // Set loading to true before fetching
       try {
         const res = await Axios.get("/api/books");
-        setBooksData(res.data.Books);
-        setBooksCategoryData(res.data.Book_category);
+        setBooksData(res.data.books);
+        setBooksCategoryData(res.data.book_category);
       } catch (error) {
         console.error("Error fetching books:", error);
       } finally {
@@ -45,7 +45,7 @@ export const Books = () => {
   // Filter books based on selected category and search query
   const filteredBooks = booksData.filter((book) => {
     const matchesCategory = selectedCategory
-      ? book.category.cat_name === selectedCategory
+      ? book.category.category_name === selectedCategory
       : true;
     const matchesSearch = book.book_title
       .toLowerCase()

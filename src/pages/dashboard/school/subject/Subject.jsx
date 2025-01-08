@@ -8,29 +8,32 @@ import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner an
 import { motion, AnimatePresence } from "framer-motion"; // Add this import
 import AddSubjectModal from "./AddSubject"; // Add this import
 import { MdAdd } from "react-icons/md";
+import ReactDataTable from "../../../../components/common/dashboard/Datatable";
 
 const Subject = () => {
   const [subjectData, setSubjectGradeData] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
-
+  const fetchData = async () => {
+    try {
+      const res = await Axios.get("/api/schoolSubjects");
+      console.log(res);
+      setSubjectGradeData(res.data.school_subjects);
+    } catch (error) {
+      toast.error("Failed to fetch subjects.");
+    } finally {
+      setLoading(false); // Set loading to false after data fetch
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await Axios.get("/api/schoolSubjects");
-        console.log(res);
-        setSubjectGradeData(res.data.school_subjects);
-      } catch (error) {
-        toast.error("Failed to fetch subjects.");
-      } finally {
-        setLoading(false); // Set loading to false after data fetch
-      }
-    };
     fetchData();
   }, []);
 
-  const headers = ["Name", "Grade", "Actions"];
+  const headers = [
+    { name: "Name", selector: "name" },
+    { name: "Grade", selector: "grade_name" },
+  ];
 
   const editGrade = (id) => {
     console.log(id);
@@ -80,10 +83,11 @@ const Subject = () => {
               {/* Spinner icon */}
             </div>
           ) : subjectData.length > 0 ? ( // Conditional rendering for subjects data
-            <SubjectDatatable
+            <ReactDataTable
               datas={subjectData}
               headers={headers}
               actions={actions}
+              used_id={"subject_id"}
             />
           ) : (
             // Display no subjects message

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion"; // Add this import
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import Datatable from "../../../../components/common/dashboard/Datatable";
 import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
@@ -6,42 +6,47 @@ import Axios from "../../../../middleware/Axios";
 import ResourcesDatatable from "../../../../components/common/dashboard/ResourcesDatatable";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaRegSadCry, FaSpinner } from "react-icons/fa"; // Importing spinner and sad icon
+import { FaRegSadCry, FaSpinner } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
+import ReactDataTable from "../../../../components/common/dashboard/Datatable";
 
 const Resources = () => {
   const [resourceData, setResourcesGradeData] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add this state
+  const [loading, setLoading] = useState(true);
+  const [loadingSubjects, setLoadingSubjects] = useState(true); // Loading state for subjects
+  const [subjects, setSubjects] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [file, setFile] = useState(null);
-  const [subjects, setSubjects] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       const res = await Axios.get("/api/schoolResources");
-      console.log(res);
       setResourcesGradeData(res.data.school_resources);
     } catch (error) {
       toast.error("Failed to fetch resources.");
     } finally {
-      setLoading(false); // Set loading to false after data fetch
+      setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
     const fetchSubjects = async () => {
+      setLoadingSubjects(true); // Start loading
       try {
         const res = await Axios.get("/api/schoolSubjects");
         setSubjects(res.data.school_subjects);
       } catch (error) {
         console.error("Error fetching subjects:", error);
+      } finally {
+        setLoadingSubjects(false); // Stop loading
       }
     };
     fetchSubjects();
@@ -62,8 +67,7 @@ const Resources = () => {
       });
       toast.success("Resources added successfully!");
       setIsModalOpen(false);
-      fetchData(); // Refresh the resources list
-      // Reset form
+      fetchData();
       setName("");
       setSubject("");
       setFile(null);
@@ -74,17 +78,20 @@ const Resources = () => {
     }
   };
 
-  const headers = ["Name", "Subject", "Grade", "Actions"];
+  const headers = [
+    { name: "Name", selector: "name" },
+    { name: "Subject", selector: "subject" },
+    { name: "Grade", selector: "grade" },
+  ];
 
   const editGrade = (id) => {
-    console.log(id);
     navigate("/school/resources/edit/" + id);
   };
 
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolResources/" + id).then((res) => {
       toast.success("Resource deleted successfully");
-      fetchData(); // Refresh data after deletion
+      fetchData();
     });
   };
 
@@ -92,6 +99,10 @@ const Resources = () => {
     { label: "Edit", function: editGrade },
     { label: "Delete", function: deleteGrade },
   ];
+
+  const handleAddSubject = () => {
+    navigate("/school/subjects"); // Redirect to add subject page
+  };
 
   return (
     <div>
@@ -173,22 +184,41 @@ const Resources = () => {
                         <label className="block text-sm font-medium text-gray-900">
                           Subject
                         </label>
-                        <select
-                          value={subject}
-                          onChange={(e) => setSubject(e.target.value)}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                          required
-                        >
-                          <option value="">Select Subject</option>
-                          {subjects.map((subj) => (
-                            <option
-                              key={subj.subject_id}
-                              value={subj.subject_id}
+                        {loadingSubjects ? (
+                          <div className="flex items-center">
+                            <FaSpinner className="animate-spin h-5 w-5 mr-2" />
+                            <span>Loading subjects...</span>
+                          </div>
+                        ) : subjects.length === 0 ? (
+                          <div className="text-red-600">
+                            <p>
+                              No subjects available. Please add a subject first.
+                            </p>
+                            <button
+                              onClick={handleAddSubject}
+                              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
-                              {subj.name}
-                            </option>
-                          ))}
-                        </select>
+                              Add Subject
+                            </button>
+                          </div>
+                        ) : (
+                          <select
+                            value={subject}
+                            onChange={(e) => setSubject(e.target.value)}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            required
+                          >
+                            <option value="">Select Subject</option>
+                            {subjects.map((subj) => (
+                              <option
+                                key={subj.subject_id}
+                                value={subj.subject_id}
+                              >
+                                {subj.grade_name} - - {subj.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </div>
 
                       {/* File Upload */}
@@ -247,14 +277,12 @@ const Resources = () => {
                         </button>
                         <button
                           type="submit"
-                          disabled={isSubmitting}
+                          disabled={isSubmitting || subjects.length === 0}
                           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
                         >
                           {isSubmitting ? (
                             <>
-                              <svg
-                                className="animate-spin h-5 w-5" /* ... spinner SVG ... */
-                              />
+                              <FaSpinner className="animate-spin h-5 w-5" />
                               Saving...
                             </>
                           ) : (
@@ -269,21 +297,24 @@ const Resources = () => {
             )}
           </AnimatePresence>
 
-          {loading ? ( // Conditional rendering for loading state
+          {loading ? (
             <div className="flex justify-center items-center h-64">
-              <FaSpinner className="animate-spin text-3xl" />{" "}
-              {/* Spinner icon */}
+              <FaSpinner className="animate-spin text-3xl" />
             </div>
-          ) : resourceData.length > 0 ? ( // Conditional rendering for resources data
-            <ResourcesDatatable
-              datas={resourceData}
+          ) : resourceData.length > 0 ? (
+            <ReactDataTable
+              datas={resourceData.map((resource) => ({
+                ...resource,
+                subject: resource.subjects.name,
+                grade: resource.subjects.grade_name,
+              }))}
               headers={headers}
               actions={actions}
+              used_id={"resource_id"}
             />
           ) : (
-            // Display no resources message
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-              <FaRegSadCry className="text-6xl mb-2" /> {/* Sad icon */}
+              <FaRegSadCry className="text-6xl mb-2" />
               <p>No resources available.</p>
             </div>
           )}

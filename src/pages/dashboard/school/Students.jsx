@@ -25,7 +25,10 @@ const Students = () => {
     fetchData();
   }, []);
 
-  const headers = ["Name", "Email"];
+  const headers = [
+    { name: "Name", selector: "name" },
+    { name: "Email", selector: "email" },
+  ];
 
   return (
     <div>
@@ -36,7 +39,11 @@ const Students = () => {
           </div>
         ) : (
           <>
-            <StudentDatatable datas={studentData} headers={headers} />
+            <StudentDatatable
+              datas={studentData}
+              headers={headers}
+              actions={[]}
+            />
           </>
         )}
       </DashboardLayout>

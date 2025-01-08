@@ -5,8 +5,6 @@ import { useSiteStore } from "../context/siteStore";
 import Cookies from "js-cookie";
 
 const SchoolProtectedRoute = () => {
-  const cookies = document.cookie;
-  console.log(cookies);
   let user = useSiteStore((store) => store.user);
   return user && user?.user_type?.toLowerCase() === "school" ? (
     <Outlet />

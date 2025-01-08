@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { FaRegSadCry, FaSpinner, FaCheck } from "react-icons/fa"; // Importing spinner icon from React Icons
 import { motion, AnimatePresence } from "framer-motion"; // Add this import
 import { MdAdd } from "react-icons/md";
+import ReactDataTable from "../../../../components/common/dashboard/Datatable";
 
 const Grade = () => {
   const [gradesData, setGradeData] = useState([]);
@@ -43,7 +44,10 @@ const Grade = () => {
     fetchData();
   }, []);
 
-  const headers = ["Name", "Number Of subjects", "Actions"];
+  const headers = [
+    { name: "Name", selector: "name" },
+    { name: "Number Of subjects", selector: "subjects_count" },
+  ];
 
   const editGrade = (id) => {
     const grade = gradesData.find((g) => g.grade_id === id);
@@ -450,13 +454,14 @@ const Grade = () => {
               {/* Spinner icon */}
             </div>
           ) : gradesData.length > 0 ? ( // Conditional rendering for grades data
-            <Datatable
+            <ReactDataTable
               datas={gradesData.map((grade) => ({
                 ...grade,
-                columns: [grade.name, grade.subjects_count || 0],
+                subjects_count: grade.subjects ? grade.subjects.length : 0,
               }))}
               headers={headers}
               actions={actions}
+              used_id={"grade_id"}
             />
           ) : (
             // Display no grades message

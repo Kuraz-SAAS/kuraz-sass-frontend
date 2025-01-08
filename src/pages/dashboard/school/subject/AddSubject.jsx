@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import Axios from "../../../../middleware/Axios";
-import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { FaSpinner } from "react-icons/fa";
 
 const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
@@ -11,6 +10,8 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
   const [grade, setGrade] = useState("");
   const [grades, setGrades] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -19,6 +20,8 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
         setGrades(res.data.school_grades);
       } catch (error) {
         console.error("Error fetching subjects:", error);
+      } finally {
+        setIsLoading(false); // Stop loading when fetch is complete
       }
     };
     fetchSubjects();
@@ -44,6 +47,10 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleAddGrade = () => {
+    navigate("/school/grades"); // Redirect to the page for adding grades
   };
 
   return (
@@ -109,19 +116,36 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
               <label className="block text-sm font-medium text-gray-900">
                 Grade
               </label>
-              <select
-                value={grade}
-                onChange={(e) => setGrade(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                required
-              >
-                <option value="">Select Grade</option>
-                {grades.map((grade) => (
-                  <option key={grade.grade_id} value={grade.grade_id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </select>
+              {isLoading ? (
+                <div className="flex items-center">
+                  <FaSpinner className="animate-spin h-5 w-5 mr-2" />
+                  <span>Loading grades...</span>
+                </div>
+              ) : grades.length === 0 ? (
+                <div className="text-red-600">
+                  <p>No grades available. Please add a grade first.</p>
+                  <button
+                    onClick={handleAddGrade}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Add Grade
+                  </button>
+                </div>
+              ) : (
+                <select
+                  value={grade}
+                  onChange={(e) => setGrade(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  required
+                >
+                  <option value="">Select Grade</option>
+                  {grades.map((grade) => (
+                    <option key={grade.grade_id} value={grade.grade_id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             {/* Action Buttons */}
@@ -135,7 +159,7 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || grades.length === 0}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
               >
                 {isSubmitting ? (

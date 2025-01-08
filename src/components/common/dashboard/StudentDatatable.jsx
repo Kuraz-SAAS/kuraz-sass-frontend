@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Axios from "../../../middleware/Axios";
 import CustomPagination from "../CustomPagination";
 import { MdAdd } from "react-icons/md";
+import ReactDataTable from "./Datatable";
 
 const StudentDatatable = ({ datas, headers, actions }) => {
   const [searchValue, setSearchValue] = useState();
@@ -355,9 +356,9 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center py-10">
+    <div className="min-h-screen  flex justify-center py-10">
       <div className="w-full max-w-7xl px-4">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="shadow-lg rounded-lg overflow-hidden">
           <div className="bg-gray-200 flex justify-between items-center p-4 border-b border-gray-300">
             <div className="flex gap-2">
               <button
@@ -375,152 +376,8 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                 Import Excel
               </button>
             </div>
-            <div className="flex items-center bg-white border rounded-full shadow-sm">
-              <input
-                type="text"
-                className="py-2 px-4 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Search..."
-                onChange={(e) => searchProducts(e.target.value)}
-                value={searchValue}
-              />
-              <button
-                className={`p-2 rounded-full ${
-                  searchValue
-                    ? "text-gray-500 hover:text-gray-700"
-                    : "text-transparent"
-                }`}
-                onClick={clearData}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16A8 8 0 0112 4zm4.7 10.3l-1.4 1.4L12 13.4l-3.3 3.3-1.4-1.4L10.6 12 7.3 8.7l1.4-1.4L12 10.6l3.3-3.3 1.4 1.4L13.4 12l3.3 3.3z" />
-                </svg>
-              </button>
-            </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {headers.map((header, index) => (
-                    <th
-                      key={index}
-                      className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                      onClick={() => handleSort(header)}
-                    >
-                      <div className="flex items-center gap-2">
-                        {header}
-                        {/* Add sort indicators here if needed */}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {rowsToShow?.map((student, index) => (
-                  <tr
-                    key={student.user_id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {student.user_id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {student.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {student.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        {student.user_type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {student?.tenant?.domain_name}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-            <div className="flex items-center">
-              <span className="text-sm text-gray-700">
-                Showing{" "}
-                <span className="font-medium">
-                  {currentPage * rowsLimit + 1}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium">
-                  {Math.min((currentPage + 1) * rowsLimit, dataList?.length)}
-                </span>{" "}
-                of <span className="font-medium">{dataList?.length}</span>{" "}
-                results
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 0}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md 
-                  ${
-                    currentPage === 0
-                      ? "text-gray-300 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-              >
-                Previous
-              </button>
-
-              {Array.from({
-                length: Math.min(5, Math.ceil(dataList?.length / itemsPerPage)),
-              }).map((_, idx) => {
-                const pageNumber = currentPage - 2 + idx;
-                if (
-                  pageNumber < 0 ||
-                  pageNumber >= Math.ceil(dataList?.length / itemsPerPage)
-                )
-                  return null;
-
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => handlePageChange(pageNumber)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
-                      ${
-                        currentPage === pageNumber
-                          ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                  >
-                    {pageNumber + 1}
-                  </button>
-                );
-              })}
-
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={
-                  currentPage >= Math.ceil(dataList?.length / itemsPerPage) - 1
-                }
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
-                  ${
-                    currentPage >=
-                    Math.ceil(dataList?.length / itemsPerPage) - 1
-                      ? "text-gray-300 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <ReactDataTable datas={datas} headers={headers} actions={actions} />
           <AnimatePresence>
             {isModalOpen && (
               <motion.div
