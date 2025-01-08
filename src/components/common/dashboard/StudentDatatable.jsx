@@ -9,13 +9,9 @@ import { MdAdd } from "react-icons/md";
 import ReactDataTable from "./Datatable";
 
 const StudentDatatable = ({ datas, headers, actions }) => {
-  const [searchValue, setSearchValue] = useState();
   const [dataList, setDataList] = useState([...datas]);
   const [rowsLimit] = useState(8);
   const [rowsToShow, setRowsToShow] = useState(dataList?.slice(0, rowsLimit));
-  const [customPagination, setCustomPagination] = useState([]);
-  const [activeColumn, setActiveColumn] = useState(["Price"]);
-  const [sortingColumn, setSortingColumn] = useState(["Price"]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStudent, setNewStudent] = useState({
     first_name: "",
@@ -25,7 +21,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const [excelFile, setExcelFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [csvData, setCsvData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingChunks, setProcessingChunks] = useState([]);
   const [completedChunks, setCompletedChunks] = useState([]);
@@ -33,153 +28,9 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const [totalChunks, setTotalChunks] = useState(0);
   const CHUNK_SIZE = 50;
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // or whatever number you want
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    const startIndex = pageNumber * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    setRowsToShow(dataList.slice(startIndex, endIndex));
-  };
-
-  function searchProducts(keyword) {
-    keyword = keyword.toLowerCase();
-    setSearchValue(keyword);
-    if (!keyword == "") {
-      const results = dataList.filter((student) => {
-        return (
-          student.name.toLowerCase().includes(keyword) ||
-          student.email.toLowerCase().includes(keyword) ||
-          student.user_type.toLowerCase().includes(keyword) ||
-          student?.tenant?.domain_name.toLowerCase().includes(keyword)
-        );
-      });
-      setDataList(results);
-      setRowsToShow(results?.slice(0, rowsLimit));
-      setCurrentPage(0);
-      // setTotalPage(Math.ceil(results?.length / rowsLimit));
-      // setCustomPagination(
-      //   Array(Math.ceil(results?.length / rowsLimit)).fill(null)
-      // );
-    } else {
-      clearData();
-    }
-  }
-  const clearData = () => {
-    setSearchValue("");
-    const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
-    setDataList(sortedProducts);
-    setRowsToShow(sortedProducts?.slice(0, rowsLimit));
-    setCustomPagination(Array(Math.ceil(datas?.length / rowsLimit)).fill(null));
-    // setTotalPage(Math.ceil(datas?.length / rowsLimit));
-  };
-  // const sortByColumn = (column, changeSortingColumn = true) => {
-  //   if (column != "Price") {
-  //     if (sortingColumn?.includes(column) && changeSortingColumn) {
-  //       const sortData = dataList
-  //         ?.slice()
-  //         .sort((a, b) =>
-  //           b[column].toString().localeCompare(a[column].toString())
-  //         );
-  //       setRowsToShow(
-  //         sortData?.slice(
-  //           currentPage * rowsLimit,
-  //           (currentPage + 1) * rowsLimit
-  //         )
-  //       );
-  //       if (changeSortingColumn) {
-  //         setSortingColumn([]);
-  //         setDataList(sortData);
-  //       }
-  //     } else {
-  //       const sortData = dataList
-  //         ?.slice()
-  //         .sort((a, b) =>
-  //           a[column].toString().localeCompare(b[column].toString())
-  //         );
-  //       setRowsToShow(
-  //         sortData?.slice(
-  //           currentPage * rowsLimit,
-  //           (currentPage + 1) * rowsLimit
-  //         )
-  //       );
-  //       if (changeSortingColumn) {
-  //         setDataList(sortData);
-  //         setSortingColumn([`${column}`]);
-  //       }
-  //     }
-  //   } else {
-  //     if (sortingColumn?.includes(column)) {
-  //       const sortedProducts = dataList
-  //         ?.slice()
-  //         .sort((a, b) => b.Price - a.Price);
-  //       setRowsToShow(
-  //         sortedProducts?.slice(
-  //           currentPage * rowsLimit,
-  //           (currentPage + 1) * rowsLimit
-  //         )
-  //       );
-  //       if (changeSortingColumn) {
-  //         setSortingColumn([]);
-  //         setDataList(sortedProducts);
-  //       }
-  //     } else {
-  //       const sortedProducts = dataList
-  //         ?.slice()
-  //         .sort((a, b) => a.Price - b.Price);
-  //       setRowsToShow(
-  //         sortedProducts?.slice(
-  //           currentPage * rowsLimit,
-  //           (currentPage + 1) * rowsLimit
-  //         )
-  //       );
-  //       if (changeSortingColumn) {
-  //         setSortingColumn([`${column}`]);
-  //         setDataList(sortedProducts);
-  //       }
-  //     }
-  //   }
-  //   setActiveColumn([`${column}`]);
-  //   // setCurrentPage(0);
-  // };
-  // const nextPage = () => {
-  //   const startIndex = rowsLimit * (currentPage + 1);
-  //   const endIndex = startIndex + rowsLimit;
-  //   const newArray = datas?.slice(startIndex, endIndex);
-  //   setRowsToShow(newArray);
-  //   setCurrentPage(currentPage + 1);
-  // };
-  // const changePage = (value) => {
-  //   const startIndex = value * rowsLimit;
-  //   const endIndex = startIndex + rowsLimit;
-  //   const newArray = datas?.slice(startIndex, endIndex);
-  //   setRowsToShow(newArray);
-  //   setCurrentPage(value);
-  // };
-  // const previousPage = () => {
-  //   const startIndex = (currentPage - 1) * rowsLimit;
-  //   const endIndex = startIndex + rowsLimit;
-  //   const newArray = datas?.slice(startIndex, endIndex);
-  //   setRowsToShow(newArray);
-  //   if (currentPage > 1) {
-  //     setCurrentPage(currentPage - 1);
-  //   } else {
-  //     setCurrentPage(0);
-  //   }
-  // };
-  useMemo(() => {
-    setCustomPagination(
-      Array(Math.ceil(dataList?.length / rowsLimit)).fill(null)
-    );
-  }, []);
-
   useEffect(() => {
-    const sortedProducts = datas?.slice().sort((a, b) => a.Price - b.Price);
-    setDataList(sortedProducts);
-    setRowsToShow(sortedProducts?.slice(0, rowsLimit));
+    setDataList([...datas]);
   }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -377,7 +228,11 @@ const StudentDatatable = ({ datas, headers, actions }) => {
               </button>
             </div>
           </div>
-          <ReactDataTable datas={datas} headers={headers} actions={actions} />
+          <ReactDataTable
+            datas={dataList}
+            headers={headers}
+            actions={actions}
+          />
           <AnimatePresence>
             {isModalOpen && (
               <motion.div

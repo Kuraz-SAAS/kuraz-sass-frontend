@@ -45,7 +45,7 @@ export const Books = () => {
   // Filter books based on selected category and search query
   const filteredBooks = booksData.filter((book) => {
     const matchesCategory = selectedCategory
-      ? book.category.category_name === selectedCategory
+      ? book.category?.category_name === selectedCategory
       : true;
     const matchesSearch = book.book_title
       .toLowerCase()
@@ -91,11 +91,13 @@ export const Books = () => {
               {categories?.map((category, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <Checkbox
-                    checked={selectedCategory === category}
-                    onChange={() => handleCategoryChange(category)}
+                    checked={selectedCategory === category.category_name}
+                    onChange={() =>
+                      handleCategoryChange(category.category_name)
+                    }
                     label={
                       <Typography variant="small" className="font-medium">
-                        {category}
+                        {category.category_name}
                       </Typography>
                     }
                     containerProps={{ className: "-ml-3 py-2" }}
