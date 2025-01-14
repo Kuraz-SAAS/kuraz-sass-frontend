@@ -3,32 +3,42 @@ import { FaPaperPlane } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useSiteStore } from "../../../context/siteStore";
 
-const ChatComponent = ({ pdfFile, bookId }) => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-  const user = useSiteStore((store) => store.user);
+const ChatComponent = ({ bookId }) => {
+  const [messages, setMessages] = useState([]); // Chat messages
+  const [input, setInput] = useState(""); // User input
+  const [loading, setLoading] = useState(false); // Loading state
+  const messagesEndRef = useRef(null); // Scroll reference
+  const user = useSiteStore((store) => store.user); // Fetch user data
 
   useEffect(() => {
     // Auto-scroll to the latest message
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const askAboutPdf = async (bookId, question, userId) => {
+  // Function to ask a question about the PDF
+  const askAboutPdf = async (question) => {
+    if (!question.trim()) return; // Prevent empty questions
+    setLoading(true);
+
     try {
-      setLoading(true); // Set loading to true to disable the button
-      const response = await fetch("http://localhost:3000/api/ask", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          documentId: "55ca0006-923e-4303-bf53-39ce01f79e14",
-          question,
-          userId: user?.user_id,
-        }),
-      });
+      // Add the user's question to the messages
+      setMessages((prev) => [...prev, { text: question, sender: "user" }]);
+
+      // Send the question to the backend
+      const response = await fetch(
+        "https://chat.saas.kuraztech.com/api/ask-pdf",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            documentId: "55ca0006-923e-4303-bf53-39ce01f79e14",
+            question,
+            userId: user?.user_id,
+          }),
+        }
+      );
 
       // Handle rate limits or HTTP errors
       if (response.status === 429) {
@@ -105,7 +115,8 @@ const ChatComponent = ({ pdfFile, bookId }) => {
   };
 
   return (
-    <div className="flex flex-col h-full border bg-gray-100 rounded-b-lg w-[400px] shadow-md shadow-[#F3D598] border-gray-300 p-4">
+    <div className="flex flex-col h-[80vh] overflow-y-scroll border bg-gray-100 rounded-lg w-full max-w-md shadow-md p-4">
+      {/* Messages Display */}
       <div className="flex-1 overflow-y-auto">
         {messages.map((msg, index) => (
           <div

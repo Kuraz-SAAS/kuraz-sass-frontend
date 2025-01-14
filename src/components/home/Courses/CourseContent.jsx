@@ -45,7 +45,10 @@ const CourseContent = ({ section, setCurrentVideos }) => {
       {/* Loop through the sections */}
       {sections?.map((sec, sectionIndex) => (
         <section key={sec.id}>
-          <div className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer">
+          <div
+            className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
+            onClick={() => toggleSection(sectionIndex)}
+          >
             <div className="flex items-center space-x-2">
               <FaPlayCircle size={20} />
               <h3 className="font-semibold">{sec?.section_title}</h3>
