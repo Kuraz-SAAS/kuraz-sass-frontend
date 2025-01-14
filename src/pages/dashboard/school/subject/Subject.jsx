@@ -9,26 +9,14 @@ import { motion, AnimatePresence } from "framer-motion"; // Add this import
 import AddSubjectModal from "./AddSubject"; // Add this import
 import { MdAdd } from "react-icons/md";
 import ReactDataTable from "../../../../components/common/dashboard/Datatable";
+import { useSiteStore } from "../../../../context/siteStore";
 
 const Subject = () => {
-  const [subjectData, setSubjectGradeData] = useState([]);
+  const subjectData = useSiteStore((store) => store.schoolSubject);
+  const setSchoolSubjects = useSiteStore((store) => store.setSchoolSubjects);
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
-  const fetchData = async () => {
-    try {
-      const res = await Axios.get("/api/schoolSubjects");
-      console.log(res);
-      setSubjectGradeData(res.data.school_subjects);
-    } catch (error) {
-      toast.error("Failed to fetch subjects.");
-    } finally {
-      setLoading(false); // Set loading to false after data fetch
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const headers = [
     { name: "Name", selector: "name" },
@@ -43,7 +31,7 @@ const Subject = () => {
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolSubjects/" + id).then((res) => {
       toast.success("Subject deleted successfully");
-      fetchData(); // Refresh data after deletion
+      setSchoolSubjects();
     });
   };
 
@@ -71,18 +59,13 @@ const Subject = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={() => {
                   setIsModalOpen(false);
-                  fetchData();
+                  setSchoolSubjects();
                 }}
               />
             )}
           </AnimatePresence>
 
-          {loading ? ( // Conditional rendering for loading state
-            <div className="flex justify-center items-center h-64">
-              <FaSpinner className="animate-spin text-3xl" />{" "}
-              {/* Spinner icon */}
-            </div>
-          ) : subjectData.length > 0 ? ( // Conditional rendering for subjects data
+          {subjectData.length > 0 ? ( // Conditional rendering for subjects data
             <ReactDataTable
               datas={subjectData}
               headers={headers}

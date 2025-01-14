@@ -12,6 +12,7 @@ import {
 } from "@material-tailwind/react";
 import { ImSpinner10 } from "react-icons/im"; // Importing the spinner icon
 import { FaBook } from "react-icons/fa";
+import { useSiteStore } from "../../context/siteStore";
 
 const getCategories = (books) => {
   const categories = books.map((book) => book.category.cat_name);
@@ -19,28 +20,12 @@ const getCategories = (books) => {
 };
 
 export const Books = () => {
-  const [booksData, setBooksData] = useState([]);
-  const [categories, setBooksCategoryData] = useState([]);
+  const booksData = useSiteStore((store) => store.books);
+  const categories = useSiteStore((store) => store.bookCategory);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
-
-  useEffect(() => {
-    const fetchBookData = async () => {
-      setLoading(true); // Set loading to true before fetching
-      try {
-        const res = await Axios.get("/api/books");
-        setBooksData(res.data.books);
-        setBooksCategoryData(res.data.book_category);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false); // Set loading to false after fetching
-      }
-    };
-    fetchBookData();
-  }, []);
 
   // Filter books based on selected category and search query
   const filteredBooks = booksData.filter((book) => {
@@ -107,11 +92,12 @@ export const Books = () => {
             </AccordionBody>
           </Accordion>
         </div>
-        {loading ? (
+        {/* {loading ? (
           <div className="flex items-center justify-center w-full h-screen">
             <ImSpinner10 className="animate-spin" size={80} />
           </div>
-        ) : filteredBooks?.length === 0 ? (
+        ) : */}
+        {filteredBooks?.length === 0 ? (
           <div className="container text-center h-full">
             <FaBook
               className="mx-auto text-gray-400"

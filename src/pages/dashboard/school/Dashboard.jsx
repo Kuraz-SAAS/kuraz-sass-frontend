@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../pages/layouts/dashboard/school/DashboardLayout";
 import Axios from "../../../middleware/Axios";
+import { useSiteStore } from "../../../context/siteStore";
 
 const Dashboard = () => {
-  const [dashboardData, setDashboardData] = useState({});
-
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      await Axios.get("api/tenant/admin/dashboard").then((res) => {
-        setDashboardData(res.data);
-      });
-    };
-
-    fetchDashboard();
-  }, []);
+  const dashboardData = useSiteStore((store) => store.schoolDashboard);
 
   return (
     <DashboardLayout>

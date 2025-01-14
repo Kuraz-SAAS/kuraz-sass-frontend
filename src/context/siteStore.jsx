@@ -6,7 +6,50 @@ const siteStore = (set, get) => ({
   courses: [],
   courseCategory: [],
   studentDashboard: null,
+  bookCategory: [],
   user: {},
+  books: [],
+  schoolGrades: [],
+  schoolDashboard: {},
+  schoolStudents: [],
+  schoolSubject: [],
+  schoolResources: [],
+  schoolNotice: [],
+
+  setSchoolNotice: async () => {
+    const res = await Axios.get("/api/schoolNotices");
+    set({ schoolNotice: res.data.notices });
+  },
+
+  setSchoolResources: async () => {
+    const res = await Axios.get("/api/schoolResources");
+    set({ schoolResources: res.data.school_resources });
+  },
+
+  setSchoolStudents: async () => {
+    const res = await Axios.get("/api/tenant/admin/students");
+    set({ schoolStudents: res.data.students });
+  },
+
+  setSchoolSubjects: async () => {
+    const res = await Axios.get("/api/schoolSubjects");
+    set({ schoolSubject: res.data.school_subjects });
+  },
+  setSchoolDashboard: async () => {
+    const res = await Axios.get("api/tenant/admin/dashboard");
+    set({ schoolDashboard: res.data });
+  },
+
+  setBooks: async () => {
+    const res = await Axios.get("/api/books");
+    set({ books: res.data.books });
+    set({ bookCategory: res.data.book_category });
+  },
+
+  setSchoolGrades: async () => {
+    const res = await Axios.get("/api/schoolGrades");
+    set({ schoolGrades: res.data.school_grades });
+  },
 
   // Set user information
   setUser: (user) => set({ user }),

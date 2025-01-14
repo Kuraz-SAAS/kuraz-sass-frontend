@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 import { FaRegSadCry, FaSpinner } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
 import ReactDataTable from "../../../../components/common/dashboard/Datatable";
+import { useSiteStore } from "../../../../context/siteStore";
 
 const Resources = () => {
-  const [resourceData, setResourcesGradeData] = useState([]);
+  const resourceData = useSiteStore((store) => store.schoolResources);
   const [loading, setLoading] = useState(true);
   const [loadingSubjects, setLoadingSubjects] = useState(true); // Loading state for subjects
-  const [subjects, setSubjects] = useState([]);
+  const subjects = useSiteStore((store) => store.schoolSubject);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
@@ -22,35 +23,7 @@ const Resources = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      const res = await Axios.get("/api/schoolResources");
-      setResourcesGradeData(res.data.school_resources);
-    } catch (error) {
-      toast.error("Failed to fetch resources.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      setLoadingSubjects(true); // Start loading
-      try {
-        const res = await Axios.get("/api/schoolSubjects");
-        setSubjects(res.data.school_subjects);
-      } catch (error) {
-        console.error("Error fetching subjects:", error);
-      } finally {
-        setLoadingSubjects(false); // Stop loading
-      }
-    };
-    fetchSubjects();
-  }, []);
+  const setSchoolResources = useSiteStore((store) => store.setSchoolResources);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +40,7 @@ const Resources = () => {
       });
       toast.success("Resources added successfully!");
       setIsModalOpen(false);
-      fetchData();
+      setSchoolResources();
       setName("");
       setSubject("");
       setFile(null);
@@ -91,7 +64,7 @@ const Resources = () => {
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolResources/" + id).then((res) => {
       toast.success("Resource deleted successfully");
-      fetchData();
+      setSchoolResources();
     });
   };
 
@@ -184,12 +157,7 @@ const Resources = () => {
                         <label className="block text-sm font-medium text-gray-900">
                           Subject
                         </label>
-                        {loadingSubjects ? (
-                          <div className="flex items-center">
-                            <FaSpinner className="animate-spin h-5 w-5 mr-2" />
-                            <span>Loading subjects...</span>
-                          </div>
-                        ) : subjects.length === 0 ? (
+                        {subjects.length === 0 ? (
                           <div className="text-red-600">
                             <p>
                               No subjects available. Please add a subject first.
@@ -296,12 +264,7 @@ const Resources = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <FaSpinner className="animate-spin text-3xl" />
-            </div>
-          ) : resourceData.length > 0 ? (
+          {resourceData.length > 0 ? (
             <ReactDataTable
               datas={resourceData.map((resource) => ({
                 ...resource,
