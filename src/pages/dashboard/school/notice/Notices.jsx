@@ -8,27 +8,14 @@ import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import AddNoticeModal from "./AddNoticeModal";
 import { MdAdd } from "react-icons/md";
+import { useSiteStore } from "../../../../context/siteStore";
 
 const Notices = () => {
-  const [noticeData, setNoticeData] = useState([]);
+  const noticeData = useSiteStore((store) => store.schoolNotice);
+  const setSchoolNotice = useSiteStore((store) => store.setSchoolNotice);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-
-  const fetchData = async () => {
-    try {
-      const res = await Axios.get("/api/schoolNotices");
-      setNoticeData(res.data.school_notices);
-    } catch (error) {
-      toast.error("Failed to fetch notices.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const headers = ["Title", "Description", "Actions"];
   const editGrade = (id) => {
@@ -38,6 +25,7 @@ const Notices = () => {
   const deleteGrade = async (id) => {
     await Axios.delete("/api/schoolNotices/" + id).then((res) => {
       toast.success("Notice deleted successfully");
+      setSchoolNotice();
       navigate("/school/dashboard");
     });
   };
@@ -65,7 +53,7 @@ const Notices = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={() => {
                   setIsModalOpen(false);
-                  fetchData();
+                  setSchoolNotice();
                 }}
               />
             )}

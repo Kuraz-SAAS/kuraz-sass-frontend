@@ -8,9 +8,11 @@ import { FaRegSadCry, FaSpinner, FaCheck } from "react-icons/fa"; // Importing s
 import { motion, AnimatePresence } from "framer-motion"; // Add this import
 import { MdAdd } from "react-icons/md";
 import ReactDataTable from "../../../../components/common/dashboard/Datatable";
+import { useSiteStore } from "../../../../context/siteStore";
 
 const Grade = () => {
-  const [gradesData, setGradeData] = useState([]);
+  const gradesData = useSiteStore((store) => store.schoolGrades);
+  const setSchoolGrades = useSiteStore((store) => store.setSchoolGrades);
   const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
@@ -28,21 +30,6 @@ const Grade = () => {
     grade_id: i + 1,
     name: `Grade ${i + 1}`,
   }));
-
-  const fetchData = async () => {
-    try {
-      const res = await Axios.get("/api/schoolGrades");
-      setGradeData(res.data.school_grades);
-    } catch (error) {
-      toast.error("Failed to fetch grades.");
-    } finally {
-      setLoading(false); // Set loading to false after data fetch
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const headers = [
     { name: "Name", selector: "name" },
@@ -65,7 +52,7 @@ const Grade = () => {
     try {
       await Axios.delete("/api/schoolGrades/" + gradeToDelete);
       toast.success("Grade deleted successfully");
-      fetchData();
+      setSchoolGrades();
     } catch (error) {
       toast.error("Failed to delete grade");
     } finally {
@@ -87,7 +74,7 @@ const Grade = () => {
       await Axios.post("/api/schoolGrades", { name });
       toast.success("Grade added successfully!");
       setIsModalOpen(false);
-      fetchData();
+      setSchoolGrades();
       setName("");
     } catch (err) {
       toast.error("Failed to add grade. Please try again.");
@@ -105,7 +92,7 @@ const Grade = () => {
       });
       toast.success("Grade updated successfully!");
       setIsUpdateModalOpen(false);
-      fetchData();
+      setSchoolGrades();
     } catch (err) {
       toast.error("Failed to update grade. Please try again.");
     } finally {
@@ -135,7 +122,7 @@ const Grade = () => {
       await Axios.post("/api/grades/import", {
         grades: selectedGradeNames,
       });
-      await fetchData(); // Wait for the data to be fetched
+      setSchoolGrades(); // Wait for the data to be fetched
       toast.success("Grade suggestions saved successfully!");
       setSelectedGrades([]); // Reset selections after saving
     } catch (error) {
@@ -156,7 +143,6 @@ const Grade = () => {
             <MdAdd />
             Add Grade
           </button>
-
           <AnimatePresence>
             {isModalOpen && (
               <motion.div
@@ -249,7 +235,6 @@ const Grade = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
           {/* Update Grade Modal */}
           <AnimatePresence>
             {isUpdateModalOpen && (
@@ -340,7 +325,6 @@ const Grade = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
           {/* Add this Delete Confirmation Modal */}
           <AnimatePresence>
             {isDeleteModalOpen && (
@@ -397,7 +381,6 @@ const Grade = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
           {/* Add this section before the data table */}
           <div className="mt-8 mb-6">
             <h2 className="text-xl font-semibold mb-4">Suggested Grades</h2>
@@ -447,13 +430,7 @@ const Grade = () => {
               </div>
             )}
           </div>
-
-          {loading ? ( // Conditional rendering for loading state
-            <div className="flex justify-center items-center h-64">
-              <FaSpinner className="animate-spin text-3xl" />{" "}
-              {/* Spinner icon */}
-            </div>
-          ) : gradesData.length > 0 ? ( // Conditional rendering for grades data
+          {gradesData.length > 0 ? ( // Conditional rendering for grades data
             <ReactDataTable
               datas={gradesData.map((grade) => ({
                 ...grade,

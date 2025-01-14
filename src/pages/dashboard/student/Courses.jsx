@@ -3,6 +3,7 @@ import DashboardLayout from "../../layouts/dashboard/student/DashboardLayouts";
 import { useSiteStore } from "../../../context/siteStore";
 import { MdOutlineMenuBook } from "react-icons/md"; // Import the book icon
 import { VideoImage } from "../../../assets/images";
+import { Link } from "react-router-dom";
 
 const Courses = () => {
   const [activeTab, setActiveTab] = useState("active");
@@ -50,7 +51,8 @@ const Courses = () => {
           <div className="grid gap-6">
             {ongoing_course?.length ? (
               ongoing_course.map((crs, index) => (
-                <div
+                <Link
+                  to={`/course/${crs.course_id}`}
                   key={index}
                   className="bg-white rounded-lg shadow-lg p-6 flex flex-col sm:flex-row items-center"
                 >
@@ -80,7 +82,7 @@ const Courses = () => {
                   <div className="flex-shrink-0 w-12 h-12 border-4 border-green-400 rounded-full flex items-center justify-center text-sm font-semibold">
                     {crs?.total_percentage.toFixed(0)}%
                   </div>
-                </div>
+                </Link>
               ))
             ) : (
               <div className="text-center col-span-full flex flex-col items-center">
@@ -97,7 +99,8 @@ const Courses = () => {
           <div className="grid gap-6">
             {completed_courses?.length ? (
               completed_courses.map((crs, index) => (
-                <div
+                <Link
+                  to={`/course/${crs.course_id}}`}
                   key={index}
                   className="bg-white rounded-lg shadow-lg p-6 flex flex-col sm:flex-row items-center"
                 >
@@ -127,7 +130,7 @@ const Courses = () => {
                   <div className="flex-shrink-0 w-12 h-12 border-4 border-green-400 rounded-full flex items-center justify-center text-sm font-semibold">
                     100%
                   </div>
-                </div>
+                </Link>
               ))
             ) : (
               <div className="text-center col-span-full flex flex-col items-center">

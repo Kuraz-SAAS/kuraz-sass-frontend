@@ -4,28 +4,15 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaSpinner } from "react-icons/fa";
+import { useSiteStore } from "../../../../context/siteStore";
 
 const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
-  const [grades, setGrades] = useState([]);
+  const grades = useSiteStore((store) => store.schoolGrades);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const navigate = useNavigate(); // Hook for navigation
-
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      try {
-        const res = await Axios.get("/api/schoolGrades");
-        setGrades(res.data.school_grades);
-      } catch (error) {
-        console.error("Error fetching subjects:", error);
-      } finally {
-        setIsLoading(false); // Stop loading when fetch is complete
-      }
-    };
-    fetchSubjects();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,12 +103,7 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
               <label className="block text-sm font-medium text-gray-900">
                 Grade
               </label>
-              {isLoading ? (
-                <div className="flex items-center">
-                  <FaSpinner className="animate-spin h-5 w-5 mr-2" />
-                  <span>Loading grades...</span>
-                </div>
-              ) : grades.length === 0 ? (
+              {grades.length === 0 ? (
                 <div className="text-red-600">
                   <p>No grades available. Please add a grade first.</p>
                   <button

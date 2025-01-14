@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { infiniteSpiner } from "./assets/images";
+import StudentLayout from "./layouts/students/StudentLayout";
 
 // Lazy load all components
 const LandingPages = React.lazy(() => import("./pages/landing/LandingPages"));
@@ -122,15 +123,17 @@ const App = () => {
           </Route>
 
           <Route element={<StudentProtectedRoute />}>
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            <Route path="/student/courses" element={<StudentCourses />} />
-            <Route path="/student/saved" element={<SavedCourses />} />
-            <Route path="/books" element={<Books />} />
-            <Route path="/books/single/:id" element={<SingleBook />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/course/:id" element={<SingleResource />} />
-            <Route path="/course/play/:id" element={<CourseViewPage />} />
-            <Route path="/resources" element={<Resources />} />
+            <Route element={<StudentLayout />}>
+              <Route path="/student/dashboard" element={<StudentDashboard />} />
+              <Route path="/student/courses" element={<StudentCourses />} />
+              <Route path="/student/saved" element={<SavedCourses />} />
+              <Route path="/books" element={<Books />} />
+              <Route path="/books/single/:id" element={<SingleBook />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/course/:id" element={<SingleResource />} />
+              <Route path="/course/play/:id" element={<CourseViewPage />} />
+              <Route path="/resources" element={<Resources />} />
+            </Route>
           </Route>
         </Routes>
       </Suspense>

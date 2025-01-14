@@ -81,21 +81,6 @@ const CoursesPage = () => {
   const user = useSiteStore((store) => store.user);
   const courses = useSiteStore((store) => store.courses);
   const courseCategory = useSiteStore((store) => store.courseCategory);
-  const getCourses = useSiteStore((store) => store.getCourses);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getCourses();
-      } catch (err) {
-        setError("Failed to fetch courses. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [getCourses]);
 
   // Handler Functions
   const handleSearchChange = (e) => {
@@ -181,12 +166,13 @@ const CoursesPage = () => {
             </MenuList>
           </Menu>
         </div>
-
-        {isLoading ? (
+        {/* {isLoading ? (
           <div className="flex items-center justify-center h-screen w-full">
             <ImSpinner10 className="animate-spin text-primary" size={80} />
           </div>
-        ) : error ? (
+        ) : */}
+        
+        {error ? (
           <div className="container text-center text-red-500">{error}</div>
         ) : filteredCourses.length === 0 ? (
           <div className="container text-center w-full">

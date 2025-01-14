@@ -27,24 +27,26 @@ const LoginForm = () => {
 
     setIsLoading(true);
 
-    await Axios.get("/sanctum/csrf-cookie").then(async (res) => {
-      try {
-        const res = await Axios.post("login", {
+    await Axios.get("/sanctum/csrf-cookie")
+      .then(async (result) => {
+        await Axios.post("login", {
           email: email,
           password: password,
-        });
-
-        if (res.status === 204 || res.status === 200) {
-          setUser(res.data.user);
-          toast.success("Login successful!");
-          navigate("/courses");
-        }
-      } catch (error) {
+        })
+          .then((res) => {
+            setUser(res.data.user);
+            toast.success("Login successful!");
+            navigate("/courses");
+          })
+          .catch((err) => {
+            toast.error("Login failed. Please check your credentials.");
+            setIsLoading(false);
+          });
+      })
+      .catch((err) => {
         toast.error("Login failed. Please check your credentials.");
-      } finally {
         setIsLoading(false);
-      }
-    });
+      });
   };
 
   const handleKeyPress = (e) => {
