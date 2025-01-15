@@ -18,15 +18,9 @@ const Students = () => {
 
   return (
     <div>
-      <DashboardLayout>
-        <>
-          <StudentDatatable
-            datas={studentData}
-            headers={headers}
-            actions={[]}
-          />
-        </>
-      </DashboardLayout>
+      <>
+        <StudentDatatable datas={studentData} headers={headers} actions={[]} />
+      </>
     </div>
   );
 };

@@ -42,7 +42,7 @@ const Subject = () => {
 
   return (
     <div>
-      <DashboardLayout>
+   
         <div>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -80,7 +80,7 @@ const Subject = () => {
             </div>
           )}
         </div>
-      </DashboardLayout>
+
     </div>
   );
 };

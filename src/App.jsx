@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { infiniteSpiner } from "./assets/images";
 import StudentLayout from "./layouts/students/StudentLayout";
+import DashboardLayout from "./pages/layouts/dashboard/school/DashboardLayout";
 
 // Lazy load all components
 const LandingPages = React.lazy(() => import("./pages/landing/LandingPages"));
@@ -101,25 +102,27 @@ const App = () => {
           <Route path="/add-book" element={<Addbook />} />
 
           <Route element={<SchoolProtectedRoute />}>
-            <Route path="/school/dashboard" element={<SchoolDashboard />} />
-            <Route path="/school/notices" element={<Notices />} />
-            <Route path="/school/notices/edit/:id" element={<EditNotice />} />
-            <Route path="/school/students" element={<SchoolStudents />} />
-            <Route path="/school/resources" element={<SchoolResources />} />
-            <Route path="/school/resources/add" element={<AddResources />} />
-            <Route
-              path="/school/resources/edit/:id"
-              element={<AddResources />}
-            />
-            <Route path="/school/grades" element={<Grade />} />
-            <Route path="/school/grades/add" element={<AddGrade />} />
-            <Route path="/school/grades/edit/:id" element={<UpdateGrade />} />
-            <Route path="/school/subjects" element={<Subject />} />
-            <Route path="/school/subjects/add" element={<AddSubject />} />
-            <Route
-              path="/school/subjects/edit/:id"
-              element={<UpdateSubject />}
-            />
+            <Route element={<DashboardLayout />}>
+              <Route path="/school/dashboard" element={<SchoolDashboard />} />
+              <Route path="/school/notices" element={<Notices />} />
+              <Route path="/school/notices/edit/:id" element={<EditNotice />} />
+              <Route path="/school/students" element={<SchoolStudents />} />
+              <Route path="/school/resources" element={<SchoolResources />} />
+              <Route path="/school/resources/add" element={<AddResources />} />
+              <Route
+                path="/school/resources/edit/:id"
+                element={<AddResources />}
+              />
+              <Route path="/school/grades" element={<Grade />} />
+              <Route path="/school/grades/add" element={<AddGrade />} />
+              <Route path="/school/grades/edit/:id" element={<UpdateGrade />} />
+              <Route path="/school/subjects" element={<Subject />} />
+              <Route path="/school/subjects/add" element={<AddSubject />} />
+              <Route
+                path="/school/subjects/edit/:id"
+                element={<UpdateSubject />}
+              />
+            </Route>
           </Route>
 
           <Route element={<StudentProtectedRoute />}>

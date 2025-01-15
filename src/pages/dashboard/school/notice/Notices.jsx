@@ -36,38 +36,36 @@ const Notices = () => {
 
   return (
     <div>
-      <DashboardLayout>
-        <div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-primary font-light text-sm flex items-center gap-2 text-white p-2 rounded-md"
-          >
-            <MdAdd />
-            Add Notice
-          </button>
+      <div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-primary font-light text-sm flex items-center gap-2 text-white p-2 rounded-md"
+        >
+          <MdAdd />
+          Add Notice
+        </button>
 
-          <AnimatePresence>
-            {isModalOpen && (
-              <AddNoticeModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSuccess={() => {
-                  setIsModalOpen(false);
-                  setSchoolNotice();
-                }}
-              />
-            )}
-          </AnimatePresence>
-
-          {noticeData?.length > 0 && (
-            <NoticeDatatable
-              datas={noticeData}
-              headers={headers}
-              actions={actions}
+        <AnimatePresence>
+          {isModalOpen && (
+            <AddNoticeModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onSuccess={() => {
+                setIsModalOpen(false);
+                setSchoolNotice();
+              }}
             />
           )}
-        </div>
-      </DashboardLayout>
+        </AnimatePresence>
+
+        {noticeData?.length > 0 && (
+          <NoticeDatatable
+            datas={noticeData}
+            headers={headers}
+            actions={actions}
+          />
+        )}
+      </div>
     </div>
   );
 };

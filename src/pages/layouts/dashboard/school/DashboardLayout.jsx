@@ -3,6 +3,7 @@ import Sidebar from "../../../../components/school/dashboard/Sidebar";
 import TopNavbar from "../../../../components/school/dashboard/TopNavbar";
 import { useSiteStore } from "../../../../context/siteStore";
 import { ImSpinner10 } from "react-icons/im";
+import { Outlet } from "react-router-dom";
 
 const DashboardLayout = ({ children }) => {
   const setSchoolDashboard = useSiteStore((store) => store.setSchoolDashboard);
@@ -10,16 +11,27 @@ const DashboardLayout = ({ children }) => {
   const setSchoolSubjects = useSiteStore((store) => store.setSchoolSubjects);
   const setSchoolResources = useSiteStore((store) => store.setSchoolResources);
   const setSchoolNotice = useSiteStore((store) => store.setSchoolNotice);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    setSchoolDashboard();
-    setSchoolStudents();
-    setSchoolSubjects();
-    setSchoolNotice();
-    setSchoolResources();
-    setIsLoading(false);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          setSchoolDashboard(),
+          setSchoolStudents(),
+          setSchoolSubjects(),
+          setSchoolResources(),
+          setSchoolNotice(),
+        ]);
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -39,7 +51,7 @@ const DashboardLayout = ({ children }) => {
               <ImSpinner10 className="animate-spin text-primary" size={80} />
             </div>
           ) : (
-            <div>{children}</div>
+            <Outlet />
           )}
         </main>
       </div>

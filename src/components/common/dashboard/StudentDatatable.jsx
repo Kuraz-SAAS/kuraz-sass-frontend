@@ -31,6 +31,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   useEffect(() => {
     setDataList([...datas]);
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
