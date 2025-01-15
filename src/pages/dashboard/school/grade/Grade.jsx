@@ -134,321 +134,319 @@ const Grade = () => {
 
   return (
     <div>
-      <DashboardLayout>
-        <div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-primary font-light flex  items-center gap-2 text-sm text-white p-2 rounded-md"
-          >
-            <MdAdd />
-            Add Grade
-          </button>
-          <AnimatePresence>
-            {isModalOpen && (
+      <div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-primary font-light flex  items-center gap-2 text-sm text-white p-2 rounded-md"
+        >
+          <MdAdd />
+          Add Grade
+        </button>
+        <AnimatePresence>
+          {isModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Overlay */}
               <motion.div
-                className="fixed inset-0 z-50 overflow-y-auto"
+                className="fixed inset-0 bg-black bg-opacity-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-              >
-                {/* Overlay */}
+                onClick={() => setIsModalOpen(false)}
+              />
+
+              {/* Modal content */}
+              <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
                 <motion.div
-                  className="fixed inset-0 bg-black bg-opacity-50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  onClick={() => setIsModalOpen(false)}
-                />
-
-                {/* Modal content */}
-                <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
-                  <motion.div
-                    className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
-                    onClick={(e) => e.stopPropagation()}
-                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    transition={{
-                      type: "spring",
-                      duration: 0.3,
-                      delay: 0.15,
-                      bounce: 0.25,
-                    }}
+                  className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                  initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.3,
+                    delay: 0.15,
+                    bounce: 0.25,
+                  }}
+                >
+                  <motion.h2
+                    className="text-xl font-light mb-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
                   >
-                    <motion.h2
-                      className="text-xl font-light mb-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      Add Grade
-                    </motion.h2>
-                    <motion.form
-                      onSubmit={handleSubmit}
-                      className="space-y-4"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-900">
-                          Grade Name
-                        </label>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                          required
-                        />
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsModalOpen(false)}
-                          className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <FaSpinner className="animate-spin h-5 w-5" />
-                              Saving...
-                            </>
-                          ) : (
-                            "Save"
-                          )}
-                        </button>
-                      </div>
-                    </motion.form>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {/* Update Grade Modal */}
-          <AnimatePresence>
-            {isUpdateModalOpen && (
-              <motion.div
-                className="fixed inset-0 z-50 overflow-y-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <motion.div
-                  className="fixed inset-0 bg-black bg-opacity-50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  onClick={() => setIsUpdateModalOpen(false)}
-                />
-
-                <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
-                  <motion.div
-                    className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
-                    onClick={(e) => e.stopPropagation()}
-                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    transition={{
-                      type: "spring",
-                      duration: 0.3,
-                      delay: 0.15,
-                      bounce: 0.25,
-                    }}
+                    Add Grade
+                  </motion.h2>
+                  <motion.form
+                    onSubmit={handleSubmit}
+                    className="space-y-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
                   >
-                    <motion.h2
-                      className="text-xl font-light mb-4"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      Update Grade
-                    </motion.h2>
-                    <motion.form
-                      onSubmit={handleUpdate}
-                      className="space-y-4"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-900">
-                          Grade Name
-                        </label>
-                        <input
-                          type="text"
-                          value={updateName}
-                          onChange={(e) => setUpdateName(e.target.value)}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                          required
-                        />
-                      </div>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-900">
+                        Grade Name
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
+                      />
+                    </div>
 
-                      <div className="flex justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsUpdateModalOpen(false)}
-                          className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <FaSpinner className="animate-spin h-5 w-5" />
-                              Updating...
-                            </>
-                          ) : (
-                            "Update"
-                          )}
-                        </button>
-                      </div>
-                    </motion.form>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {/* Add this Delete Confirmation Modal */}
-          <AnimatePresence>
-            {isDeleteModalOpen && (
-              <motion.div
-                className="fixed inset-0 z-50 overflow-y-auto"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <motion.div
-                  className="fixed inset-0 bg-black bg-opacity-50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  onClick={() => setIsDeleteModalOpen(false)}
-                />
-
-                <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
-                  <motion.div
-                    className="bg-white p-8 rounded-lg w-[400px] shadow-xl"
-                    onClick={(e) => e.stopPropagation()}
-                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    transition={{
-                      type: "spring",
-                      duration: 0.3,
-                      delay: 0.15,
-                      bounce: 0.25,
-                    }}
-                  >
-                    <h2 className="text-xl font-light mb-4">Confirm Delete</h2>
-                    <p className="mb-6">
-                      Are you sure you want to delete this grade?
-                    </p>
+                    {/* Action Buttons */}
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => setIsDeleteModalOpen(false)}
+                        type="button"
+                        onClick={() => setIsModalOpen(false)}
                         className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
                       >
                         Cancel
                       </button>
                       <button
-                        onClick={confirmDelete}
-                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
                       >
-                        Delete
+                        {isSubmitting ? (
+                          <>
+                            <FaSpinner className="animate-spin h-5 w-5" />
+                            Saving...
+                          </>
+                        ) : (
+                          "Save"
+                        )}
                       </button>
                     </div>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {/* Add this section before the data table */}
-          <div className="mt-8 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Suggested Grades</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {staticGrades
-                .filter(
-                  (grade) =>
-                    !gradesData.some(
-                      (g) => g.name.toLowerCase() === grade.name.toLowerCase()
-                    )
-                )
-                .map((grade) => (
-                  <div
-                    key={grade.grade_id}
-                    onClick={() => toggleGradeSelection(grade.grade_id)}
-                    className={`border border-primary border-dashed p-4 rounded-lg cursor-pointer transition-all ${
-                      selectedGrades.includes(grade.grade_id)
-                        ? "bg-[#bc8c4e] text-white"
-                        : "bg-gray-100 hover:bg-gray-200"
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span>{grade.name}</span>
-                      {selectedGrades.includes(grade.grade_id) && (
-                        <FaCheck className="text-white" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-            </div>
-            {selectedGrades.length > 0 && (
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={handleSaveSelections}
-                  disabled={isSavingGrades}
-                  className="bg-[#bc8c4e] text-white px-4 py-2 rounded-md hover:bg-[#a67b43] disabled:opacity-50 flex items-center gap-2"
-                >
-                  {isSavingGrades ? (
-                    <>
-                      <FaSpinner className="animate-spin h-5 w-5" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save Grades"
-                  )}
-                </button>
+                  </motion.form>
+                </motion.div>
               </div>
-            )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* Update Grade Modal */}
+        <AnimatePresence>
+          {isUpdateModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div
+                className="fixed inset-0 bg-black bg-opacity-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setIsUpdateModalOpen(false)}
+              />
+
+              <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+                <motion.div
+                  className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                  initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.3,
+                    delay: 0.15,
+                    bounce: 0.25,
+                  }}
+                >
+                  <motion.h2
+                    className="text-xl font-light mb-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    Update Grade
+                  </motion.h2>
+                  <motion.form
+                    onSubmit={handleUpdate}
+                    className="space-y-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-900">
+                        Grade Name
+                      </label>
+                      <input
+                        type="text"
+                        value={updateName}
+                        onChange={(e) => setUpdateName(e.target.value)}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsUpdateModalOpen(false)}
+                        className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <FaSpinner className="animate-spin h-5 w-5" />
+                            Updating...
+                          </>
+                        ) : (
+                          "Update"
+                        )}
+                      </button>
+                    </div>
+                  </motion.form>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* Add this Delete Confirmation Modal */}
+        <AnimatePresence>
+          {isDeleteModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div
+                className="fixed inset-0 bg-black bg-opacity-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setIsDeleteModalOpen(false)}
+              />
+
+              <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+                <motion.div
+                  className="bg-white p-8 rounded-lg w-[400px] shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                  initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.3,
+                    delay: 0.15,
+                    bounce: 0.25,
+                  }}
+                >
+                  <h2 className="text-xl font-light mb-4">Confirm Delete</h2>
+                  <p className="mb-6">
+                    Are you sure you want to delete this grade?
+                  </p>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => setIsDeleteModalOpen(false)}
+                      className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmDelete}
+                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* Add this section before the data table */}
+        <div className="mt-8 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Suggested Grades</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {staticGrades
+              .filter(
+                (grade) =>
+                  !gradesData.some(
+                    (g) => g.name.toLowerCase() === grade.name.toLowerCase()
+                  )
+              )
+              .map((grade) => (
+                <div
+                  key={grade.grade_id}
+                  onClick={() => toggleGradeSelection(grade.grade_id)}
+                  className={`border border-primary border-dashed p-4 rounded-lg cursor-pointer transition-all ${
+                    selectedGrades.includes(grade.grade_id)
+                      ? "bg-[#bc8c4e] text-white"
+                      : "bg-gray-100 hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span>{grade.name}</span>
+                    {selectedGrades.includes(grade.grade_id) && (
+                      <FaCheck className="text-white" />
+                    )}
+                  </div>
+                </div>
+              ))}
           </div>
-          {gradesData.length > 0 ? ( // Conditional rendering for grades data
-            <ReactDataTable
-              datas={gradesData.map((grade) => ({
-                ...grade,
-                subjects_count: grade.subjects ? grade.subjects.length : 0,
-              }))}
-              headers={headers}
-              actions={actions}
-              used_id={"grade_id"}
-            />
-          ) : (
-            // Display no grades message
-            <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-              <FaRegSadCry className="text-6xl mb-2" /> {/* Sad icon */}
-              <p>No grades available.</p>
+          {selectedGrades.length > 0 && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={handleSaveSelections}
+                disabled={isSavingGrades}
+                className="bg-[#bc8c4e] text-white px-4 py-2 rounded-md hover:bg-[#a67b43] disabled:opacity-50 flex items-center gap-2"
+              >
+                {isSavingGrades ? (
+                  <>
+                    <FaSpinner className="animate-spin h-5 w-5" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Grades"
+                )}
+              </button>
             </div>
           )}
         </div>
-      </DashboardLayout>
+        {gradesData.length > 0 ? ( // Conditional rendering for grades data
+          <ReactDataTable
+            datas={gradesData.map((grade) => ({
+              ...grade,
+              subjects_count: grade.subjects ? grade.subjects.length : 0,
+            }))}
+            headers={headers}
+            actions={actions}
+            used_id={"grade_id"}
+          />
+        ) : (
+          // Display no grades message
+          <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+            <FaRegSadCry className="text-6xl mb-2" /> {/* Sad icon */}
+            <p>No grades available.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
