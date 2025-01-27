@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { infiniteSpiner } from "./assets/images";
 import StudentLayout from "./layouts/students/StudentLayout";
 import DashboardLayout from "./pages/layouts/dashboard/school/DashboardLayout";
+import PhetPage from "./pages/home/PhetPage";
+import SinglePhet from "./pages/home/SinglePhet";
 
 // Lazy load all components
 const LandingPages = React.lazy(() => import("./pages/landing/LandingPages"));
@@ -131,9 +133,11 @@ const App = () => {
               <Route path="/student/courses" element={<StudentCourses />} />
               <Route path="/student/saved" element={<SavedCourses />} />
               <Route path="/books" element={<Books />} />
+              <Route path="/phet" element={<PhetPage />} />
               <Route path="/books/single/:id" element={<SingleBook />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/course/:id" element={<SingleResource />} />
+              <Route path="/phet/:id" element={<SinglePhet />} />
               <Route path="/course/play/:id" element={<CourseViewPage />} />
               <Route path="/resources" element={<Resources />} />
             </Route>

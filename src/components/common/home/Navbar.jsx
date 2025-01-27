@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useSiteStore } from "../../../context/siteStore";
 import { bookImg } from "../../../assets/test_img";
+import { Phet } from "../../../assets/images";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,7 +31,7 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <ul className="flex space-x-6">
+          <ul className="flex space-x-6 items-center">
             <li>
               <Link
                 to="/courses"
@@ -56,6 +57,15 @@ const Navbar = () => {
               >
                 <FaUser />
                 <span className="font-light">Resources</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/phet"
+                className="flex items-center text-gray-800 hover:text-blue-600"
+              >
+                <img src={Phet} className="w-[60px]" />
+                <span className="font-light">PhET Sims</span>
               </Link>
             </li>
           </ul>

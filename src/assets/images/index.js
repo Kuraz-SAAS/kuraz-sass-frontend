@@ -12,6 +12,7 @@ import gearSpinner from "./gear-spinner.svg";
 import AI from "./ai.png";
 import VideoImage from "./video.svg";
 import BookImage from "./book.svg";
+import Phet  from './phet-logo-loading.svg'
 
 export {
   gearSpinner,
@@ -28,4 +29,5 @@ export {
   avatar,
   VideoImage,
   BookImage,
+  Phet
 };
