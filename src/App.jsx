@@ -5,9 +5,9 @@ import StudentLayout from "./layouts/students/StudentLayout";
 import DashboardLayout from "./pages/layouts/dashboard/school/DashboardLayout";
 import PhetPage from "./pages/home/PhetPage";
 import SinglePhet from "./pages/home/SinglePhet";
+import LandingPages from "./pages/landing/LandingPages";
 
-// Lazy load all components
-const LandingPages = React.lazy(() => import("./pages/landing/LandingPages"));
+
 const LoginForm = React.lazy(() => import("./pages/Auth/LoginForm"));
 const Books = React.lazy(() => import("./pages/home/Books"));
 const Courses = React.lazy(() => import("./pages/home/Courses"));

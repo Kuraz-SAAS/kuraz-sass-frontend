@@ -9,7 +9,7 @@ const SchoolProtectedRoute = () => {
   return user && user?.user_type?.toLowerCase() === "school" ? (
     <Outlet />
   ) : (
-    <Navigate to={"/login"} />
+    <Navigate to={"/"} />
   );
 };
 
