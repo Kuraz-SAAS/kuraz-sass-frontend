@@ -2,6 +2,7 @@
 import withMT from "@material-tailwind/react/utils/withMT";
 
 export default withMT({
+  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -11,14 +12,22 @@ export default withMT({
   theme: {
     extend: {
       colors: {
-        primary: "#323238",
-        secondary: "#323238",
-        black: "#323238",
+        primary: "#75692A",
+        secondary: "#C2BEA8",
       },
       fontFamily: {
         poppins: '"Poppins", system-ui',
+        Roboto: '"Roboto", serif',
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      blur: {
+        xs: "2px",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 });

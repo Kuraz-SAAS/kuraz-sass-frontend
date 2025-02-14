@@ -5,7 +5,7 @@ import { useSiteStore } from "../context/siteStore";
 
 const CommonProtectedRoute = () => {
   let user = useSiteStore((store) => store.user);
-  return user && user.user_type ? <Outlet /> : <Navigate to={"/login"} />;
+  return user && user.user_type ? <Outlet /> : <Navigate to={"/"} />;
 };
 
 export default CommonProtectedRoute;
