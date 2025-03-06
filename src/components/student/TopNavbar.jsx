@@ -78,7 +78,7 @@ const TopNavbar = () => {
               className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-200 w-full text-start hover:bg-gray-100 dark:hover:bg-gray-600 text-sm"
               onClick={() => {
                 setUser(null);
-                navigate("/login");
+                navigate("/");
               }}
             >
               <FaSignOutAlt />

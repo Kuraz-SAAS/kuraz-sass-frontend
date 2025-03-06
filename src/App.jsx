@@ -95,14 +95,6 @@ const App = () => {
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/" element={<LandingPages />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/school/register" element={<SchoolRegistrationForm />} />
-          <Route path="/forget-password" element={<ForgetPassword />} />
-          <Route path="/change-password" element={<ChangePassword />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/add-book" element={<Addbook />} />
-
           <Route element={<SchoolProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/school/dashboard" element={<SchoolDashboard />} />

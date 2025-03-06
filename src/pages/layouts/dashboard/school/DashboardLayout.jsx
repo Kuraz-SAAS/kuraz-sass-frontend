@@ -11,6 +11,7 @@ const DashboardLayout = ({ children }) => {
   const setSchoolSubjects = useSiteStore((store) => store.setSchoolSubjects);
   const setSchoolResources = useSiteStore((store) => store.setSchoolResources);
   const setSchoolNotice = useSiteStore((store) => store.setSchoolNotice);
+  const setSchoolGrade = useSiteStore((store)=>store.setSchoolGrades);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const DashboardLayout = ({ children }) => {
           setSchoolSubjects(),
           setSchoolResources(),
           setSchoolNotice(),
+          setSchoolGrade()
         ]);
       } catch (error) {
         console.error("Error loading dashboard data:", error);

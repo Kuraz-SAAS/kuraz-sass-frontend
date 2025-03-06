@@ -150,15 +150,6 @@ const LoginForm = () => {
                       </Link>
                     </div>
                   </div>
-
-                  <p className="mt-6 text-xs text-gray-600 text-center">
-                    Don't have an account?{" "}
-                    <Link to="/school/register">
-                      <span className="text-[#F3D598] font-semibold">
-                        Sign up
-                      </span>
-                    </Link>
-                  </p>
                 </div>
               </div>
             </div>

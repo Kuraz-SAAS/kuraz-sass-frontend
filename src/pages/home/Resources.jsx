@@ -5,6 +5,7 @@ import PdfViewer from "../../components/home/resources/PDFViewer";
 import Navbar from "../../components/common/home/Navbar";
 import Axios from "../../middleware/Axios";
 import { useSiteStore } from "../../context/siteStore";
+import PdfViewerResources from "@/components/home/resources/PDFViewerResources";
 
 const Resources = () => {
   const schoolGrades = useSiteStore((store) => store.schoolGrades);
@@ -151,7 +152,7 @@ const Resources = () => {
         {/* PDF viewer */}
         <div className="w-full lg:w-2/3 overflow-y-auto">
           {selectedPdf ? (
-            <PdfViewer pdfUrl={selectedPdf} path={"resource/pdf"} />
+            <PdfViewerResources pdfUrl={selectedPdf} path={"resource/pdf"} />
           ) : (
             <div className="text-center border-4 border-gray-500 h-[60vh] lg:h-[80vh] flex justify-center items-center text-gray-500">
               <div className="flex flex-col items-center">

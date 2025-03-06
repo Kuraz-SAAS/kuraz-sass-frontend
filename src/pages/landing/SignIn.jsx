@@ -101,22 +101,6 @@ const SignIn = ({toggleForm}) => {
           </Button>
         </form>
       </CardContent>
-      <CardFooter className="grid gap-5">
-        <p className="underline underline-offset-4 font-light text-sm cursor-pointer">
-          Forgot password?
-        </p>
-        <div className="flex justify-center">
-          <p className="text-sm">
-            Don't have an account?{" "}
-            <button
-              onClick={toggleForm}
-              className="underline underline-offset-4 cursor-pointer"
-            >
-              Sign Up
-            </button>
-          </p>
-        </div>
-      </CardFooter>
     </Card>
   );
 };

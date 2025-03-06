@@ -27,12 +27,8 @@
     "framer-motion": "^11.18.2",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-<<<<<<< HEAD
-    "pdfjs-dist": "^3.11.120",
-=======
     "lucide-react": "^0.474.0",
-    "pdfjs-dist": "^3.4.120",
->>>>>>> refs/remotes/origin/main
+    "pdfjs-dist": "^3.11.120",
     "react": "^18.3.1",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",
@@ -40,6 +36,7 @@
     "react-icons": "^5.3.0",
     "react-lottie-player": "^2.1.0",
     "react-markdown": "^9.0.1",
+    "react-pdf": "^9.2.1",
     "react-player": "^2.16.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.26.2",

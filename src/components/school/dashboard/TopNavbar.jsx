@@ -70,7 +70,7 @@ const TopNavbar = () => {
                 localStorage.clear();
                 sessionStorage.clear();
                 setUser(null);
-                navigate("/login");
+                navigate("/");
               }}
             >
               Logout

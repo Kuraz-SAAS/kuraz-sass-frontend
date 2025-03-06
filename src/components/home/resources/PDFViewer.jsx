@@ -1,59 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import axios from "axios";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css"; // Include default layout styles
-import Axios from "../../../middleware/Axios";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { gearSpinner } from "../../../assets/images";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import { gearSpinner } from "@/assets/images";
 
-const PdfViewer = ({ pdfUrl, path }) => {
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pdfData, setPdfData] = useState(null);
+const PdfViewer = ({ pdfUrl }) => {
+  const [blobUrl, setBlobUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Initialize the default layout plugin
-  const defaultLayout = defaultLayoutPlugin();
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {
-    // Fetch the PDF using Axios
-    const fetchPdf = async () => {
+    const fetchPDF = async () => {
       try {
-        const response = await Axios.get(`/api/${path}/${pdfUrl}`, {
-          responseType: "blob", // Important to get the PDF as a blob
-        });
-        // Create a URL from the blob and set it to state
-        const pdfBlob = URL.createObjectURL(response.data);
-        setPdfData(pdfBlob);
-      } catch (error) {
-        console.error("Error fetching the PDF:", error);
+        const response = await fetch(
+          "https://api.saas.kuraztech.com/api/proxy-read-ebook?filename=" + pdfUrl,
+          { mode: "cors" }
+        );
+        if (!response.ok) throw new Error("Failed to load PDF");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
       }
     };
 
-    fetchPdf();
-  }, [pdfUrl, path]);
+    fetchPDF();
+  }, [pdfUrl]);
 
   return (
     <div className="pdf-container w-full max-h-[80vh]">
-      {pdfData ? (
-        <Worker
-          workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
-        >
-          <Viewer
-            fileUrl={pdfData} // Use the object URL here
-            plugins={[defaultLayout]}
-            onLoadSuccess={({ numPages }) => setNumPages(numPages)} // Capture the number of pages
-          />
-        </Worker>
-      ) : (
+      {loading ? (
         <div className="flex flex-col gap-2 h-full justify-center items-center">
-          <img src={gearSpinner} className="w-[70px]" />
+          <img src={gearSpinner} className="w-[70px]" alt="Loading spinner" />
           <p className="ml-3 text-gray-500">Loading PDF...</p>
-          <p className="text-gray-500">
-            It only take longer on the first time please wait
-          </p>
         </div>
+      ) : error ? (
+        <div className="flex flex-col gap-2 h-full justify-center items-center">
+          <p className="text-red-500">{error}</p>
+        </div>
+      ) : (
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+          <Viewer fileUrl={blobUrl} plugins={[defaultLayoutPluginInstance]} />
+        </Worker>
       )}
     </div>
   );
