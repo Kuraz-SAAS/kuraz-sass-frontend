@@ -10,6 +10,7 @@ import AddSubjectModal from "./AddSubject"; // Add this import
 import { MdAdd } from "react-icons/md";
 import ReactDataTable from "../../../../components/common/dashboard/Datatable";
 import { useSiteStore } from "../../../../context/siteStore";
+import { Button } from "@/components/ui/button";
 
 const Subject = () => {
   const subjectData = useSiteStore((store) => store.schoolSubject);
@@ -44,13 +45,14 @@ const Subject = () => {
     <div>
    
         <div>
-          <button
+          <Button
+            variant="outline"
             onClick={() => setIsModalOpen(true)}
-            className="bg-primary flex items-center gap-2 font-light text-sm text-white p-2 rounded-md"
+            className="flex items-center gap-2 font-light text-sm text-white p-2 rounded-md"
           >
             <MdAdd />
             Add Subject
-          </button>
+        </Button>
 
           <AnimatePresence>
             {isModalOpen && (

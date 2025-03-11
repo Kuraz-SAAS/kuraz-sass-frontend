@@ -1,15 +1,39 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaPaperPlane, FaStopCircle } from "react-icons/fa";
-import ReactMarkdown from "react-markdown";
+import { FaPaperPlane } from "react-icons/fa";
+import { Card, CardContent, CardFooter } from "../../ui/card";
+import { Button } from "../../ui/button";
+import { Textarea } from "../../ui/textarea";
+import BouncingDotsLoader from "./BouncingDotsLoader";
 import { useSiteStore } from "../../../context/siteStore";
+import ReactMarkdown from "react-markdown";
 
-const ChatComponent = ({ bookId, pdfName }) => {
-  const [messages, setMessages] = useState([]); // Chat messages
-  const [input, setInput] = useState(""); // User input
-  const [loading, setLoading] = useState(false); // Loading state
-  const messagesEndRef = useRef(null); // Scroll reference
-  const controllerRef = useRef(null); // Request controller
-  const user = useSiteStore((store) => store.user); // Fetch user data
+const ChatComponent = ({ pdfName }) => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  const controllerRef = useRef(null);
+  const user = useSiteStore((store) => store.user);
+  const textareaRef = useRef(null);
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  };
+
+  // Load messages from sessionStorage when component mounts
+  useEffect(() => {
+    const savedMessages = sessionStorage.getItem(`chat_${pdfName}`);
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    }
+  }, [pdfName]);
+
+  // Save messages to sessionStorage whenever they change
+  useEffect(() => {
+    sessionStorage.setItem(`chat_${pdfName}`, JSON.stringify(messages));
+  }, [messages, pdfName]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -19,70 +43,58 @@ const ChatComponent = ({ bookId, pdfName }) => {
     if (!question.trim()) return;
     setLoading(true);
 
-    // Create an AbortController to allow request cancellation
+    // Add user message
+    setMessages((prev) => [...prev, { text: question, sender: "user" }]);
+
     controllerRef.current = new AbortController();
-    const { signal } = controllerRef.current;
+    const signal = controllerRef.current.signal;
 
     try {
-      setMessages((prev) => [...prev, { text: question, sender: "user" }]);
-
-      const response = await fetch("https://chat.saas.kuraztech.com/api/ask", {
+      const response = await fetch("http://localhost:3000/api/ask", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           documentId: pdfName,
-          question,
+          userMessage: question,
           userId: user?.user_id,
         }),
-        signal, // Attach the signal for cancellation
+        signal,
       });
 
-      if (response.status === 429) {
-        throw new Error("Rate limit exceeded. Try again in a few minutes.");
-      }
-      if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status}`);
-      }
+      if (!response.ok) throw new Error("Failed to fetch response.");
 
       const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let assistantResponse = "";
-
-      setMessages((prev) => [
-        ...prev,
-        { text: "", sender: "bot", id: "temp-bot" },
-      ]);
+      const decoder = new TextDecoder();
+      let botMessage = "";
+      let botMessageId = null;
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        assistantResponse += chunk;
+        botMessage += chunk;
 
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === "temp-bot" ? { ...msg, text: assistantResponse } : msg
-          )
-        );
+        if (!botMessageId) {
+          botMessageId = `bot-${Date.now()}`;
+          setMessages((prev) => [
+            ...prev,
+            { text: botMessage, sender: "bot", id: botMessageId },
+          ]);
+        } else {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === botMessageId ? { ...msg, text: botMessage } : msg
+            )
+          );
+        }
       }
-
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === "temp-bot" ? { ...msg, id: `bot-${Date.now()}` } : msg
-        )
-      );
     } catch (error) {
-      if (error.name === "AbortError") {
-        setMessages((prev) => prev.filter((msg) => msg.id !== "temp-bot")); // Remove temp message
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { text: `Error: ${error.message}`, sender: "bot" },
-        ]);
-      }
+      console.error("Chat Error:", error);
+      setMessages((prev) => [
+        ...prev,
+        { text: "Error retrieving response.", sender: "bot", id: `error-${Date.now()}` },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -95,77 +107,50 @@ const ChatComponent = ({ bookId, pdfName }) => {
     }
   };
 
-  const handleStop = () => {
-    if (controllerRef.current) {
-      controllerRef.current.abort(); // Cancel the request
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
-    setLoading(false);
   };
 
   return (
-    <div className="flex flex-col h-[80vh] overflow-y-scroll border bg-gray-100 rounded-lg w-full max-w-lg shadow-md p-4">
-      <div className="flex-1 overflow-y-auto">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`mb-2 ${
-              msg.sender === "user" ? "text-right" : "text-left"
-            }`}
-          >
-            <span
-              className={`inline-block px-4 py-2 rounded-lg ${
-                msg.sender === "user"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-black"
-              }`}
+    <Card className="w-[500px] h-[75vh] flex flex-col justify-end shadow-lg">
+      <CardContent className="flex flex-col overflow-y-auto p-4 space-y-3">
+        {messages.map((msg, index) =>
+          msg.text ? (
+            <div
+              key={index}
+              className={`p-2 rounded-b-lg min-w-[20%] ${msg.sender === "user"
+                  ? "bg-black text-white self-end"
+                  : "bg-gray-200 text-black self-start"
+                }`}
             >
-              {msg.sender === "bot" ? (
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
-              ) : (
-                <span>{msg.text}</span>
-              )}
-            </span>
-          </div>
-        ))}
-        {loading && (
-          <div className="text-left mb-2">
-            <span className="inline-block px-4 py-2 rounded-lg bg-gray-300 text-black">
-              Generating...
-            </span>
-          </div>
+              <ReactMarkdown>{msg.text}</ReactMarkdown>
+            </div>
+          ) : null
         )}
+        <div className="justify-items-start mt-3">
+            {loading && <BouncingDotsLoader />}
+        </div>
         <div ref={messagesEndRef} />
-      </div>
+      </CardContent>
 
-      <div className="flex items-center mt-4">
-        <input
-          type="text"
-          className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
-          placeholder="Ask a question..."
+      <CardFooter className="p-4 flex items-center gap-2">
+        <Textarea
+          ref={textareaRef}
+          className="flex-1 resize-none overflow-y-hidden"
+          placeholder="Type a message..."
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !loading && handleSend()}
-          disabled={loading}
+          rows={2}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
-
-        {loading ? (
-          <button
-            className="ml-2 p-2 rounded-lg bg-red-500 text-white"
-            onClick={handleStop}
-          >
-            <FaStopCircle size={20} />
-          </button>
-        ) : (
-          <button
-            className="ml-2 p-2 rounded-lg bg-blue-500 text-white"
-            onClick={handleSend}
-            disabled={loading}
-          >
-            <FaPaperPlane />
-          </button>
-        )}
-      </div>
-    </div>
+        <Button onClick={handleSend} disabled={loading}>
+          <FaPaperPlane />
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

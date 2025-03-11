@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa";
 import { AiFillFilePdf, AiOutlineFilePdf } from "react-icons/ai";
-import PdfViewer from "../../components/home/resources/PDFViewer";
+import PdfViewerResources from "@/components/home/resources/PDFViewerResources";
 import Navbar from "../../components/common/home/Navbar";
 import Axios from "../../middleware/Axios";
 import { useSiteStore } from "../../context/siteStore";
-import PdfViewerResources from "@/components/home/resources/PDFViewerResources";
 
 const Resources = () => {
+  const setSchoolGrades = useSiteStore((store) => store.setSchoolGrades);
   const schoolGrades = useSiteStore((store) => store.schoolGrades);
   const [openFolders, setOpenFolders] = useState({});
   const [selectedPdf, setSelectedPdf] = useState("");
   const [resourcesBySubject, setResourcesBySubject] = useState({});
   const [loadingResources, setLoadingResources] = useState({});
   const [errorResources, setErrorResources] = useState({});
+  const [loadingGrades, setLoadingGrades] = useState(true); // Loading state for grades
+  const [isLoading, setLoading] = useState(false);
 
   const toggleFolder = async (folderType, folderId) => {
     setOpenFolders((prev) => ({
@@ -57,13 +59,30 @@ const Resources = () => {
     setSelectedPdf(file);
   };
 
+  useEffect(() => {
+    const fetchGrades = async () => {
+      setLoadingGrades(true); // Set loading to true while fetching grades
+      try {
+        await setSchoolGrades(); // Assume this sets the grades
+      } catch (error) {
+        console.error("Error setting grades:", error);
+      } finally {
+        setLoadingGrades(false); // Set loading to false once grades are fetched
+      }
+    };
+    fetchGrades();
+    setLoading(false);
+  }, []);
+
   return (
     <div>
       <Navbar />
       <div className="flex flex-col lg:flex-row font-poppins pt-28 px-4 lg:px-9 gap-6">
         {/* Folder list */}
         <div className="lg:w-[300px] w-full bg-[#EEEEEE] min-h-[60vh] max-h-[80vh] overflow-y-auto rounded-lg pr-4 shadow-lg p-4 lg:p-6">
-          {schoolGrades.length === 0 ? (
+          {loadingGrades ? (
+            <div className="text-center text-gray-500">Loading grades...</div>
+          ) : schoolGrades.length === 0 ? (
             <div>
               <p>No resources</p>
             </div>
@@ -84,9 +103,8 @@ const Resources = () => {
                   </div>
                   <ul
                     id={`grade${grade.grade_id}`}
-                    className={`pl-6 mt-2 space-y-2 ${
-                      openFolders[`grade${grade.grade_id}`] ? "" : "hidden"
-                    }`}
+                    className={`pl-6 mt-2 space-y-2 ${openFolders[`grade${grade.grade_id}`] ? "" : "hidden"
+                      }`}
                   >
                     {grade?.subjects?.map((subject) => (
                       <li key={subject?.subject_id}>
@@ -105,11 +123,10 @@ const Resources = () => {
                         </div>
                         <ul
                           id={`subject${subject.subject_id}`}
-                          className={`pl-6 mt-2 space-y-2 ${
-                            openFolders[`subject${subject.subject_id}`]
+                          className={`pl-6 mt-2 space-y-2 ${openFolders[`subject${subject.subject_id}`]
                               ? ""
                               : "hidden"
-                          }`}
+                            }`}
                         >
                           {loadingResources[subject.subject_id] ? (
                             <li className="text-gray-500">Loading...</li>
@@ -119,7 +136,7 @@ const Resources = () => {
                             </li>
                           ) : resourcesBySubject[subject.subject_id] &&
                             resourcesBySubject[subject.subject_id].length >
-                              0 ? (
+                            0 ? (
                             resourcesBySubject[subject.subject_id].map(
                               (resource) => (
                                 <li key={resource.id}>

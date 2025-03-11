@@ -40,10 +40,10 @@ const siteStore = (set, get) => ({
     set({ schoolDashboard: res.data });
   },
 
-  setBooks: async () => {
+  getBooks: async () => {
     const res = await Axios.get("/api/books");
-    set({ books: res.data.books });
     set({ bookCategory: res.data.book_category });
+    return res.data.books;
   },
 
   setSchoolGrades: async () => {
@@ -57,9 +57,15 @@ const siteStore = (set, get) => ({
   // Fetch courses and set them in the store
   getCourses: async () => {
     const res = await Axios.get("/api/courses");
-    set({ courses: res.data.course });
     set({ courseCategory: res.data.course_category });
+    return res.data.course
   },
+
+  // set courses
+  setCourses: (courses) => set({ courses }),
+
+  // set books
+  setBooks: (books) => set({ books }),
 
   // Fetch student dashboard data
   getStudentDashboard: async () => {

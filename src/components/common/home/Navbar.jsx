@@ -26,7 +26,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800 capitalize flex items-center space-x-2">
           <FaHome className="text-secondary" />
-          <p className="font-light">{user?.name || "MyApp"}</p>
+          <p className="font-light text-sm  md:text-lg">{user?.name}</p>
         </div>
 
         {/* Desktop Menu */}
@@ -64,8 +64,8 @@ const Navbar = () => {
                 to="/phet"
                 className="flex items-center text-gray-800 hover:text-blue-600"
               >
-                <img src={Phet} className="w-[60px]" />
-                <span className="font-light">PhET Sims</span>
+                <img src={Phet} className="lg:w-[60px] w-[130px]" />
+                <span className="font-light hidden lg:block">PhET Sims</span>
               </Link>
             </li>
           </ul>

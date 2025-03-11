@@ -21,6 +21,7 @@ import SkillBuilding from './skill-building.svg'
 import Exam from './exam.svg';
 import Reporting from './reporting.svg';
 import WhiteLogo from './white-logo.png';
+import placeHolder from './placeholder-image.jpg';
 
 export {
   WhiteLogo,
@@ -45,5 +46,6 @@ export {
   avatar,
   VideoImage,
   BookImage,
-  Phet
+  Phet,
+  placeHolder,
 };

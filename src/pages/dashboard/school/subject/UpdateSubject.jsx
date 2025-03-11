@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Axios from "../../../../middleware/Axios";
-import DashboardLayout from "../../../layouts/dashboard/school/DashboardLayout";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 

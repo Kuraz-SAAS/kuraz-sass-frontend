@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import Slider from "../../../components/common/dashboard/Slider"; // Adjust the path if needed
-import { AiOutlineFileText } from "react-icons/ai"; // Replace with your desired icons
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../../../components/ui/card";
 import DashboardLayout from "../../layouts/dashboard/student/DashboardLayouts";
 import Axios from "../../../middleware/Axios";
 import { useSiteStore } from "../../../context/siteStore";
+
+// Import Lucide Icons
+import { Book, Play, Check, Bookmark, BookOpen, Archive } from "lucide-react";
+import Slider from "@/components/common/dashboard/Slider";
+import { Calendar, FileText, Clock } from 'lucide-react';
 
 const Dashboard = () => {
   const student = useSiteStore((store) => store.studentDashboard);
@@ -11,107 +20,106 @@ const Dashboard = () => {
     (store) => store.getStudentDashboard
   );
 
-  const [events, setEvents] = useState("");
+  const [events, setEvents] = useState([]);
 
   const fetchEvents = async () => {
-    await Axios.get("/api/tenant/notices").then((res) => {
-      console.log(res);
+    try {
+      const res = await Axios.get("/api/tenant/notices");
       setEvents(res.data.notices);
-    });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
   };
 
   useEffect(() => {
     getStudentDashboard();
     fetchEvents();
   }, []);
-  console.log(student);
+
+  // Stats array with Lucide Icons
+  const stats = [
+    { label: "Total Courses", value: student?.total_course, icon: Book },
+    { label: "Ongoing Courses", value: student?.ongoing_course_count, icon: Play },
+    { label: "Completed Courses", value: student?.completed_course_count, icon: Check },
+    { label: "Saved Courses", value: student?.saved_courses_count, icon: Bookmark },
+    { label: "Books", value: 0, icon: BookOpen },
+    { label: "School's Resources", value: 0, icon: Archive },
+  ];
+
+  const features = [
+    { label: 'Exams', icon: Calendar },
+    { label: 'Library', icon: Book },
+    { label: 'Reports', icon: FileText },
+    { label: 'Scheduler', icon: Clock },
+  ];
   return (
     <DashboardLayout>
       <section className="w-full">
-        <div className="font-poppins grid">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* Total Course Card */}
-            <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-light">{student?.total_course}</div>
-              <div className="mt-2 flex items-center">
-                <span className="text-md font-light">Total Courses</span>
-                <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
-              </div>
-            </div>
-
-            {/* OnGoing Course Card */}
-            <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-light">
-                {student?.ongoing_course_count}
-              </div>
-              <div className="mt-2 flex items-center">
-                <span className="text-md font-light">OnGoing Courses</span>
-                <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
-              </div>
-            </div>
-
-            {/* Completed Course Card */}
-            <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-light">
-                {student?.completed_course_count}
-              </div>
-              <div className="mt-2 flex items-center">
-                <span className="text-md font-light">Completed Courses</span>
-                <AiOutlineFileText className="ml-2 w-6 h-6" />
-              </div>
-            </div>
-
-            {/* Saved Courses Card */}
-            <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-light">
-                {student?.saved_courses_count}
-              </div>
-              <div className="mt-2 flex items-center">
-                <span className="text-md font-light">Saved Courses</span>
-                <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
-              </div>
-            </div>
-
-            {/* Books Card */}
-            <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-light">0</div>
-              <div className="mt-2 flex items-center">
-                <span className="text-md font-light">Books</span>
-                <AiOutlineFileText className="ml-2 text-primary w-6 h-6" />
-              </div>
-            </div>
-
-            {/* School's Resources Card */}
-            <div className="bg-white text-primary border-l-4 border-primary rounded-lg shadow-sm p-6">
-              <div className="text-3xl font-light">0</div>
-              <div className="mt-2 flex items-center">
-                <span className="text-md font-light">School's Resources</span>
-                <AiOutlineFileText className="ml-2 w-6 h-6" />
-              </div>
-            </div>
-
-            {/* Custom Slider Component */}
-            <div className="col-span-2">
-              {events.length > 0 ? (
-                <Slider events={events} />
-              ) : (
-                <Slider events={[{ title: "no event" }]} />
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-6 p-6">
-            {/* Recent Activities Section */}
-            <div className="w-full md:w-1/2 bg-white rounded-lg shadow p-6">
-              <h2 className="text-primary font-light mb-3">
-                RECENT ACTIVITIES
-              </h2>
-              <div className="border-t pt-2 text-gray-600">
-                No Activity Recorded Yet
-              </div>
-            </div>
-          </div>
+        {/* Stats Cards */}
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat, index) => (
+            <Card key={index} className="bg-white text-primary shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-3xl font-light">
+                  {stat.value}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center">
+                <span className="text-md font-light">{stat.label}</span>
+                <stat.icon className="ml-2 w-6 h-6 text-primary" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
+
+        {/* Events Slider */}
+        <div className="mt-6">
+          {events.length > 0 ? (
+            <Slider>
+              {events.map((event, index) => (
+                <div key={index} className="p-4">
+                  {event.title}
+                </div>
+              ))}
+            </Slider>
+          ) : (
+            <Slider>
+              <div className="p-4">No events</div>
+            </Slider>
+          )}
+        </div>
+
+        {/* Recent Activities Card */}
+        <div className="mt-6">
+          <Card className="bg-white shadow">
+            <CardHeader>
+              <CardTitle className="text-primary font-light">
+                Recent Activities
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-600">
+              No Activity Recorded Yet
+            </CardContent>
+          </Card>
+        </div>
+        <section className="mt-6">
+          <h2 className="text-xl font-semibold text-primary">Coming Soon</h2>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 mt-4">
+            {features.map((feature, index) => (
+              <Card key={index} className="bg-white text-primary shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium flex items-center">
+                    <feature.icon className="mr-2 w-6 h-6 text-primary" />
+                    {feature.label}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-gray-600">
+                  Stay tuned for upcoming updates on {feature.label}.
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
       </section>
     </DashboardLayout>
   );

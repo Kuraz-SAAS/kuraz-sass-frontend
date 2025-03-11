@@ -3,7 +3,9 @@ import CourseContent from "../../components/home/Courses/CourseContent";
 import VideoPlayer from "../../components/home/Courses/VideoPlayer";
 import { Link, useParams } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
-import { BsBack } from "react-icons/bs";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { Card } from "../../components/ui/card";
 
 const CourseViewPage = () => {
   const params = useParams();
@@ -17,37 +19,32 @@ const CourseViewPage = () => {
   const course = courses.find((c) => c.id === parseInt(params.id));
   const firstVideo = course?.course_section[0];
 
-  const [currentVideos, setCurrentVideos] = useState(
-    firstVideo?.videos[0].video_links[0]
+  const [currentVideo, setCurrentVideo] = useState(
+    firstVideo?.videos[0]?.video_links[0]
   );
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen font-poppins py-6 px-4 lg:py-10 lg:px-20 bg-gray-100">
-      {/* Main content */}
-      <main className="flex-1 grid gap-4 lg:gap-5 p-4 lg:p-6">
-        <div className="flex items-center gap-2">
-          <BsBack size={24} />
-          <Link
-            to={"/courses"}
-            className="underline underline-offset-4 text-sm lg:text-base"
-          >
-            Back to Courses
-          </Link>
+    <div className="flex flex-col items-center lg:flex-row min-h-screen font-poppins bg-muted p-6 lg:p-10 gap-6">
+      {/* Main Content */}
+      <main className="flex-1 space-y-5">
+        <div className="flex items-center gap-3">
+          <Button asChild variant="outline" className="flex items-center gap-2">
+            <Link to="/courses">
+              <ArrowLeft className="w-5 h-5" /> Back to Courses
+            </Link>
+          </Button>
         </div>
-        <h2 className="text-base lg:text-lg font-semibold text-gray-700">
-          {firstVideo?.videos[0].video_title}
+        <h2 className="text-lg lg:text-xl font-semibold text-gray-700">
+          {firstVideo?.videos[0]?.video_title || "Course Video"}
         </h2>
-        <div className="mt-4 shadow-md rounded-xl aspect-w-16 aspect-h-9">
-          <VideoPlayer videoId={currentVideos} />
-        </div>
+        <Card className="shadow-lg rounded-xl overflow-hidden">
+          <VideoPlayer videoId={currentVideo} />
+        </Card>
       </main>
 
       {/* Sidebar */}
-      <aside className="w-full lg:w-2/5 p-4 mt-6 lg:mt-0 lg:p-4 ">
-        <CourseContent
-          section={course?.course_section}
-          setCurrentVideos={setCurrentVideos}
-        />
+      <aside className="w-full lg:w-2/5">
+        <CourseContent section={course?.course_section} setCurrentVideos={setCurrentVideo} />
       </aside>
     </div>
   );

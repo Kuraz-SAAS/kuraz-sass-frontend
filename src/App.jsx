@@ -6,6 +6,8 @@ import DashboardLayout from "./pages/layouts/dashboard/school/DashboardLayout";
 import PhetPage from "./pages/home/PhetPage";
 import SinglePhet from "./pages/home/SinglePhet";
 import LandingPages from "./pages/landing/LandingPages";
+import SignUp from "./pages/landing/SignUp";
+import { LoaderCircle } from "lucide-react";
 
 
 const LoginForm = React.lazy(() => import("./pages/Auth/LoginForm"));
@@ -82,19 +84,18 @@ const Addbook = React.lazy(() => import("./pages/home/Addbook"));
 const Services = React.lazy(() => import("./pages/landing/Services"));
 const ContactUs = React.lazy(() => import("./pages/landing/ContactUs"));
 
-// Loading spinner component
 const LoadingSpinner = () => (
-  <div className="flex justify-center bg-secondary items-center h-screen">
-    <img src={infiniteSpiner} alt="" className="max-w-[100px]" />
+  <div className="flex justify-center items-center h-screen bg-white">
+    <LoaderCircle className="w-16 h-16 text-gray-500 animate-spin" />
   </div>
 );
-
 const App = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/" element={<LandingPages />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route element={<SchoolProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/school/dashboard" element={<SchoolDashboard />} />

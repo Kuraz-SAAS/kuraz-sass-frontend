@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion"; // Add this import
 import { MdAdd } from "react-icons/md";
 import ReactDataTable from "../../../../components/common/dashboard/Datatable";
 import { useSiteStore } from "../../../../context/siteStore";
+import { Button } from "@/components/ui/button";
 
 const Grade = () => {
   const gradesData = useSiteStore((store) => store.schoolGrades);
@@ -87,7 +88,7 @@ const Grade = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await Axios.patch(`/api/schoolGrades/${selectedGrade.id}`, {
+      await Axios.patch(`/api/schoolGrades/${selectedGrade.grade_id}`, {
         name: updateName,
       });
       toast.success("Grade updated successfully!");
@@ -135,13 +136,14 @@ const Grade = () => {
   return (
     <div>
       <div>
-        <button
+        <Button
+          variant="outline"
           onClick={() => setIsModalOpen(true)}
-          className="bg-primary font-light flex  items-center gap-2 text-sm text-white p-2 rounded-md"
+          className=" font-light flex  items-center gap-2 text-sm text-white p-2 rounded-md"
         >
           <MdAdd />
           Add Grade
-        </button>
+        </Button>
         <AnimatePresence>
           {isModalOpen && (
             <motion.div
@@ -206,17 +208,19 @@ const Grade = () => {
 
                     {/* Action Buttons */}
                     <div className="flex justify-end gap-2">
-                      <button
+                      <Button
                         type="button"
+                        variant="secondary"
                         onClick={() => setIsModalOpen(false)}
-                        className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                        className=""
                       >
                         Cancel
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="submit"
+                        variant="outline"
                         disabled={isSubmitting}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                        className=""
                       >
                         {isSubmitting ? (
                           <>
@@ -226,7 +230,7 @@ const Grade = () => {
                         ) : (
                           "Save"
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </motion.form>
                 </motion.div>
@@ -296,17 +300,19 @@ const Grade = () => {
                     </div>
 
                     <div className="flex justify-end gap-2">
-                      <button
+                      <Button
                         type="button"
+                        variant="secondary"
                         onClick={() => setIsUpdateModalOpen(false)}
-                        className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                        className=""
                       >
                         Cancel
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="submit"
+                        variant="outline"
                         disabled={isSubmitting}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                        className=""
                       >
                         {isSubmitting ? (
                           <>
@@ -316,7 +322,7 @@ const Grade = () => {
                         ) : (
                           "Update"
                         )}
-                      </button>
+                      </Button>
                     </div>
                   </motion.form>
                 </motion.div>
@@ -362,18 +368,20 @@ const Grade = () => {
                     Are you sure you want to delete this grade?
                   </p>
                   <div className="flex justify-end gap-2">
-                    <button
+                    <Button
+                      variant="secondary"
                       onClick={() => setIsDeleteModalOpen(false)}
-                      className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                      className=""
                     >
                       Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="outline"
                       onClick={confirmDelete}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                      className=" bg-red-500  hover:bg-red-600"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               </div>

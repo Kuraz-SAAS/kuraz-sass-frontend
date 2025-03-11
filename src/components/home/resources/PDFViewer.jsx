@@ -35,7 +35,7 @@ const PdfViewer = ({ pdfUrl }) => {
   }, [pdfUrl]);
 
   return (
-    <div className="pdf-container w-full max-h-[80vh]">
+    <div className="max-h-[80vh] w-full">
       {loading ? (
         <div className="flex flex-col gap-2 h-full justify-center items-center">
           <img src={gearSpinner} className="w-[70px]" alt="Loading spinner" />

@@ -31,7 +31,7 @@ const GlowingCard = ({data}) => {
         ></div>
 
         <CardContent className="relative grid gap-7 z-10 text-white">
-          <div className="flex justify-between ">
+          <div className="flex justify-start gap-10 ">
             <h1 className="text-5xl font-bold text-primary">{data?.number}</h1>
             <p className="text-xl font-light">{data.title}</p>
           </div>

@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { MdOutlineArrowRightAlt } from "react-icons/md";
 import { MdOutlineLocalPhone } from "react-icons/md";
 
-const Hero = () => {
+const Hero = ({ toggleShowSignIn }) => {
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -22,6 +22,10 @@ const Hero = () => {
     hidden: { opacity: 0, x: 20, filter: "blur(5px)" },
     visible: { opacity: 1, x: 0, filter: "blur(0px)" },
   };
+
+  const handleGetInContact = ()=>{
+    window.location.href = `tel:${+251995454546}`;
+  }
 
   return (
     <motion.div
@@ -45,12 +49,12 @@ const Hero = () => {
           className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
           variants={itemVariants}
         >
-          <Button variant="outline" className="p-5 w-full sm:w-auto">
+          <Button onClick={toggleShowSignIn} variant="outline" className="p-5 w-full sm:w-auto">
             Get Started
             <MdOutlineArrowRightAlt className="ml-2" />
           </Button>
 
-          <Button variant="secondary" className="p-5 w-full sm:w-auto">
+          <Button onClick={handleGetInContact} variant="secondary" className="p-5 w-full sm:w-auto">
             <MdOutlineLocalPhone className="mr-2" /> Get in Contact
           </Button>
         </motion.div>

@@ -1,5 +1,6 @@
 import { WhiteLogo } from "@/assets/images";
 import { BsInstagram, BsLinkedin, BsTwitterX, BsYoutube } from "react-icons/bs";
+import { FaFacebook } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -19,6 +20,12 @@ const Footer = () => {
           <p className="text-lg sm:text-xl">@Kuraztech</p>
           <ul>
             <li className="flex gap-4">
+              <a href="#" aria-label="LinkedIn">
+                <FaFacebook
+                  size={24}
+                  className="hover:text-gray-400 transition-colors"
+                />
+              </a>
               <a href="#" aria-label="LinkedIn">
                 <BsLinkedin
                   size={24}

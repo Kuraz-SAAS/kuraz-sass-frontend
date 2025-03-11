@@ -1,16 +1,12 @@
 import React, { useState } from "react";
-import {
-  FaChevronDown,
-  FaChevronUp,
-  FaEye,
-  FaPlayCircle,
-} from "react-icons/fa";
+import { ChevronDown, ChevronUp, Eye, PlayCircle, ShieldCheck } from "lucide-react";
 import Axios from "../../../middleware/Axios";
-import { GiCheckedShield } from "react-icons/gi";
+import { Card, CardContent } from "../../ui/card";
+import { Button } from "../../ui/button";
 
 const CourseContent = ({ section, setCurrentVideos }) => {
   const [isOpen, setIsOpen] = useState([true, false, false]);
-  const [sections, setSections] = useState(section); // Store the section data locally
+  const [sections, setSections] = useState(section);
 
   const toggleSection = (index) => {
     const newOpen = [...isOpen];
@@ -18,7 +14,6 @@ const CourseContent = ({ section, setCurrentVideos }) => {
     setIsOpen(newOpen);
   };
 
-  // Function to handle the video status change
   const handleVideoStatusChange = async (video, sectionIndex, videoIndex) => {
     try {
       const updatedSections = [...sections];
@@ -26,74 +21,57 @@ const CourseContent = ({ section, setCurrentVideos }) => {
       updatedSections[sectionIndex].videos[videoIndex].status = newStatus;
       setSections(updatedSections);
 
-      // Send the API request
-      await Axios.post("/api/video/change-status/" + video.id, {
-        status: newStatus,
-      });
+      await Axios.post(`/api/video/change-status/${video.id}`, { status: newStatus });
     } catch (error) {
       console.error("Error changing video status:", error);
     }
   };
 
   return (
-    <div className="space-y-4 max-h-[80vh] overflow-y-auto">
-      <h2 className="text-xl font-semibold">Content</h2>
-      <p className="text-[12px] text-gray-500">
-        * Check the eye icon after finishing each video to mark the video as
-        finished.
-      </p>
-      {/* Loop through the sections */}
+    <div className="space-y-6 max-h-[80vh] overflow-y-auto p-4">
+      <h2 className="text-2xl font-bold">Course Content</h2>
+      <p className="text-sm text-gray-500">* Click the eye icon after finishing each video to mark it as completed.</p>
+
       {sections?.map((sec, sectionIndex) => (
-        <section key={sec.id}>
-          <div
-            className="flex justify-between items-center bg-gray-200 p-3 rounded cursor-pointer"
-            onClick={() => toggleSection(sectionIndex)}
-          >
-            <div className="flex items-center space-x-2">
-              <FaPlayCircle size={20} />
-              <h3 className="font-semibold">{sec?.section_title}</h3>
-              <span className="text-sm text-gray-600">
-                ({sec?.videos?.length} Lectures)
-              </span>
+        <Card key={sec.id} className="bg-white dark:bg-gray-900 shadow-md rounded-lg">
+          <CardContent className="p-4 cursor-pointer" onClick={() => toggleSection(sectionIndex)}>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-3">
+                <PlayCircle className="text-blue-500" size={24} />
+                <h3 className="font-semibold text-lg">{sec?.section_title}</h3>
+                <span className="text-sm text-gray-500">({sec?.videos?.length} Lectures)</span>
+              </div>
+              {isOpen[sectionIndex] ? <ChevronUp /> : <ChevronDown />}
             </div>
-            {isOpen[sectionIndex] ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
+          </CardContent>
+
           {isOpen[sectionIndex] && (
-            <ul className="ml-6 mt-2 space-y-2 text-sm font-light">
+            <div className="p-4 space-y-2">
               {sec?.videos.map((video, videoIndex) => (
                 <div
                   key={video.id}
-                  className="flex justify-between items-center space-x-2 px-2 cursor-pointer"
+                  className="flex justify-between items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
                   onClick={() => setCurrentVideos(video?.video_links[0])}
                 >
-                  <div className="flex items-center space-x-2">
-                    {/* Status Change Button */}
-                    <button
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      size="icon"
+                      variant="ghost"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent the parent onClick
-                        handleVideoStatusChange(
-                          video,
-                          sectionIndex,
-                          videoIndex
-                        );
+                        e.stopPropagation();
+                        handleVideoStatusChange(video, sectionIndex, videoIndex);
                       }}
                     >
-                      {video?.status ? (
-                        <GiCheckedShield size={18} />
-                      ) : (
-                        <FaEye size={18} />
-                      )}
-                    </button>
-                    <span>{video?.video_title}</span>
+                      {video?.status ? <ShieldCheck className="text-green-500" /> : <Eye />}
+                    </Button>
+                    <span className="text-gray-800 dark:text-gray-300">{video?.video_title}</span>
                   </div>
-                  <span className="text-gray-500">
-                    {video?.video_duration} (min)
-                  </span>
+                  <span className="text-gray-500 text-sm">{video?.video_duration} min</span>
                 </div>
               ))}
-            </ul>
+            </div>
           )}
-        </section>
+        </Card>
       ))}
     </div>
   );

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaSpinner } from "react-icons/fa";
 import { useSiteStore } from "../../../../context/siteStore";
+import { Button } from "@/components/ui/button";
 
 const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
   const [name, setName] = useState("");
@@ -132,17 +133,19 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-2">
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={onClose}
-                className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+                className=""
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
+                variant="outline"
                 disabled={isSubmitting || grades.length === 0}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                className=""
               >
                 {isSubmitting ? (
                   <>
@@ -152,7 +155,7 @@ const AddSubjectModal = ({ isOpen, onClose, onSuccess }) => {
                 ) : (
                   "Save"
                 )}
-              </button>
+              </Button>
             </div>
           </motion.form>
         </motion.div>

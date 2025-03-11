@@ -5,6 +5,7 @@ import { useSiteStore } from "../../context/siteStore";
 import { avatar } from "../../assets/images";
 import { GoHomeFill } from "react-icons/go";
 import { BsPerson } from "react-icons/bs";
+import { Button } from "../ui/button";
 
 const TopNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,9 +45,9 @@ const TopNavbar = () => {
           to="/courses"
           className="flex items-center text-gray-800 dark:text-white font-semibold text-md"
         >
-          <span className="bg-primary flex items-center gap-2 font-light text-sm  text-white p-2 rounded-md hover:bg-primary transition">
+          <Button variant="outline" className="flex items-center gap-2 font-light text-sm  text-white p-2 rounded-md transition">
             <GoHomeFill /> Back To Home
-          </span>
+          </Button>
         </Link>
       </div>
 
