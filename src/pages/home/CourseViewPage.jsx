@@ -10,11 +10,6 @@ import { Card } from "../../components/ui/card";
 const CourseViewPage = () => {
   const params = useParams();
   const courses = useSiteStore((store) => store.courses);
-  const getCourses = useSiteStore((store) => store.getCourses);
-
-  useEffect(() => {
-    getCourses();
-  }, []);
 
   const course = courses.find((c) => c.id === parseInt(params.id));
   const firstVideo = course?.course_section[0];
