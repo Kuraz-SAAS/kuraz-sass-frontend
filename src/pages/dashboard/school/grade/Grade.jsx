@@ -136,14 +136,6 @@ const Grade = () => {
   return (
     <div>
       <div>
-        <Button
-          variant="outline"
-          onClick={() => setIsModalOpen(true)}
-          className=" font-light flex  items-center gap-2 text-sm text-white p-2 rounded-md"
-        >
-          <MdAdd />
-          Add Grade
-        </Button>
         <AnimatePresence>
           {isModalOpen && (
             <motion.div
