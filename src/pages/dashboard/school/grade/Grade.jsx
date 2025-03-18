@@ -50,6 +50,14 @@ const Grade = () => {
   };
 
   const confirmDelete = async () => {
+    const deleted_grade = gradesData.find(value=>value.grade_id === gradeToDelete)
+
+    if(deleted_grade !== 'undefined' && deleted_grade.subjects.length > 0){
+      toast.error('You can delete a grade with subject')
+      setIsDeleteModalOpen(false)
+      return
+    }
+
     try {
       await Axios.delete("/api/schoolGrades/" + gradeToDelete);
       toast.success("Grade deleted successfully");
