@@ -4,7 +4,7 @@ import Axios from "../../../middleware/Axios";
 import { Card, CardContent } from "../../ui/card";
 import { Button } from "../../ui/button";
 
-const CourseContent = ({ section, setCurrentVideos }) => {
+const CourseContent = ({ setCurrentCourse, section, setCurrentVideos, currentCourse }) => {
   const [isOpen, setIsOpen] = useState([true, false, false]);
   const [sections, setSections] = useState(section);
 
@@ -50,8 +50,11 @@ const CourseContent = ({ section, setCurrentVideos }) => {
               {sec?.videos.map((video, videoIndex) => (
                 <div
                   key={video.id}
-                  className="flex justify-between items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
-                  onClick={() => setCurrentVideos(video?.video_links[0])}
+                  className={`flex justify-between items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer ${currentCourse === video.video_title && 'bg-primary/25'}`}
+                  onClick={() => {
+                    setCurrentVideos(video?.video_links[0])
+                    setCurrentCourse(video?.video_title)
+                  }}
                 >
                   <div className="flex items-center space-x-3">
                     <Button

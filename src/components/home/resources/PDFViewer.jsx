@@ -15,21 +15,24 @@ const PdfViewer = ({ pdfUrl }) => {
   useEffect(() => {
     const fetchPDF = async () => {
       try {
-        const response = await fetch(
-          "https://api.saas.kuraztech.com/api/proxy-read-ebook?filename=" + pdfUrl,
-          { mode: "cors" }
-        );
+        const response = await fetch("http://localhost:8000/api/proxy-read-ebook?filename=" + pdfUrl, {
+          mode: "cors",
+        });
         if (!response.ok) throw new Error("Failed to load PDF");
-
+    
         const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setBlobUrl(url);
-        setLoading(false);
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          setBlobUrl(reader.result);
+          setLoading(false);
+        };
       } catch (err) {
         setError(err.message);
         setLoading(false);
       }
     };
+    
 
     fetchPDF();
   }, [pdfUrl]);

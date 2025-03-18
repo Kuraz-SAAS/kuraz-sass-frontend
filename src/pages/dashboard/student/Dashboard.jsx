@@ -13,12 +13,15 @@ import { useSiteStore } from "../../../context/siteStore";
 import { Book, Play, Check, Bookmark, BookOpen, Archive } from "lucide-react";
 import Slider from "@/components/common/dashboard/Slider";
 import { Calendar, FileText, Clock } from 'lucide-react';
+import { MdSecurity } from "react-icons/md";
+import ChangePasswordModal from "@/components/student/ChangePasswordModal";
 
 const Dashboard = () => {
   const student = useSiteStore((store) => store.studentDashboard);
   const getStudentDashboard = useSiteStore(
     (store) => store.getStudentDashboard
   );
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
   const [events, setEvents] = useState([]);
 
@@ -70,6 +73,17 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           ))}
+          <Card onClick={()=>setChangePasswordModalOpen(true)} className="bg-black text-white shadow-sm hover:bg-black/25 hover:text-primary cursor-pointer">
+              <CardHeader>
+                <CardTitle className="text-3xl font-light">
+                  Change Password
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center">
+                <span className="text-md font-light">Click Here to change Your Password</span>
+                <MdSecurity/>
+              </CardContent>
+            </Card>
         </div>
 
         {/* Events Slider */}
@@ -120,6 +134,7 @@ const Dashboard = () => {
             ))}
           </div>
         </section>
+        <ChangePasswordModal isOpen={changePasswordModalOpen} onClose={()=>setChangePasswordModalOpen(false)} />
       </section>
     </DashboardLayout>
   );

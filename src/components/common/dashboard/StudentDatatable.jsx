@@ -49,7 +49,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
         // Close modal and reset form
         setIsModalOpen(false);
-        setNewStudent({ first_name: "", last_name: "" });
+        setNewStudent({ first_name: "", last_name: "", grade: "" });
       }
     } catch (error) {
       console.error("Error adding student:", error);
@@ -312,6 +312,23 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                             setNewStudent({
                               ...newStudent,
                               last_name: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Grade
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={newStudent.grade}
+                          onChange={(e) =>
+                            setNewStudent({
+                              ...newStudent,
+                              grade: e.target.value,
                             })
                           }
                           required

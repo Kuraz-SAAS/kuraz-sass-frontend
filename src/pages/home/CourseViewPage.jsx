@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CourseContent from "../../components/home/Courses/CourseContent";
-import VideoPlayer from "../../components/home/Courses/VideoPlayer";
+import VideoPlayer from "../../components/home/Courses/VideoPlayer.jsx";
 import { Link, useParams } from "react-router-dom";
 import { useSiteStore } from "../../context/siteStore";
 import { ArrowLeft } from "lucide-react";
@@ -17,6 +17,7 @@ const CourseViewPage = () => {
   const [currentVideo, setCurrentVideo] = useState(
     firstVideo?.videos[0]?.video_links[0]
   );
+  const [currentCourse,setCurrentCourse] = useState(firstVideo?.videos[0]?.video_title);
 
   return (
     <div className="flex flex-col items-center lg:flex-row min-h-screen font-poppins bg-muted p-6 lg:p-10 gap-6">
@@ -30,7 +31,7 @@ const CourseViewPage = () => {
           </Button>
         </div>
         <h2 className="text-lg lg:text-xl font-semibold text-gray-700">
-          {firstVideo?.videos[0]?.video_title || "Course Video"}
+          {currentCourse}
         </h2>
         <Card className="shadow-lg rounded-xl overflow-hidden">
           <VideoPlayer videoId={currentVideo} />
@@ -39,7 +40,7 @@ const CourseViewPage = () => {
 
       {/* Sidebar */}
       <aside className="w-full lg:w-2/5">
-        <CourseContent section={course?.course_section} setCurrentVideos={setCurrentVideo} />
+        <CourseContent section={course?.course_section} currentCourse={currentCourse} setCurrentCourse={setCurrentCourse} setCurrentVideos={setCurrentVideo} />
       </aside>
     </div>
   );
