@@ -7,6 +7,7 @@ import Axios from "../../../middleware/Axios";
 import CustomPagination from "../CustomPagination";
 import { MdAdd } from "react-icons/md";
 import ReactDataTable from "./Datatable";
+import { useSiteStore } from "@/context/siteStore";
 
 const StudentDatatable = ({ datas, headers, actions }) => {
   const [dataList, setDataList] = useState([...datas]);
@@ -17,9 +18,14 @@ const StudentDatatable = ({ datas, headers, actions }) => {
     first_name: "",
     last_name: "",
   });
+  const [grade, setGrade] = useState("");
+  const grades = useSiteStore((store) => store.schoolGrades);
+  const [sections, setSections] = useState([]);
+  const [selectedSection, setSelectedSection] = useState(null)
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [excelFile, setExcelFile] = useState(null);
   const [fileName, setFileName] = useState("");
+  const setSchoolStudents = useSiteStore((store) => store.setSchoolStudents);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingChunks, setProcessingChunks] = useState([]);
@@ -48,6 +54,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
         toast.success("Student added successfully!");
 
         // Close modal and reset form
+        setSchoolStudents()
         setIsModalOpen(false);
         setNewStudent({ first_name: "", last_name: "", grade: "" });
       }
@@ -71,7 +78,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
       reader.onload = async (evt) => {
         const bstr = evt.target.result;
         const wb = XLSX.read(bstr, { type: "binary" });
-        const wsname = wb.SheetNames[0];
+        const wsname = wb.SheetNames[1];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
 
@@ -91,6 +98,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
           try {
             const response = await Axios.post("/api/students/import", {
               students: chunks[i],
+              sectiion_id: selectedSection
             });
 
             setCompletedChunks((prev) => [...prev, i]);
@@ -103,6 +111,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
         // Set processing to false when complete
         setIsProcessing(false);
+        setIsExcelModalOpen(false)
         toast.success("File import completed successfully!");
       };
 
@@ -401,11 +410,10 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                   transition={{ duration: 0.2 }}
                   onClick={() => setIsExcelModalOpen(false)}
                 />
-
                 {/* Modal content */}
-                <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+                <div className="flex min-h-screen z-30 gap-5 relative items-center justify-center p-4">
                   <motion.div
-                    className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
+                    className="bg-white p-8 rounded-lg w-[600px] grid gap-5 shadow-xl"
                     onClick={(e) => e.stopPropagation()}
                     initial={{ scale: 0.95, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -417,6 +425,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                       bounce: 0.25,
                     }}
                   >
+
                     <motion.h2
                       className="text-xl font-bold mb-4"
                       initial={{ opacity: 0, y: 10 }}
@@ -425,6 +434,42 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                     >
                       Import Excel File
                     </motion.h2>
+
+                    <div className="space-y-2">
+                      <select
+                        value={grade}
+                        onChange={(e) => {
+                          const selectedGrade = Number(e.target.value);
+                          setGrade(selectedGrade);
+                          const tempGrade = grades.find(value => value.grade_id === selectedGrade);                        
+                          setSections(tempGrade?.sections || []);
+                        }}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
+                      >
+                        <option value="">Select Grade</option>
+                        {grades.map((grade) => (
+                          <option key={grade.grade_id} value={grade.grade_id}>
+                            {grade.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <select
+                        value={selectedSection}
+                        onChange={(e) => setSelectedSection(e.target.value)}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
+                      >
+                        <option value="">Select Section</option>
+                        {sections?.map((section) => (
+                          <option key={section.id} value={section.id}>
+                            {section.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <motion.form
                       onSubmit={handleExcelUpload}
                       className="space-y-4"
@@ -506,12 +551,11 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                         </button>
                         <button
                           type="submit"
-                          disabled={!excelFile || isProcessing}
-                          className={`px-4 py-2 rounded flex items-center gap-2 ${
-                            excelFile && !isProcessing
-                              ? "bg-green-500 text-white hover:bg-green-600"
-                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          }`}
+                          disabled={!excelFile || isProcessing || !selectedSection}
+                          className={`px-4 py-2 rounded flex items-center gap-2 ${excelFile && !isProcessing && selectedSection
+                            ? "bg-green-500 text-white hover:bg-green-600"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            }`}
                         >
                           {isProcessing ? (
                             <>

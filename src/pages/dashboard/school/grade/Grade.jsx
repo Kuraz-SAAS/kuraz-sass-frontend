@@ -14,18 +14,21 @@ import { Button } from "@/components/ui/button";
 const Grade = () => {
   const gradesData = useSiteStore((store) => store.schoolGrades);
   const setSchoolGrades = useSiteStore((store) => store.setSchoolGrades);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedGrade, setSelectedGrade] = useState(null);
   const [updateName, setUpdateName] = useState("");
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Add this state
-  const [gradeToDelete, setGradeToDelete] = useState(null); // Add this state
-  const [selectedGrades, setSelectedGrades] = useState([]); // Add this state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [gradeToDelete, setGradeToDelete] = useState(null);
+  const [selectedGrades, setSelectedGrades] = useState([]);
   const [isSavingGrades, setIsSavingGrades] = useState(false);
+  const [gradeSections, setGradeSections] = useState({});
+  const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+  const [currentGrade, setCurrentGrade] = useState(null);
 
   const staticGrades = Array.from({ length: 12 }, (_, i) => ({
     grade_id: i + 1,
@@ -50,9 +53,9 @@ const Grade = () => {
   };
 
   const confirmDelete = async () => {
-    const deleted_grade = gradesData.find(value=>value.grade_id === gradeToDelete)
+    const deleted_grade = gradesData.find(value => value.grade_id === gradeToDelete)
 
-    if(deleted_grade !== 'undefined' && deleted_grade.subjects.length > 0){
+    if (deleted_grade !== 'undefined' && deleted_grade.subjects.length > 0) {
       toast.error('You can delete a grade with subject')
       setIsDeleteModalOpen(false)
       return
@@ -75,7 +78,6 @@ const Grade = () => {
     { label: "Delete", function: deleteGrade },
   ];
 
-  // Add handleSubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -109,7 +111,6 @@ const Grade = () => {
     }
   };
 
-  // Add this function to handle grade selection
   const toggleGradeSelection = (gradeId) => {
     setSelectedGrades((prev) => {
       if (prev.includes(gradeId)) {
@@ -120,20 +121,64 @@ const Grade = () => {
     });
   };
 
-  // Add this function to handle sending selections to backend
+  const openSectionModal = (grade) => {
+    setCurrentGrade(grade);
+
+    // Toggle grade selection
+    toggleGradeSelection(grade.grade_id);
+
+    setGradeSections((prev) => {
+      if (!prev[grade.name]) {
+        return {
+          ...prev,
+          [grade.name]: ["A"],
+        };
+      }
+      return prev;
+    });
+
+    setIsSectionModalOpen(true);
+  };
+
+  const closeSectionModal = () => {
+    setIsSectionModalOpen(false);
+    setCurrentGrade(null);
+  };
+
+  const handleSectionSelection = (section) => {
+    setGradeSections((prev) => {
+      const currentSections = prev[currentGrade.name] || [];
+      if (currentSections.includes(section)) {
+        return {
+          ...prev,
+          [currentGrade.name]: currentSections.filter((s) => s !== section),
+        };
+      } else {
+        return {
+          ...prev,
+          [currentGrade.name]: [...currentSections, section],
+        };
+      }
+    });
+  };
+
   const handleSaveSelections = async () => {
     setIsSavingGrades(true);
+  
     try {
-      const selectedGradeNames = selectedGrades.map(
-        (gradeId) =>
-          staticGrades.find((grade) => grade.grade_id === gradeId)?.name
-      );
+      const formattedData = Object.keys(gradeSections).reduce((acc, gradeName) => {
+        acc[gradeName] = gradeSections[gradeName];
+        return acc;
+      }, {});
+  
       await Axios.post("/api/grades/import", {
-        grades: selectedGradeNames,
+        grades: formattedData,
       });
-      setSchoolGrades(); // Wait for the data to be fetched
+  
+      setSchoolGrades();
       toast.success("Grade suggestions saved successfully!");
-      setSelectedGrades([]); // Reset selections after saving
+      setSelectedGrades([]);
+      setGradeSections({});
     } catch (error) {
       toast.error("Failed to save grade suggestions.");
     } finally {
@@ -388,7 +433,89 @@ const Grade = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {/* Add this section before the data table */}
+        <AnimatePresence>
+          {isSectionModalOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div
+                className="fixed inset-0 bg-black bg-opacity-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={closeSectionModal}
+              />
+              <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
+                <motion.div
+                  className="bg-white p-8 rounded-lg w-[600px] shadow-xl"
+                  onClick={(e) => e.stopPropagation()}
+                  initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.3,
+                    delay: 0.15,
+                    bounce: 0.25,
+                  }}
+                >
+                  <motion.h2
+                    className="text-xl font-light mb-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    Select Sections for {currentGrade?.name}
+                  </motion.h2>
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      {/* Render selected sections */}
+                      {gradeSections[currentGrade?.name]?.map((section) => (
+                        <div
+                          key={section}
+                          onClick={() => handleSectionSelection(section)}
+                          className={`w-10 h-10 flex items-center justify-center border border-primary border-dashed rounded-lg cursor-pointer transition-all ${gradeSections[currentGrade?.name]?.includes(section)
+                            ? "bg-[#bc8c4e] text-white"
+                            : "bg-gray-100 hover:bg-gray-200"
+                            }`}
+                        >
+                          {section}
+                        </div>
+                      ))}
+                      {/* "+" button to add the next section */}
+                      <div
+                        onClick={() => {
+                          const currentSections = gradeSections[currentGrade?.name] || [];
+                          const lastSection = currentSections[currentSections.length - 1] || 'A';
+                          const nextSection = String.fromCharCode(lastSection.charCodeAt(0) + 1);
+                          handleSectionSelection(nextSection);
+                        }}
+                        className="w-10 h-10 flex items-center justify-center border border-primary border-dashed rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200"
+                      >
+                        +
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <Button
+                      variant="secondary"
+                      onClick={closeSectionModal}
+                      className=""
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* Suggested Grades Section */}
         <div className="mt-8 mb-6">
           <h2 className="text-xl font-semibold mb-4">Suggested Grades</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -402,12 +529,11 @@ const Grade = () => {
               .map((grade) => (
                 <div
                   key={grade.grade_id}
-                  onClick={() => toggleGradeSelection(grade.grade_id)}
-                  className={`border border-primary border-dashed p-4 rounded-lg cursor-pointer transition-all ${
-                    selectedGrades.includes(grade.grade_id)
+                  onClick={() => openSectionModal(grade)}
+                  className={`border border-primary border-dashed p-4 rounded-lg cursor-pointer transition-all ${selectedGrades.includes(grade.grade_id)
                       ? "bg-[#bc8c4e] text-white"
                       : "bg-gray-100 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   <div className="flex justify-between items-center">
                     <span>{grade.name}</span>
@@ -415,6 +541,11 @@ const Grade = () => {
                       <FaCheck className="text-white" />
                     )}
                   </div>
+                  {gradeSections[grade.name] && (
+                    <div className="mt-2 text-sm">
+                      Sections: {gradeSections[grade.name].join(', ')}
+                    </div>
+                  )}
                 </div>
               ))}
           </div>
@@ -437,7 +568,7 @@ const Grade = () => {
             </div>
           )}
         </div>
-        {gradesData.length > 0 ? ( // Conditional rendering for grades data
+        {gradesData.length > 0 ? (
           <ReactDataTable
             datas={gradesData.map((grade) => ({
               ...grade,
@@ -448,9 +579,8 @@ const Grade = () => {
             used_id={"grade_id"}
           />
         ) : (
-          // Display no grades message
           <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-            <FaRegSadCry className="text-6xl mb-2" /> {/* Sad icon */}
+            <FaRegSadCry className="text-6xl mb-2" />
             <p>No grades available.</p>
           </div>
         )}
