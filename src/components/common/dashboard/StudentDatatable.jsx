@@ -123,6 +123,39 @@ const StudentDatatable = ({ datas, headers, actions }) => {
     }
   };
 
+  const handleExportToExcel = () => {
+    // Filter out unwanted fields (userid, tenant, usertype)
+    const filteredData = dataList.map(({ user_id, tenant, user_type, ...rest }) => rest);
+  
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+  
+    // Convert the filtered data to a worksheet
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+  
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+  
+    // Generate a binary string from the workbook
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+  
+    // Convert the binary string to a Blob
+    const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+  
+    // Create a link element and trigger the download
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'students.xlsx';
+    link.click();
+  };
+  
+  // Utility function to convert string to ArrayBuffer
+  const s2ab = (s) => {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+    return buf;
+  };
   const ChunkProgress = () => {
     return (
       <div className="mt-4">
@@ -235,6 +268,12 @@ const StudentDatatable = ({ datas, headers, actions }) => {
               >
                 <MdAdd />
                 Import Excel
+              </button>
+              <button
+                onClick={handleExportToExcel}
+                className="bg-primary font-light text-sm flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-purple-600"
+              >
+                Export to Excel
               </button>
             </div>
           </div>
@@ -441,7 +480,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                         onChange={(e) => {
                           const selectedGrade = Number(e.target.value);
                           setGrade(selectedGrade);
-                          const tempGrade = grades.find(value => value.grade_id === selectedGrade);                        
+                          const tempGrade = grades.find(value => value.grade_id === selectedGrade);
                           setSections(tempGrade?.sections || []);
                         }}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
