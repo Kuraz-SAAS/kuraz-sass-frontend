@@ -1,32 +1,50 @@
-import { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
 import Axios from "../../../middleware/Axios";
-import CustomPagination from "../CustomPagination";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdFilterList, MdClear, MdSearch } from "react-icons/md";
 import ReactDataTable from "./Datatable";
 import { useSiteStore } from "@/context/siteStore";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+
+const animatedComponents = makeAnimated();
 
 const StudentDatatable = ({ datas, headers, actions }) => {
-  const [dataList, setDataList] = useState([...datas]);
-  const [rowsLimit] = useState(8);
-  const [rowsToShow, setRowsToShow] = useState(dataList?.slice(0, rowsLimit));
+  // State for data and pagination
+  const [dataList, setDataList] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // State for new student form
   const [newStudent, setNewStudent] = useState({
     first_name: "",
     last_name: "",
     grade: "",
     section: ""
   });
+
+  // State for filters
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    grades: [],
+    sections: [],
+    searchQuery: ""
+  });
+
+  // Grade and section related state
   const [grade, setGrade] = useState("");
   const grades = useSiteStore((store) => store.schoolGrades);
   const [sections, setSections] = useState([]);
-  const [selectedSection, setSelectedSection] = useState(null)
+  const [selectedSection, setSelectedSection] = useState(null);
+  
+  // Excel import/export state
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [excelFile, setExcelFile] = useState(null);
   const [fileName, setFileName] = useState("");
+  
+  // Processing states
   const setSchoolStudents = useSiteStore((store) => store.setSchoolStudents);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,42 +52,103 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const [completedChunks, setCompletedChunks] = useState([]);
   const [currentChunk, setCurrentChunk] = useState(0);
   const [totalChunks, setTotalChunks] = useState(0);
+  const [isRefreshingData, setIsRefreshingData] = useState(false);
+  
   const CHUNK_SIZE = 50;
 
+  // Prepare grade options for multi-select
+  const gradeOptions = useMemo(() => 
+    grades.map(grade => ({
+      value: grade.grade_id,
+      label: grade.name
+    })), 
+    [grades]
+  );
+
+  // Prepare section options for multi-select
+  const sectionOptions = useMemo(() => 
+    sections.map(section => ({
+      value: section.id,
+      label: section.name
+    })), 
+    [sections]
+  );
+
+  // Format initial data
   useEffect(() => {
     const formattedData = datas.map(student => ({
       ...student,
       grade: student.sectionUser?.grade?.name || "N/A",
-      section: student.sectionUser?.name || "N/A"
-  }));
-    setDataList([...formattedData]);
-  }, []);
+      section: student.sectionUser?.name || "N/A",
+      gradeId: student.sectionUser?.grade?.grade_id || null,
+      sectionId: student.sectionUser?.id || null,
+      fullName: `${student.first_name} ${student.last_name}`.toLowerCase()
+    }));
+    setDataList(formattedData);
+    setFilteredData(formattedData);
+  }, [datas]);
+
+  // Apply filters whenever data or filters change
+  useEffect(() => {
+    const filtered = dataList.filter(student => {
+      // Filter by selected grades
+      if (filters.grades.length > 0 && !filters.grades.some(g => g.value === student.gradeId)) {
+        return false;
+      }
+      
+      // Filter by selected sections
+      if (filters.sections.length > 0 && !filters.sections.some(s => s.value === student.sectionId)) {
+        return false;
+      }
+      
+      // Filter by search query (name or email)
+      if (filters.searchQuery) {
+        const query = filters.searchQuery.toLowerCase();
+        return (
+          student.fullName.includes(query) ||
+          (student.email && student.email.toLowerCase().includes(query))
+        );
+      }
+      
+      return true;
+    });
+    
+    setFilteredData(filtered);
+  }, [dataList, filters]);
+
+  const refreshStudentData = async () => {
+    setIsRefreshingData(true);
+    try {
+      await setSchoolStudents();
+      toast.success("Student data refreshed successfully");
+    } catch (error) {
+      console.error("Error refreshing student data:", error);
+      toast.error("Failed to refresh student data");
+    } finally {
+      setIsRefreshingData(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // Send a POST request to the server
       const formedNewStudent = {
         first_name: newStudent.first_name,
         last_name: newStudent.last_name,
-        section_id: selected
-      }
+        section_id: selectedSection
+      };
+      
       const response = await Axios.post("/api/student/register", formedNewStudent);
 
       if (response.data) {
-        // Add the new student to the local data
-        setDataList([...dataList, response.data.user]);
-        setRowsToShow([...rowsToShow, response.data.user].slice(0, rowsLimit));
-
-        // Show success message
         toast.success("Student added successfully!");
-
-        // Close modal and reset form
-        setSchoolStudents()
+        await refreshStudentData();
         setIsModalOpen(false);
-        setNewStudent({ first_name: "", last_name: "", grade: "" ,section: ""});
+        setNewStudent({ first_name: "", last_name: "", grade: "", section: "" });
+        setSelectedSection(null);
+        setGrade("");
       }
     } catch (error) {
       console.error("Error adding student:", error);
@@ -81,7 +160,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
 
   const handleExcelUpload = async (e) => {
     e.preventDefault();
-    if (!excelFile) return;
+    if (!excelFile || !selectedSection) return;
 
     setIsProcessing(true);
 
@@ -95,7 +174,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
 
-        // Split data into chunks
         const chunks = [];
         for (let i = 0; i < data.length; i += CHUNK_SIZE) {
           chunks.push(data.slice(i, i + CHUNK_SIZE));
@@ -105,15 +183,13 @@ const StudentDatatable = ({ datas, headers, actions }) => {
         setProcessingChunks(chunks.map((_, index) => index));
         setCompletedChunks([]);
 
-        // Process chunks sequentially
         for (let i = 0; i < chunks.length; i++) {
           setCurrentChunk(i);
           try {
-            const response = await Axios.post("/api/students/import", {
+            await Axios.post("/api/students/import", {
               students: chunks[i],
               section_id: selectedSection
             });
-
             setCompletedChunks((prev) => [...prev, i]);
             setProcessingChunks((prev) => prev.filter((chunk) => chunk !== i));
           } catch (error) {
@@ -122,53 +198,100 @@ const StudentDatatable = ({ datas, headers, actions }) => {
           }
         }
 
-        // Set processing to false when complete
+        await refreshStudentData();
+        setIsExcelModalOpen(false);
+        setExcelFile(null);
+        setFileName("");
+        setTotalChunks(0);
+        setProcessingChunks([]);
+        setCompletedChunks([]);
+      };
+
+      reader.onerror = () => {
+        toast.error("Error reading file");
         setIsProcessing(false);
-        setIsExcelModalOpen(false)
-        toast.success("File import completed successfully!");
       };
 
       reader.readAsBinaryString(excelFile);
     } catch (error) {
-      console.error("Error reading file:", error);
-      toast.error("Failed to read file");
+      console.error("Error processing file:", error);
+      toast.error("Failed to process file");
       setIsProcessing(false);
     }
   };
 
   const handleExportToExcel = () => {
-    // Filter out unwanted fields (userid, tenant, usertype)
-    const filteredData = dataList.map(({ user_id, tenant, user_type, ...rest }) => rest);
-  
-    // Create a new workbook
+    const filteredDataToExport = filteredData.map(({ user_id, tenant, user_type, ...rest }) => rest);
     const wb = XLSX.utils.book_new();
-  
-    // Convert the filtered data to a worksheet
-    const ws = XLSX.utils.json_to_sheet(filteredData);
-  
-    // Add the worksheet to the workbook
+    const ws = XLSX.utils.json_to_sheet(filteredDataToExport);
     XLSX.utils.book_append_sheet(wb, ws, "Students");
-  
-    // Generate a binary string from the workbook
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-  
-    // Convert the binary string to a Blob
     const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-  
-    // Create a link element and trigger the download
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'students.xlsx';
     link.click();
   };
-  
-  // Utility function to convert string to ArrayBuffer
+
   const s2ab = (s) => {
     const buf = new ArrayBuffer(s.length);
     const view = new Uint8Array(buf);
     for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
     return buf;
   };
+
+  const handleGradeChange = (selectedOptions) => {
+    setFilters(prev => ({
+      ...prev,
+      grades: selectedOptions || []
+    }));
+    
+    // Update available sections based on selected grades
+    if (selectedOptions && selectedOptions.length > 0) {
+      const gradeIds = selectedOptions.map(opt => opt.value);
+      const availableSections = grades
+        .filter(grade => gradeIds.includes(grade.grade_id))
+        .flatMap(grade => grade.section);
+      
+      setSections(availableSections);
+      
+      // Remove any section filters that are no longer valid
+      if (filters.sections.length > 0) {
+        const validSectionIds = availableSections.map(s => s.id);
+        setFilters(prev => ({
+          ...prev,
+          sections: prev.sections.filter(s => validSectionIds.includes(s.value))
+        }));
+      }
+    } else {
+      setSections([]);
+      setFilters(prev => ({ ...prev, sections: [] }));
+    }
+  };
+
+  const handleSectionChange = (selectedOptions) => {
+    setFilters(prev => ({
+      ...prev,
+      sections: selectedOptions || []
+    }));
+  };
+
+  const handleSearchChange = (e) => {
+    setFilters(prev => ({
+      ...prev,
+      searchQuery: e.target.value
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      grades: [],
+      sections: [],
+      searchQuery: ""
+    });
+    setSections([]);
+  };
+
   const ChunkProgress = () => {
     return (
       <div className="mt-4">
@@ -180,50 +303,20 @@ const StudentDatatable = ({ datas, headers, actions }) => {
             <div key={index} className="relative group">
               {completedChunks.includes(index) ? (
                 <div className="bg-green-100 p-2 rounded-lg">
-                  <svg
-                    className="w-5 h-5 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               ) : processingChunks.includes(index) ? (
                 <div className="bg-yellow-100 p-2 rounded-lg">
-                  <svg
-                    className="w-5 h-5 text-yellow-500 animate-spin"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
+                  <svg className="w-5 h-5 text-yellow-500 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
               ) : (
                 <div className="bg-gray-100 p-2 rounded-lg">
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               )}
@@ -235,23 +328,15 @@ const StudentDatatable = ({ datas, headers, actions }) => {
             </div>
           ))}
         </div>
-
-        {/* Progress bar */}
         <div className="mt-4 bg-gray-200 rounded-full h-2.5">
           <div
             className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
-            style={{
-              width: `${(completedChunks.length / totalChunks) * 100}%`,
-            }}
+            style={{ width: `${(completedChunks.length / totalChunks) * 100}%` }}
           ></div>
         </div>
-
-        {/* Progress details */}
         <div className="mt-2 text-sm text-gray-600">
           {isProcessing ? (
-            <span>
-              Processing chunk {currentChunk + 1} of {totalChunks}...
-            </span>
+            <span>Processing chunk {currentChunk + 1} of {totalChunks}...</span>
           ) : completedChunks.length === totalChunks ? (
             <span className="text-green-600">Processing complete!</span>
           ) : (
@@ -263,38 +348,167 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   };
 
   return (
-    <div className="min-h-screen  flex justify-center py-10">
+    <div className="min-h-screen flex justify-center py-10">
       <div className="w-full max-w-7xl px-4">
         <div className="shadow-lg rounded-lg overflow-hidden">
           <div className="bg-gray-200 flex justify-between items-center p-4 border-b border-gray-300">
             <div className="flex gap-2">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-primary text-sm flex items-center gap-2 font-light text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                className="bg-primary text-sm flex items-center gap-2 font-light text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                disabled={isRefreshingData}
               >
                 <MdAdd />
                 Add Student
               </button>
               <button
                 onClick={() => setIsExcelModalOpen(true)}
-                className="bg-primary font-light text-sm flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                className="bg-primary font-light text-sm flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50"
+                disabled={isRefreshingData}
               >
                 <MdAdd />
                 Import Excel
               </button>
               <button
                 onClick={handleExportToExcel}
-                className="bg-primary font-light text-sm flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-purple-600"
+                className="bg-primary font-light text-sm flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-purple-600 disabled:opacity-50"
+                disabled={isRefreshingData}
               >
                 Export to Excel
               </button>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 text-sm px-4 py-2 rounded-lg ${showFilters ? 'bg-orange-500 text-white hover:bg-orange-600' : 'bg-primary text-white hover:bg-blue-600'} disabled:opacity-50`}
+                disabled={isRefreshingData}
+              >
+                <MdFilterList />
+                {showFilters ? 'Hide Filters' : 'Show Filters'}
+              </button>
+              {isRefreshingData && (
+                <div className="flex items-center ml-2 text-gray-600">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Refreshing data...
+                </div>
+              )}
             </div>
           </div>
-          <ReactDataTable
-            datas={dataList}
-            headers={headers}
-            actions={actions}
-          />
+
+          {/* Filter Panel */}
+          {showFilters && (
+            <div className="bg-white p-4 border-b border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Search Students</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <MdSearch className="text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search by name or email..."
+                      className="pl-10 w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={filters.searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Grade</label>
+                  <Select
+                    isMulti
+                    options={gradeOptions}
+                    components={animatedComponents}
+                    value={filters.grades}
+                    onChange={handleGradeChange}
+                    placeholder="Select grades..."
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Section</label>
+                  <Select
+                    isMulti
+                    options={sectionOptions}
+                    components={animatedComponents}
+                    value={filters.sections}
+                    onChange={handleSectionChange}
+                    placeholder={filters.grades.length === 0 ? "Select grades first" : "Select sections..."}
+                    isDisabled={filters.grades.length === 0}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center mt-3">
+                <div className="text-sm text-gray-500">
+                  Showing {filteredData.length} of {dataList.length} students
+                </div>
+                <button
+                  onClick={clearFilters}
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  <MdClear size={18} />
+                  Clear All Filters
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isRefreshingData ? (
+            <div className="flex justify-center items-center p-10">
+              <svg
+                className="animate-spin h-8 w-8 text-blue-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          ) : (
+            <ReactDataTable
+              datas={filteredData}
+              headers={headers}
+              actions={actions}
+            />
+          )}
+
+          {/* Add Student Modal */}
           <AnimatePresence>
             {isModalOpen && (
               <motion.div
@@ -304,7 +518,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Overlay */}
                 <motion.div
                   className="fixed inset-0 bg-black bg-opacity-50"
                   initial={{ opacity: 0 }}
@@ -314,7 +527,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                   onClick={() => setIsModalOpen(false)}
                 />
 
-                {/* Modal content */}
                 <div className="flex min-h-screen z-30 relative items-center justify-center p-4">
                   <motion.div
                     className="bg-white p-8 rounded-lg w-96 shadow-xl"
@@ -325,15 +537,15 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                     transition={{
                       type: "spring",
                       duration: 0.3,
-                      delay: 0.15, // Delay the modal content animation
-                      bounce: 0.25, // Reduce the bounce effect slightly
+                      delay: 0.15,
+                      bounce: 0.25,
                     }}
                   >
                     <motion.h2
                       className="text-xl font-bold mb-4"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }} // Further delay the title
+                      transition={{ delay: 0.3 }}
                     >
                       Add New Student
                     </motion.h2>
@@ -341,7 +553,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                       onSubmit={handleSubmit}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ delay: 0.4 }} // Delay the form content even more
+                      transition={{ delay: 0.4 }}
                       className="space-y-4"
                     >
                       <div className="mb-4">
@@ -379,40 +591,40 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                         />
                       </div>
                       <div className="space-y-2">
-                      <select
-                        value={grade}
-                        onChange={(e) => {
-                          const selectedGrade = Number(e.target.value);
-                          setGrade(selectedGrade);
-                          const tempGrade = grades.find(value => value.grade_id === selectedGrade);
-                          setSections(tempGrade?.section || []);
-                        }}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        required
-                      >
-                        <option value="">Select Grade</option>
-                        {grades.map((grade) => (
-                          <option key={grade.grade_id} value={grade.grade_id}>
-                            {grade.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <select
-                        value={selectedSection}
-                        onChange={(e) => setSelectedSection(e.target.value)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        required
-                      >
-                        <option value="">Select Section</option>
-                        {sections?.map((section) => (
-                          <option key={section.id} value={section.id}>
-                            {section.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                        <select
+                          value={grade}
+                          onChange={(e) => {
+                            const selectedGrade = Number(e.target.value);
+                            setGrade(selectedGrade);
+                            const tempGrade = grades.find(value => value.grade_id === selectedGrade);
+                            setSections(tempGrade?.section || []);
+                          }}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          required
+                        >
+                          <option value="">Select Grade</option>
+                          {grades.map((grade) => (
+                            <option key={grade.grade_id} value={grade.grade_id}>
+                              {grade.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <select
+                          value={selectedSection}
+                          onChange={(e) => setSelectedSection(e.target.value)}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          required
+                        >
+                          <option value="">Select Section</option>
+                          {sections?.map((section) => (
+                            <option key={section.id} value={section.id}>
+                              {section.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
                       <div className="flex justify-end gap-2">
                         <button
@@ -425,9 +637,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                         <button
                           type="submit"
                           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
-                          disabled={
-                            !newStudent.first_name || !newStudent.last_name
-                          }
+                          disabled={!newStudent.first_name || !newStudent.last_name || !selectedSection}
                         >
                           {isSubmitting ? (
                             <>
@@ -463,6 +673,10 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                 </div>
               </motion.div>
             )}
+          </AnimatePresence>
+
+          {/* Import Excel Modal */}
+          <AnimatePresence>
             {isExcelModalOpen && (
               <motion.div
                 className="fixed inset-0 z-50 overflow-y-auto"
@@ -471,7 +685,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Overlay */}
                 <motion.div
                   className="fixed inset-0 bg-black bg-opacity-50"
                   initial={{ opacity: 0 }}
@@ -480,7 +693,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                   transition={{ duration: 0.2 }}
                   onClick={() => setIsExcelModalOpen(false)}
                 />
-                {/* Modal content */}
                 <div className="flex min-h-screen z-30 gap-5 relative items-center justify-center p-4">
                   <motion.div
                     className="bg-white p-8 rounded-lg w-[600px] grid gap-5 shadow-xl"
@@ -495,7 +707,6 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                       bounce: 0.25,
                     }}
                   >
-
                     <motion.h2
                       className="text-xl font-bold mb-4"
                       initial={{ opacity: 0, y: 10 }}
@@ -667,4 +878,5 @@ const StudentDatatable = ({ datas, headers, actions }) => {
     </div>
   );
 };
+
 export default StudentDatatable;
