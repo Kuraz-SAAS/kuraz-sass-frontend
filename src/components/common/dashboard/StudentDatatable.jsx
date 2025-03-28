@@ -37,7 +37,12 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const CHUNK_SIZE = 50;
 
   useEffect(() => {
-    setDataList([...datas]);
+    const formattedData = datas.map(student => ({
+      ...student,
+      grade: student.sectionUser?.grade?.name || "N/A",
+      section: student.sectionUser?.name || "N/A"
+  }));
+    setDataList([...formattedData]);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -45,7 +50,13 @@ const StudentDatatable = ({ datas, headers, actions }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await Axios.post("/api/student/register", newStudent);
+      // Send a POST request to the server
+      const formedNewStudent = {
+        first_name: newStudent.first_name,
+        last_name: newStudent.last_name,
+        section_id: selected
+      }
+      const response = await Axios.post("/api/student/register", formedNewStudent);
 
       if (response.data) {
         // Add the new student to the local data
@@ -367,40 +378,41 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                           required
                         />
                       </div>
-                      <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">
-                          Grade
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={newStudent.grade}
-                          onChange={(e) =>
-                            setNewStudent({
-                              ...newStudent,
-                              grade: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">
-                          Section
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={newStudent.section}
-                          onChange={(e) =>
-                            setNewStudent({
-                              ...newStudent,
-                              section: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
+                      <div className="space-y-2">
+                      <select
+                        value={grade}
+                        onChange={(e) => {
+                          const selectedGrade = Number(e.target.value);
+                          setGrade(selectedGrade);
+                          const tempGrade = grades.find(value => value.grade_id === selectedGrade);
+                          setSections(tempGrade?.section || []);
+                        }}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
+                      >
+                        <option value="">Select Grade</option>
+                        {grades.map((grade) => (
+                          <option key={grade.grade_id} value={grade.grade_id}>
+                            {grade.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <select
+                        value={selectedSection}
+                        onChange={(e) => setSelectedSection(e.target.value)}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        required
+                      >
+                        <option value="">Select Section</option>
+                        {sections?.map((section) => (
+                          <option key={section.id} value={section.id}>
+                            {section.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
                       <div className="flex justify-end gap-2">
                         <button
@@ -500,7 +512,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                           const selectedGrade = Number(e.target.value);
                           setGrade(selectedGrade);
                           const tempGrade = grades.find(value => value.grade_id === selectedGrade);
-                          setSections(tempGrade?.sections || []);
+                          setSections(tempGrade?.section || []);
                         }}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         required

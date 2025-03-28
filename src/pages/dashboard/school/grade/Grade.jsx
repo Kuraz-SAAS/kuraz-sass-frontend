@@ -507,7 +507,7 @@ const Grade = () => {
                       onClick={closeSectionModal}
                       className=""
                     >
-                      Close
+                      Save
                     </Button>
                   </div>
                 </motion.div>

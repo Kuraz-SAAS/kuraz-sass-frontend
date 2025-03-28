@@ -14,6 +14,8 @@ const Students = () => {
   const headers = [
     { name: "Name", selector: "name" },
     { name: "Email", selector: "email" },
+    { name: "Grade", selector: "grade" },
+    { name: "Section", selector: "section" },
   ];
 
   return (

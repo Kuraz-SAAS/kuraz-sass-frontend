@@ -29,23 +29,25 @@ const ReactDataTable = ({ datas, headers, actions, used_id }) => {
     sortable: true,
   }));
 
-  // Add a custom column for actions
-  columns.push({
-    name: "Actions",
-    cell: (row) => (
-      <div className="flex gap-2">
-        {actions.map((action, index) => (
-          <button
-            key={index}
-            onClick={() => action.function(row[used_id])}
-            className="text-blue-600 hover:text-blue-800"
-          >
-            {action.label}
-          </button>
-        ))}
-      </div>
-    ),
-  });
+  if (actions.length > 0){
+    columns.push({
+      name: "Actions",
+      cell: (row) => (
+        <div className="flex gap-2">
+          {actions.map((action, index) => (
+            <button
+              key={index}
+              onClick={() => action.function(row[used_id])}
+              className="text-blue-600 hover:text-blue-800"
+            >
+              {action.label}
+            </button>
+          ))}
+        </div>
+      ),
+    });
+  }
+  
 
   const paginationOptions = {
     rowsPerPageText: "Rows per page",
