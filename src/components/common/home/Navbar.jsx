@@ -10,7 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useSiteStore } from "../../../context/siteStore";
 import { bookImg } from "../../../assets/test_img";
-import { Phet } from "../../../assets/images";
+import { kurazLogo, Logo, Phet } from "../../../assets/images";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,14 +19,16 @@ const Navbar = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+  
+  console.log(user);
 
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 left-0 z-50 font-poppins">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800 capitalize flex items-center space-x-2">
-          <FaHome className="text-secondary" />
-          <p className="font-light text-sm  md:text-lg">{user?.name}</p>
+          <img src={Logo} className="w-[40px]"/>
+          <p className="font-light text-sm  md:text-lg">{user?.tenant?.domain_name}</p>
         </div>
 
         {/* Desktop Menu */}

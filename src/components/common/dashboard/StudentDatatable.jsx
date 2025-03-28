@@ -17,6 +17,8 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   const [newStudent, setNewStudent] = useState({
     first_name: "",
     last_name: "",
+    grade: "",
+    section: ""
   });
   const [grade, setGrade] = useState("");
   const grades = useSiteStore((store) => store.schoolGrades);
@@ -56,7 +58,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
         // Close modal and reset form
         setSchoolStudents()
         setIsModalOpen(false);
-        setNewStudent({ first_name: "", last_name: "", grade: "" });
+        setNewStudent({ first_name: "", last_name: "", grade: "" ,section: ""});
       }
     } catch (error) {
       console.error("Error adding student:", error);
@@ -98,7 +100,7 @@ const StudentDatatable = ({ datas, headers, actions }) => {
           try {
             const response = await Axios.post("/api/students/import", {
               students: chunks[i],
-              sectiion_id: selectedSection
+              section_id: selectedSection
             });
 
             setCompletedChunks((prev) => [...prev, i]);
@@ -377,6 +379,23 @@ const StudentDatatable = ({ datas, headers, actions }) => {
                             setNewStudent({
                               ...newStudent,
                               grade: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Section
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={newStudent.section}
+                          onChange={(e) =>
+                            setNewStudent({
+                              ...newStudent,
+                              section: e.target.value,
                             })
                           }
                           required

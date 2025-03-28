@@ -8,6 +8,7 @@ import SinglePhet from "./pages/home/SinglePhet";
 import LandingPages from "./pages/landing/LandingPages";
 import SignUp from "./pages/landing/SignUp";
 import { LoaderCircle } from "lucide-react";
+import CompleteProfile from "./pages/dashboard/student/CompleteProfile";
 
 
 const LoginForm = React.lazy(() => import("./pages/Auth/LoginForm"));
@@ -124,6 +125,7 @@ const App = () => {
             <Route element={<StudentLayout />}>
               <Route path="/student/dashboard" element={<StudentDashboard />} />
               <Route path="/student/courses" element={<StudentCourses />} />
+              <Route path="/student/profile" element={<CompleteProfile />} />
               <Route path="/student/saved" element={<SavedCourses />} />
               <Route path="/books" element={<Books />} />
               <Route path="/phet" element={<PhetPage />} />

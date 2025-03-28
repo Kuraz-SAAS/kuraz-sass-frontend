@@ -17,6 +17,7 @@ import {
 import { useSiteStore } from "../../context/siteStore";
 import { BsArrowBarRight } from "react-icons/bs";
 import { MdAccountBox } from "react-icons/md";
+import { AiFillProfile } from "react-icons/ai";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false); // State to track sidebar visibility
@@ -87,6 +88,21 @@ const Sidebar = () => {
               >
                 <FaUserGraduate className="text-green-400 mr-2" />
                 <span className="font-light text-sm">Courses</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/student/profile"
+                className={({ isActive }) =>
+                  `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
+                    isActive
+                      ? "bg-black text-white"
+                      : "hover:bg-black hover:text-white"
+                  }`
+                }
+              >
+                <FaUserGraduate className="text-green-400 mr-2" />
+                <span className="font-light text-sm">Complete Profile</span>
               </NavLink>
             </li>
           </ul>
@@ -182,6 +198,21 @@ const Sidebar = () => {
               >
                 <FaUserGraduate className="text-green-400 mr-2" />
                 <span className="font-light text-sm">Courses</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/student/profile"
+                className={({ isActive }) =>
+                  `flex items-center py-2 px-3 rounded-lg transition-colors duration-300 ${
+                    isActive
+                      ? "bg-black text-white"
+                      : "hover:bg-black hover:text-white"
+                  }`
+                }
+              >
+                <AiFillProfile className="text-green-400 mr-2" />
+                <span className="font-light text-sm">Complete Profile</span>
               </NavLink>
             </li>
           </ul>
