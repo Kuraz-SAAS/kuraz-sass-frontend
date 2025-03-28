@@ -3,7 +3,7 @@ import flower from "./flower.svg";
 import heroImage from "./hero-img.svg";
 import heroTextShadow from "./hero-text-shadow.svg";
 import kurazLogo from "./Kuraz-logo.svg";
-import Logo from './Kuraz.png'
+import Logo from './kuraz.png'
 import shadow from "./shadow.svg";
 import CourseBannner from "./courses_banner.png";
 import SchoolImg from "./schoolimg.svg";
