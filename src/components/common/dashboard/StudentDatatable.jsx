@@ -78,10 +78,10 @@ const StudentDatatable = ({ datas, headers, actions }) => {
   useEffect(() => {
     const formattedData = datas.map(student => ({
       ...student,
-      grade: student.sectionUser?.grade?.name || "N/A",
-      section: student.sectionUser?.name || "N/A",
-      gradeId: student.sectionUser?.grade?.grade_id || null,
-      sectionId: student.sectionUser?.id || null,
+      grade: student.section?.grade?.name || "N/A",
+      section: student.section?.name || "N/A",
+      gradeId: student.section?.grade?.grade_id || null,
+      sectionId: student.section?.id || null,
       fullName: `${student.first_name} ${student.last_name}`.toLowerCase()
     }));
     setDataList(formattedData);
